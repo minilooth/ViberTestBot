@@ -6,7 +6,8 @@ public enum BotState {
     ConversationStarted(0, true) {
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendAdminMainMenuKeyboard(botContext.getConversationStartedCallback().getUser().getViberId());
+            botContext.getKeyboardService().sendAdminMainMenuRichMediaKeyboard(botContext.getConversationStartedCallback().getUser().getViberId());
+            // botContext.getKeyboardService().sendAdminMainMenuKeyboard(botContext.getConversationStartedCallback().getUser().getViberId());
         }
 
         @Override

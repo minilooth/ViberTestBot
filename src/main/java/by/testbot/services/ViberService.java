@@ -245,6 +245,21 @@ public class ViberService {
         }
     }
 
+    public void sendRichMediaMessage(SendRichMediaMessageRequest sendRichMediaMessageRequest) {
+        if (sendRichMediaMessageRequest == null) {
+            throw new IllegalArgumentException("Send sticker message request is null.");
+        }
+
+        SendMessageResponse sendMessageResponse = viberProxy.sendRichMediaMessage(authenticationToken, sendRichMediaMessageRequest);
+
+        if (sendMessageResponse.getStatus() == Status.OK) {
+            logger.info("Sticker message sended to user: " + sendRichMediaMessageRequest.getViberId());
+        }
+        else {
+            logger.warn("Sticker message not sended: " + sendMessageResponse.getStatus() + ". Error: " + sendMessageResponse.getStatusMessage());
+        }
+    }
+
     public void handleUpdate(ViberUpdate viberUpdate) {
         if (viberUpdate.hasDeliveredCallback()) {
             logger.info("Received DeliveredCallback from user: " + viberUpdate.getDeliveredCallback().getUserId());

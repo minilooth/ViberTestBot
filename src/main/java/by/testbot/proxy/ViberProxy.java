@@ -39,4 +39,7 @@ public interface ViberProxy {
 
     @PostMapping("/send_message")
     public SendMessageResponse sendStickerMessage(@RequestHeader("X-Viber-Auth-Token") String authenticationToken, SendStickerMessageRequest sendStickerMessageRequest);
+
+    @PostMapping("/send_message")
+    public SendMessageResponse sendRichMediaMessage(@RequestHeader("X-Viber-Auth-Token") String authenticationToken, SendRichMediaMessageRequest sendRichMediaMessageRequest);
 }

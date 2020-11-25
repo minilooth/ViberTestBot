@@ -5,6 +5,7 @@ by\testbot\payload\requests\message\SendUrlMessageRequest.class
 by\testbot\payload\callbacks\SubscribedCallback.class
 by\testbot\models\Keyboard.class
 by\testbot\models\Message.class
+by\testbot\models\RichMediaKeyboard.class
 by\testbot\models\enums\button\ImageScaleType.class
 by\testbot\models\Sender.class
 by\testbot\services\MessageService.class
@@ -35,6 +36,7 @@ by\testbot\payload\callbacks\ConversationStartedCallback.class
 by\testbot\payload\callbacks\SeenCallback.class
 by\testbot\proxy\ViberProxy.class
 by\testbot\utils\Utils.class
+by\testbot\payload\requests\message\SendRichMediaMessageRequest.class
 by\testbot\payload\callbacks\WebhookCallback.class
 by\testbot\bot\BotState.class
 by\testbot\payload\requests\message\SendContactMessageRequest.class

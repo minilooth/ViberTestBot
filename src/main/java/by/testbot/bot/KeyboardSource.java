@@ -5,8 +5,59 @@ import java.util.List;
 
 import by.testbot.models.Button;
 import by.testbot.models.Keyboard;
+import by.testbot.models.RichMediaKeyboard;
 
 public class KeyboardSource {
+    public static RichMediaKeyboard getAdminMainMenuRichMediaKeyboard() {
+        RichMediaKeyboard richMediaKeyboard = new RichMediaKeyboard();
+        List<Button> buttons = new ArrayList<>();
+
+        Button postponeMessageButton = new Button();
+        postponeMessageButton.setText("Отложенное сообщение");
+        postponeMessageButton.setActionBody("Отложенное сообщение");
+        postponeMessageButton.setColumns(3);
+        postponeMessageButton.setRows(1);
+        buttons.add(postponeMessageButton);
+
+        Button listOfManagersButton = new Button();
+        listOfManagersButton.setText("Список менеджеров");
+        listOfManagersButton.setActionBody("Список менеджеров");
+        listOfManagersButton.setColumns(3);
+        listOfManagersButton.setRows(1);
+        buttons.add(listOfManagersButton);
+
+        Button listOfClientsButton = new Button();
+        listOfClientsButton.setText("Список клиентов");
+        listOfClientsButton.setActionBody("Список клиентов");
+        listOfClientsButton.setColumns(3);
+        listOfClientsButton.setRows(1);
+        buttons.add(listOfClientsButton);
+
+        Button reportButton = new Button();
+        reportButton.setText("Отчет");
+        reportButton.setActionBody("Отчет");
+        reportButton.setColumns(3);
+        reportButton.setRows(1);
+        buttons.add(reportButton);
+
+        Button integrationButton = new Button();
+        integrationButton.setText("Интеграции");
+        integrationButton.setActionBody("Интеграции");
+        integrationButton.setColumns(3);
+        integrationButton.setRows(1);
+        buttons.add(integrationButton);
+
+        Button settingsButton = new Button();
+        settingsButton.setText("Настройка");
+        settingsButton.setActionBody("Настройка");
+        settingsButton.setColumns(3);
+        settingsButton.setRows(1);
+        buttons.add(settingsButton);
+
+        richMediaKeyboard.setButtons(buttons);
+        return richMediaKeyboard;
+    }
+
     public static Keyboard getAdminMainMenuKeyboard() {
         Keyboard keyboard = new Keyboard();
         List<Button> buttons = new ArrayList<>();

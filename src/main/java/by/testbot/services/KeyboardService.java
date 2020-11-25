@@ -5,12 +5,25 @@ import org.springframework.stereotype.Service;
 
 import by.testbot.bot.KeyboardSource;
 import by.testbot.models.Sender;
+import by.testbot.payload.requests.message.SendRichMediaMessageRequest;
 import by.testbot.payload.requests.message.SendTextMessageRequest;
 
 @Service
 public class KeyboardService {
     @Autowired
     private ViberService viberService;
+
+    public void sendAdminMainMenuRichMediaKeyboard(String viberId) {
+        SendRichMediaMessageRequest sendRichMediaMessageRequest = new SendRichMediaMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName("AutoCapitalBot");
+
+        sendRichMediaMessageRequest.setRichMediaKeyboard(KeyboardSource.getAdminMainMenuRichMediaKeyboard());
+        sendRichMediaMessageRequest.setViberId(viberId);
+
+        viberService.sendRichMediaMessage(sendRichMediaMessageRequest);
+    }
 
     public void sendAdminMainMenuKeyboard(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
