@@ -10,6 +10,10 @@ import by.testbot.models.RichMediaKeyboard;
 public class KeyboardSource {
     public static RichMediaKeyboard getAdminMainMenuRichMediaKeyboard() {
         RichMediaKeyboard richMediaKeyboard = new RichMediaKeyboard();
+        richMediaKeyboard.setButtonGroupColumns(6);
+        richMediaKeyboard.setButtonGroupRows(7);
+        richMediaKeyboard.setColor("#FFFFFF");
+
         List<Button> buttons = new ArrayList<>();
 
         Button postponeMessageButton = new Button();

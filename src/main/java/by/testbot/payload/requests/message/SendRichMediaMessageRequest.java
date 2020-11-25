@@ -13,7 +13,7 @@ public class SendRichMediaMessageRequest {
     private String viberId;
 
     @JsonProperty("min_api_version")
-    private Integer minApiVersion;
+    private final Integer minApiVersion = 7;
 
     @JsonProperty("type")
     private final MessageType messageType = MessageType.RICH_MEDIA;
