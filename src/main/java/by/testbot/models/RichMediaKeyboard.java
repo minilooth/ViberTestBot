@@ -38,5 +38,5 @@ public class RichMediaKeyboard {
     private InputFieldState inputFieldState;
 
     @JsonProperty("Type")
-    private final MessageType messageType = MessageType.KEYBOARD; 
+    private final MessageType messageType = MessageType.RICH_MEDIA; 
 }
