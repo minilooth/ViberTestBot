@@ -253,10 +253,10 @@ public class ViberService {
         SendMessageResponse sendMessageResponse = viberProxy.sendRichMediaMessage(authenticationToken, sendRichMediaMessageRequest);
 
         if (sendMessageResponse.getStatus() == Status.OK) {
-            logger.info("Sticker rich media sended to user: " + sendRichMediaMessageRequest.getViberId());
+            logger.info("Rich media message sended to user: " + sendRichMediaMessageRequest.getViberId());
         }
         else {
-            logger.warn("Sticker rich media not sended: " + sendMessageResponse.getStatus() + ". Error: " + sendMessageResponse.getStatusMessage());
+            logger.warn("Rich media message not sended: " + sendMessageResponse.getStatus() + ". Error: " + sendMessageResponse.getStatusMessage());
         }
     }
 
