@@ -23,11 +23,6 @@ public enum BotState {
         }
 
         @Override
-        public void handleInput(BotContext botContext) {
-
-        }
-
-        @Override
         public BotState nextState() {
             return EnterMessage;
         }
