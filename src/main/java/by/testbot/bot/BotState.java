@@ -73,7 +73,7 @@ public enum BotState {
 
             sender.setName("AutoCapitalBot");
             
-            sendTextMessageRequest.setUserId(botContext.getConversationStartedCallback().getUser().getViberId());
+            sendTextMessageRequest.setUserId(botContext.getMessageCallback().getSender().getId());
             sendTextMessageRequest.setText("Сейчас пройдет только сообщение Hello(Стэйт EnterHelloMessage)");
             sendTextMessageRequest.setSender(sender);
 
@@ -90,7 +90,7 @@ public enum BotState {
 
                 sender.setName("AutoCapitalBot");
                 
-                sendTextMessageRequest.setUserId(botContext.getConversationStartedCallback().getUser().getViberId());
+                sendTextMessageRequest.setUserId(botContext.getMessageCallback().getSender().getId());
                 sendTextMessageRequest.setText("Вы ввели Hello!");
                 sendTextMessageRequest.setSender(sender);
 
@@ -104,7 +104,7 @@ public enum BotState {
 
                 sender.setName("AutoCapitalBot");
                 
-                sendTextMessageRequest.setUserId(botContext.getConversationStartedCallback().getUser().getViberId());
+                sendTextMessageRequest.setUserId(botContext.getMessageCallback().getSender().getId());
                 sendTextMessageRequest.setText("Неверный ввод!");
                 sendTextMessageRequest.setSender(sender);
 
