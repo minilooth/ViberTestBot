@@ -17,6 +17,9 @@ public class SendRichMediaMessageRequest {
     @JsonProperty("type")
     private final MessageType messageType = MessageType.RICH_MEDIA;
 
+    @JsonProperty("alt_text")
+    private String altText;
+
     @JsonProperty("rich_media")
     private RichMediaKeyboard richMediaKeyboard;
 }

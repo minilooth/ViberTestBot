@@ -21,6 +21,7 @@ public class KeyboardService {
 
         sendRichMediaMessageRequest.setRichMediaKeyboard(KeyboardSource.getAdminMainMenuRichMediaKeyboard());
         sendRichMediaMessageRequest.setViberId(viberId);
+        sendRichMediaMessageRequest.setAltText("Admin menu");
 
         viberService.sendRichMediaMessage(sendRichMediaMessageRequest);
     }
