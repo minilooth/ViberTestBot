@@ -281,8 +281,6 @@ public class ViberService {
             logger.info("Received SubscribedCallback from user: " + viberUpdate.getSubscribedCallback().getUser().getViberId());
             
             // handle callback
-
-            messageService.sendHelloWorldMessage(viberUpdate.getSubscribedCallback().getUser().getViberId());
         }
         else if (viberUpdate.hasUnsubscribedCallback()) {
             logger.info("Received UnsubscribedCallback from user: " + viberUpdate.getUnsubscribedCallback().getUserId());
@@ -292,10 +290,7 @@ public class ViberService {
             logger.info("Received ConversationStartedCallback from user: " + viberUpdate.getConversationStartedCallback().getUser().getViberId());
             // handle callback
 
-            // BotState botState = BotState.ConversationStarted;
-            // BotContext botContext = BotContext.of(this, this.messageService, this.keyboardService, viberUpdate.getConversationStartedCallback());
-
-            // botState.enter(botContext);
+            messageService.sendConversationStartedMessage(viberUpdate.getConversationStartedCallback().getUser().getViberId());
         }
         else if (viberUpdate.hasWebhookCallback()) {
             logger.info("Received WebhookCallback.");
@@ -350,6 +345,4 @@ public class ViberService {
 
         userService.update(user);
     }
-
-
 }

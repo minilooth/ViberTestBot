@@ -54,4 +54,13 @@ public class ViberUpdate {
     public Boolean hasWebhookCallback() {
         return !Objects.isNull(this.unsubscribedCallback);
     }
+
+    public Boolean hasContact() {
+        if (hasMessageCallback()) {
+            return !Objects.isNull(this.messageCallback.getMessage().getContact());
+        }
+        else {
+            return false;
+        }
+    }
 }

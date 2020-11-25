@@ -144,6 +144,13 @@ public class KeyboardSource {
         changePrivilegesButton.setRows(1);
         buttons.add(changePrivilegesButton);
 
+        Button backButton = new Button();
+        backButton.setText("Назад");
+        backButton.setActionBody("Назад");
+        backButton.setColumns(6);
+        backButton.setRows(1);
+        buttons.add(backButton);
+
         keyboard.setButtons(buttons);
         return keyboard;
     }
@@ -165,6 +172,13 @@ public class KeyboardSource {
         additionalActionsWithClientsButton.setColumns(6);
         additionalActionsWithClientsButton.setRows(1);
         buttons.add(additionalActionsWithClientsButton);
+
+        Button backButton = new Button();
+        backButton.setText("Назад");
+        backButton.setActionBody("Назад");
+        backButton.setColumns(6);
+        backButton.setRows(1);
+        buttons.add(backButton);
 
         keyboard.setButtons(buttons);
         return keyboard;
@@ -188,6 +202,13 @@ public class KeyboardSource {
         reportAboutBotWorkButton.setRows(1);
         buttons.add(reportAboutBotWorkButton);
 
+        Button backButton = new Button();
+        backButton.setText("Назад");
+        backButton.setActionBody("Назад");
+        backButton.setColumns(6);
+        backButton.setRows(1);
+        buttons.add(backButton);
+
         keyboard.setButtons(buttons);
         return keyboard;
     }
@@ -209,6 +230,13 @@ public class KeyboardSource {
         deleteIntegrationButton.setColumns(6);
         deleteIntegrationButton.setRows(1);
         buttons.add(deleteIntegrationButton);
+
+        Button backButton = new Button();
+        backButton.setText("Назад");
+        backButton.setActionBody("Назад");
+        backButton.setColumns(6);
+        backButton.setRows(1);
+        buttons.add(backButton);
 
         keyboard.setButtons(buttons);
         return keyboard;
@@ -232,6 +260,13 @@ public class KeyboardSource {
         setBotUsingPeriodButton.setRows(1);
         buttons.add(setBotUsingPeriodButton);
 
+        Button backButton = new Button();
+        backButton.setText("Назад");
+        backButton.setActionBody("Назад");
+        backButton.setColumns(6);
+        backButton.setRows(1);
+        buttons.add(backButton);
+
         keyboard.setButtons(buttons);
         return keyboard;
     }
@@ -254,6 +289,13 @@ public class KeyboardSource {
         atNightButton.setRows(1);
         buttons.add(atNightButton);
 
+        Button backButton = new Button();
+        backButton.setText("Назад");
+        backButton.setActionBody("Назад");
+        backButton.setColumns(6);
+        backButton.setRows(1);
+        buttons.add(backButton);
+
         keyboard.setButtons(buttons);
         return keyboard;
     }
@@ -275,6 +317,13 @@ public class KeyboardSource {
         noButton.setColumns(6);
         noButton.setRows(1);
         buttons.add(noButton);
+
+        Button backButton = new Button();
+        backButton.setText("Назад");
+        backButton.setActionBody("Назад");
+        backButton.setColumns(6);
+        backButton.setRows(1);
+        buttons.add(backButton);
 
         keyboard.setButtons(buttons);
         return keyboard;

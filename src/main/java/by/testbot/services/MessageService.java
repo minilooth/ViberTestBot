@@ -11,13 +11,13 @@ public class MessageService {
     @Autowired
     private ViberService viberService;
 
-    public void sendHelloWorldMessage(String viberId) {
+    public void sendConversationStartedMessage(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName("AutoCapitalBot");
 
-        sendTextMessageRequest.setText("Привет");
+        sendTextMessageRequest.setText("Привет, это бот AutoCapitalBot");
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setUserId(viberId);
 
