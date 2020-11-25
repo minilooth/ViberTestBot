@@ -335,6 +335,7 @@ public class ViberService {
             logger.info("New user registered: " + viberId);
         }
         else {
+            botState = user.getBotState();
             botContext = BotContext.of(this, this.messageService, this.keyboardService, viberUpdate.getMessageCallback());
         }
 
