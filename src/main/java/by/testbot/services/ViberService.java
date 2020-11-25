@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import by.testbot.bot.BotContext;
 import by.testbot.bot.BotState;
+import by.testbot.models.User;
 import by.testbot.models.ViberUpdate;
 import by.testbot.models.enums.Status;
 import by.testbot.payload.requests.message.*;
@@ -23,6 +24,9 @@ public class ViberService {
     
     @Autowired
     private ViberProxy viberProxy;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private MessageService messageService;
@@ -288,10 +292,10 @@ public class ViberService {
             logger.info("Received ConversationStartedCallback from user: " + viberUpdate.getConversationStartedCallback().getUser().getViberId());
             // handle callback
 
-            BotState botState = BotState.ConversationStarted;
-            BotContext botContext = BotContext.of(this, this.messageService, this.keyboardService, viberUpdate.getConversationStartedCallback());
+            // BotState botState = BotState.ConversationStarted;
+            // BotContext botContext = BotContext.of(this, this.messageService, this.keyboardService, viberUpdate.getConversationStartedCallback());
 
-            botState.enter(botContext);
+            // botState.enter(botContext);
         }
         else if (viberUpdate.hasWebhookCallback()) {
             logger.info("Received WebhookCallback.");
@@ -300,7 +304,50 @@ public class ViberService {
         else if (viberUpdate.hasMessageCallback()) {
             logger.info("Received MessageCallback from user: " + viberUpdate.getMessageCallback().getSender().getId() + ", message type: " + viberUpdate.getMessageCallback().getMessage().getMessageType());
             // handle callback
+
+            handleMessageCallback(viberUpdate);
         }
+    }
+
+    private void handleMessageCallback(ViberUpdate viberUpdate) {
+        final String viberId = viberUpdate.getMessageCallback().getSender().getId();
+        BotContext botContext = null;
+        BotState botState = null;
+
+        User user = userService.getByViberId(viberId);
+
+        if (user == null) {
+            botState = BotState.getInitialState();
+
+            user = new User();
+
+            user.setViberId(viberId);
+            user.setBotState(botState);
+            user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
+            user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
+            user.setName(viberUpdate.getMessageCallback().getSender().getName());
+
+            userService.save(user);
+
+            botContext = BotContext.of(this, this.messageService, this.keyboardService, viberUpdate.getMessageCallback());
+            botState.enter(botContext);
+
+            logger.info("New user registered: " + viberId);
+        }
+        else {
+            botContext = BotContext.of(this, this.messageService, this.keyboardService, viberUpdate.getMessageCallback());
+        }
+
+        botState.handleInput(botContext);
+
+        do {
+            botState = botState.nextState();
+            botState.enter(botContext);
+        } while (!botState.getIsInputNeeded());
+
+        user.setBotState(botState);
+
+        userService.update(user);
     }
 
 

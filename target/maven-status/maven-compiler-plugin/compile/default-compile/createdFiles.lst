@@ -13,6 +13,7 @@ by\testbot\services\InitializationService.class
 by\testbot\models\enums\button\BackgroundMediaScaleType.class
 by\testbot\bot\BotContext.class
 by\testbot\bot\KeyboardSource.class
+by\testbot\bot\BotState$2.class
 by\testbot\models\enums\Status.class
 by\testbot\models\User.class
 by\testbot\services\WebhookService.class
@@ -54,5 +55,6 @@ by\testbot\payload\responses\SetWebhookResponse.class
 by\testbot\models\ViberUpdate.class
 by\testbot\services\KeyboardService.class
 by\testbot\payload\requests\message\SendPictureMessageRequest.class
+by\testbot\bot\BotState$3.class
 by\testbot\TestbotApplication.class
 by\testbot\payload\requests\message\SendTextMessageRequest.class

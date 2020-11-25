@@ -2,12 +2,24 @@ package by.testbot.bot;
 
 import java.util.Arrays;
 
+import by.testbot.models.Sender;
+import by.testbot.payload.requests.message.SendTextMessageRequest;
+
 public enum BotState {
-    ConversationStarted(0, true) {
+    Subscribed(0, true) {
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendAdminMainMenuRichMediaKeyboard(botContext.getConversationStartedCallback().getUser().getViberId());
-            // botContext.getKeyboardService().sendAdminMainMenuKeyboard(botContext.getConversationStartedCallback().getUser().getViberId());
+            SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+            Sender sender = new Sender();
+
+            sender.setName("AutoCapitalBot");
+            
+            sendTextMessageRequest.setUserId(botContext.getSubscribedCallback().getUser().getViberId());
+            sendTextMessageRequest.setText("Привет, ты только что подписался на меня. Введи любое сообщение чтобы начать");
+            sendTextMessageRequest.setSender(sender);
+
+            botContext.getViberService().sendTextMessage(sendTextMessageRequest);
+            // botContext.getKeyboardService().sendAdminMainMenuRichMediaKeyboard(botContext.getConversationStartedCallback().getUser().getViberId());
         }
 
         @Override
@@ -17,7 +29,99 @@ public enum BotState {
 
         @Override
         public BotState nextState() {
-            return ConversationStarted;
+            return EnterMessage;
+        }
+    },
+    
+    EnterMessage(1, true) {
+        @Override
+        public void enter(BotContext botContext) {
+            SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+            Sender sender = new Sender();
+
+            sender.setName("AutoCapitalBot");
+            
+            sendTextMessageRequest.setUserId(botContext.getMessageCallback().getSender().getId());
+            sendTextMessageRequest.setText("Введи любое сообщение(Стэйт EnterMessage)");
+            sendTextMessageRequest.setSender(sender);
+
+            botContext.getViberService().sendTextMessage(sendTextMessageRequest);
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+            Sender sender = new Sender();
+
+            sender.setName("AutoCapitalBot");
+            
+            sendTextMessageRequest.setUserId(botContext.getMessageCallback().getSender().getId());
+            sendTextMessageRequest.setText("Ты ввел: " + botContext.getMessageCallback().getMessage().getText());
+            sendTextMessageRequest.setSender(sender);
+
+            botContext.getViberService().sendTextMessage(sendTextMessageRequest);
+        }
+
+        @Override
+        public BotState nextState() {
+            return EnterHelloMessage;
+        }
+    },
+    
+    EnterHelloMessage(1, true) {
+        BotState botState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+            Sender sender = new Sender();
+
+            sender.setName("AutoCapitalBot");
+            
+            sendTextMessageRequest.setUserId(botContext.getConversationStartedCallback().getUser().getViberId());
+            sendTextMessageRequest.setText("Сейчас пройдет только сообщение Hello(Стэйт EnterHelloMessage)");
+            sendTextMessageRequest.setSender(sender);
+
+            botContext.getViberService().sendTextMessage(sendTextMessageRequest);
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            if (text.equals("Hello")) {
+                SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+                Sender sender = new Sender();
+
+                sender.setName("AutoCapitalBot");
+                
+                sendTextMessageRequest.setUserId(botContext.getConversationStartedCallback().getUser().getViberId());
+                sendTextMessageRequest.setText("Вы ввели Hello!");
+                sendTextMessageRequest.setSender(sender);
+
+                botContext.getViberService().sendTextMessage(sendTextMessageRequest);
+
+                botState = BotState.EnterMessage;
+            }
+            else {
+                SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+                Sender sender = new Sender();
+
+                sender.setName("AutoCapitalBot");
+                
+                sendTextMessageRequest.setUserId(botContext.getConversationStartedCallback().getUser().getViberId());
+                sendTextMessageRequest.setText("Неверный ввод!");
+                sendTextMessageRequest.setSender(sender);
+
+                botContext.getViberService().sendTextMessage(sendTextMessageRequest);
+
+                botState = EnterHelloMessage;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return botState;
         }
     };
 
@@ -38,7 +142,7 @@ public enum BotState {
     }
 
     public static BotState byId(Integer id) {
-        return Arrays.asList(BotState.values()).stream().filter(b -> b.getId().equals(id)).findFirst().orElse(ConversationStarted);
+        return Arrays.asList(BotState.values()).stream().filter(b -> b.getId().equals(id)).findFirst().orElse(Subscribed);
     }
 
     public Boolean getIsInputNeeded() { return isInputNeeded; }
