@@ -14,7 +14,7 @@ public enum BotState {
 
             sender.setName("AutoCapitalBot");
             
-            sendTextMessageRequest.setUserId(botContext.getSubscribedCallback().getUser().getViberId());
+            sendTextMessageRequest.setUserId(botContext.getMessageCallback().getSender().getId());
             sendTextMessageRequest.setText("Привет, ты только что подписался на меня. Введи любое сообщение чтобы начать");
             sendTextMessageRequest.setSender(sender);
 
