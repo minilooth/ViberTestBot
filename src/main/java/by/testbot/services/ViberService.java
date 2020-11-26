@@ -339,9 +339,11 @@ public class ViberService {
             userService.save(user);
 
             botContext = BotContext.of(this, this.messageService, this.keyboardService, this.userService, viberUpdate.getMessageCallback());
-            // botState.enter(botContext);
+            botState.enter(botContext);
 
             logger.info("New user registered: " + viberId);
+            
+            return;
         }
         else {
             botState = user.getBotState();
