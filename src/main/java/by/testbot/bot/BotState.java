@@ -230,6 +230,7 @@ public enum BotState {
     
     Settings(true) {
         BotState botState;
+
         @Override
         public void enter(BotContext botContext) {
             botContext.getKeyboardService().sendSettingsMenuKeyboard(botContext.getMessageCallback().getSender().getId());
@@ -530,7 +531,6 @@ public enum BotState {
 
     //endregion
     
-    
     //region Clients
     
     GetListOfClients(false) {
@@ -627,6 +627,94 @@ public enum BotState {
         @Override
         public BotState nextState() {
             return Integrations;
+        }
+    }, 
+
+    //endregion
+
+    //region Settings
+    
+    ListOfMessagesWhichBotSend(false) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return Settings;
+        }
+    }, 
+    
+    SetBotUsingPeriod(true) {
+        BotState botState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getKeyboardService().sendBotUsagePeriodMenuKeyboard(botContext.getMessageCallback().getSender().getId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            switch(text) {
+                case "В чате(время обработки)":
+                    botState = InChatBotUsingPeriod;
+                    break;
+                case "В ночное время":
+                    botState = AtNightChatBotUsingPeriod;
+                    break;
+                case "Назад":
+                    botState = Settings;
+                    break;
+                default: 
+                    botState = SetBotUsingPeriod;
+                    break;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return botState;
+        }
+    },
+
+    //endregion
+
+    //region SetBotUsingPeriod
+
+    InChatBotUsingPeriod(true) {
+        @Override
+        public void enter(BotContext botContext) {
+            
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return SetBotUsingPeriod;
+        }
+    },
+
+    AtNightChatBotUsingPeriod(true) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return SetBotUsingPeriod;
         }
     };
 
