@@ -73,7 +73,6 @@ public class KeyboardSource {
         postponeMessageButton.setColumns(3);
         postponeMessageButton.setRows(1);
         postponeMessageButton.setBackgroundColor("#2db9b9");
-        postponeMessageButton.setTextOpacity(60);
         postponeMessageButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(postponeMessageButton);
 
@@ -135,6 +134,8 @@ public class KeyboardSource {
         getListOfManagersButton.setActionBody("Получить список менеджеров");
         getListOfManagersButton.setColumns(3);
         getListOfManagersButton.setRows(1);
+        getListOfManagersButton.setBackgroundColor("#2db9b9");
+        getListOfManagersButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(getListOfManagersButton);
 
         Button addManagerButton = new Button();
@@ -142,6 +143,8 @@ public class KeyboardSource {
         addManagerButton.setActionBody("Добавить менеджера");
         addManagerButton.setColumns(3);
         addManagerButton.setRows(1);
+        addManagerButton.setBackgroundColor("#2db9b9");
+        addManagerButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(addManagerButton);
 
         Button deleteManagerButton = new Button();
@@ -149,6 +152,8 @@ public class KeyboardSource {
         deleteManagerButton.setActionBody("Удалить менеджера");
         deleteManagerButton.setColumns(3);
         deleteManagerButton.setRows(1);
+        deleteManagerButton.setBackgroundColor("#2db9b9");
+        deleteManagerButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(deleteManagerButton);
 
         Button changePrivilegesButton = new Button();
@@ -156,6 +161,8 @@ public class KeyboardSource {
         changePrivilegesButton.setActionBody("Изменение привелегий");
         changePrivilegesButton.setColumns(3);
         changePrivilegesButton.setRows(1);
+        changePrivilegesButton.setBackgroundColor("#2db9b9");
+        changePrivilegesButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(changePrivilegesButton);
 
         Button backButton = new Button();
@@ -163,6 +170,8 @@ public class KeyboardSource {
         backButton.setActionBody("Назад");
         backButton.setColumns(6);
         backButton.setRows(1);
+        backButton.setBackgroundColor("#2db9b9");
+        backButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(backButton);
 
         keyboard.setButtons(buttons);
@@ -178,6 +187,8 @@ public class KeyboardSource {
         getListOfClientsAndOtherInformationButton.setActionBody("Получить список клиентов и ифнормацию о них");
         getListOfClientsAndOtherInformationButton.setColumns(6);
         getListOfClientsAndOtherInformationButton.setRows(1);
+        getListOfClientsAndOtherInformationButton.setBackgroundColor("#2db9b9");
+        getListOfClientsAndOtherInformationButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(getListOfClientsAndOtherInformationButton);
 
         Button additionalActionsWithClientsButton = new Button();
@@ -185,6 +196,8 @@ public class KeyboardSource {
         additionalActionsWithClientsButton.setActionBody("Дополнительные операции с клиентами");
         additionalActionsWithClientsButton.setColumns(6);
         additionalActionsWithClientsButton.setRows(1);
+        additionalActionsWithClientsButton.setBackgroundColor("#2db9b9");
+        additionalActionsWithClientsButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(additionalActionsWithClientsButton);
 
         Button backButton = new Button();
@@ -192,6 +205,8 @@ public class KeyboardSource {
         backButton.setActionBody("Назад");
         backButton.setColumns(6);
         backButton.setRows(1);
+        backButton.setBackgroundColor("#2db9b9");
+        backButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(backButton);
 
         keyboard.setButtons(buttons);
@@ -207,6 +222,8 @@ public class KeyboardSource {
         reportAboutManagersWorkButton.setActionBody("Отчет о работе менеджеров");
         reportAboutManagersWorkButton.setColumns(6);
         reportAboutManagersWorkButton.setRows(1);
+        reportAboutManagersWorkButton.setBackgroundColor("#2db9b9");
+        reportAboutManagersWorkButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(reportAboutManagersWorkButton);
 
         Button reportAboutBotWorkButton = new Button();
@@ -214,6 +231,8 @@ public class KeyboardSource {
         reportAboutBotWorkButton.setActionBody("Отчет о работе бота");
         reportAboutBotWorkButton.setColumns(6);
         reportAboutBotWorkButton.setRows(1);
+        reportAboutBotWorkButton.setBackgroundColor("#2db9b9");
+        reportAboutBotWorkButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(reportAboutBotWorkButton);
 
         Button backButton = new Button();
@@ -221,6 +240,8 @@ public class KeyboardSource {
         backButton.setActionBody("Назад");
         backButton.setColumns(6);
         backButton.setRows(1);
+        backButton.setBackgroundColor("#2db9b9");
+        backButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(backButton);
 
         keyboard.setButtons(buttons);
@@ -236,20 +257,35 @@ public class KeyboardSource {
         addIntegrationButton.setActionBody("Добавление новой интеграции");
         addIntegrationButton.setColumns(6);
         addIntegrationButton.setRows(1);
+        addIntegrationButton.setBackgroundColor("#2db9b9");
+        addIntegrationButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(addIntegrationButton);
 
         Button deleteIntegrationButton = new Button();
-        deleteIntegrationButton.setText("Удаление новой интергации");
-        deleteIntegrationButton.setActionBody("Удаление новой интеграции");
+        deleteIntegrationButton.setText("Удаление интергации");
+        deleteIntegrationButton.setActionBody("Удаление интеграции");
         deleteIntegrationButton.setColumns(6);
         deleteIntegrationButton.setRows(1);
+        deleteIntegrationButton.setBackgroundColor("#2db9b9");
+        deleteIntegrationButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(deleteIntegrationButton);
+
+        Button newIntegrationButton = new Button();
+        newIntegrationButton.setText("Новые интеграции");
+        newIntegrationButton.setActionBody("Новые интеграции");
+        newIntegrationButton.setColumns(6);
+        newIntegrationButton.setRows(1);
+        newIntegrationButton.setBackgroundColor("#2db9b9");
+        newIntegrationButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(newIntegrationButton);
 
         Button backButton = new Button();
         backButton.setText("Назад");
         backButton.setActionBody("Назад");
         backButton.setColumns(6);
         backButton.setRows(1);
+        backButton.setBackgroundColor("#2db9b9");
+        backButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(backButton);
 
         keyboard.setButtons(buttons);
@@ -265,6 +301,8 @@ public class KeyboardSource {
         editTextButton.setActionBody("Редактировать текст, отправляемый ботом");
         editTextButton.setColumns(6);
         editTextButton.setRows(1);
+        editTextButton.setBackgroundColor("#2db9b9");
+        editTextButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(editTextButton);
 
         Button setBotUsingPeriodButton = new Button();
@@ -272,6 +310,8 @@ public class KeyboardSource {
         setBotUsingPeriodButton.setActionBody("Настройка периода временного использования бота");
         setBotUsingPeriodButton.setColumns(6);
         setBotUsingPeriodButton.setRows(1);
+        setBotUsingPeriodButton.setBackgroundColor("#2db9b9");
+        setBotUsingPeriodButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(setBotUsingPeriodButton);
 
         Button backButton = new Button();
@@ -279,6 +319,8 @@ public class KeyboardSource {
         backButton.setActionBody("Назад");
         backButton.setColumns(6);
         backButton.setRows(1);
+        backButton.setBackgroundColor("#2db9b9");
+        backButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(backButton);
 
         keyboard.setButtons(buttons);
@@ -294,6 +336,8 @@ public class KeyboardSource {
         inChatButton.setActionBody("В чате(время обработки)");
         inChatButton.setColumns(6);
         inChatButton.setRows(1);
+        inChatButton.setBackgroundColor("#2db9b9");
+        inChatButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(inChatButton);
 
         Button atNightButton = new Button();
@@ -301,6 +345,8 @@ public class KeyboardSource {
         atNightButton.setActionBody("В ночное время");
         atNightButton.setColumns(6);
         atNightButton.setRows(1);
+        atNightButton.setBackgroundColor("#2db9b9");
+        atNightButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(atNightButton);
 
         Button backButton = new Button();
@@ -308,6 +354,8 @@ public class KeyboardSource {
         backButton.setActionBody("Назад");
         backButton.setColumns(6);
         backButton.setRows(1);
+        backButton.setBackgroundColor("#2db9b9");
+        backButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(backButton);
 
         keyboard.setButtons(buttons);
@@ -323,6 +371,8 @@ public class KeyboardSource {
         yesButton.setActionBody("Да");
         yesButton.setColumns(6);
         yesButton.setRows(1);
+        yesButton.setBackgroundColor("#2db9b9");
+        yesButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(yesButton);
 
         Button noButton = new Button();
@@ -330,14 +380,9 @@ public class KeyboardSource {
         noButton.setActionBody("Нет");
         noButton.setColumns(6);
         noButton.setRows(1);
+        noButton.setBackgroundColor("#2db9b9");
+        noButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(noButton);
-
-        Button backButton = new Button();
-        backButton.setText("Назад");
-        backButton.setActionBody("Назад");
-        backButton.setColumns(6);
-        backButton.setRows(1);
-        buttons.add(backButton);
 
         keyboard.setButtons(buttons);
         return keyboard;

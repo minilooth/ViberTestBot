@@ -138,36 +138,73 @@ public enum BotState {
     },
 
     Report(true) {
+        BotState botState;
+
         @Override
         public void enter(BotContext botContext) {
-
+            botContext.getKeyboardService().sendReportMenuKeyboard(botContext.getMessageCallback().getSender().getId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
 
+            switch (text) {
+                case "Отчет о работе менеджеров": 
+                    botState = ReportAboutManagersWork;
+                    break;
+                case "Отчет о работе бота":
+                    botState = ReportAbountBotWork;
+                    break;
+                case "Назад":
+                    botState = MainMenu;
+                    break;
+                default:
+                    botState = Report;
+                    break;
+            }
         }
 
         @Override
         public BotState nextState() {
-            return MainMenu;
+            return botState;
         }
     }, 
     
     Integrations(true) {
+        BotState botState;
+
         @Override
         public void enter(BotContext botContext) {
-
+            botContext.getKeyboardService().sendIntegrationsMenuKeyboard(botContext.getMessageCallback().getSender().getId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
 
+            switch (text) {
+                case "Добавление новой интеграции": 
+                    botState = AddIntegration;
+                    break;
+                case "Удаление интергации":
+                    botState = DeleteIntegration;
+                    break;
+                case "Новые интеграции":
+                    botState = NewIntegrations;
+                    break;
+                case "Назад":
+                    botState = MainMenu;
+                    break;
+                default:
+                    botState = Integrations;
+                    break;
+            }
         }
 
         @Override
         public BotState nextState() {
-            return MainMenu;
+            return botState;
         }
     },
     
@@ -278,7 +315,7 @@ public enum BotState {
         }
     },
     
-    AdditionalOperationsWithClients(true) {
+    AdditionalOperationsWithClients(false) {
         @Override
         public void enter(BotContext botContext) {
 
@@ -292,6 +329,74 @@ public enum BotState {
         @Override
         public BotState nextState() {
             return Clients;
+        }
+    }, 
+
+    //endregion
+
+    //region Report
+
+    ReportAboutManagersWork(false) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return Report;
+        }
+    },
+
+    ReportAbountBotWork(false) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return Report;
+        }
+    },
+
+    //endregion
+
+    //region Integrations
+
+    AddIntegration(false) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return Integrations;
+        }
+    },
+
+    DeleteIntegration(false) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return Integrations;
+        }
+    },
+
+    NewIntegrations(false) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return Integrations;
         }
     };
 

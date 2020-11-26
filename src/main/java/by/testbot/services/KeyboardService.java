@@ -62,7 +62,7 @@ public class KeyboardService {
         sender.setName("AutoCapitalBot");
 
         sendTextMessageRequest.setText("Список клиентов");
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getListOfManagersMenuKeyboard());
+        sendTextMessageRequest.setKeyboard(KeyboardSource.getListOfClientsMenuKeyboard());
         sendTextMessageRequest.setUserId(viberId);
         sendTextMessageRequest.setSender(sender);
 
