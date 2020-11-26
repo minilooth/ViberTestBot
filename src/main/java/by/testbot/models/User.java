@@ -2,8 +2,6 @@ package by.testbot.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import by.testbot.bot.BotState;
 import lombok.Data;
 
 @Data
@@ -70,7 +67,6 @@ public class User {
     private String deviceType;
 
     @JsonIgnore
-    @Enumerated(EnumType.ORDINAL)
     @Column(name = "BotState", nullable = false)
-    private BotState botState;
+    private Integer botState;
 }
