@@ -264,7 +264,7 @@ public class ViberService {
         }
     }
 
-    public void handleUpdate(ViberUpdate viberUpdate) {
+    public Object handleUpdate(ViberUpdate viberUpdate) {
         if (viberUpdate.hasDeliveredCallback()) {
             logger.info("Received DeliveredCallback from user: " + viberUpdate.getDeliveredCallback().getUserId());
             // handle callback
@@ -273,7 +273,6 @@ public class ViberService {
         else if (viberUpdate.hasSeenCallback()) {
             logger.info("Received SeenCallback from user: " + viberUpdate.getSeenCallback().getUserId());
             // handle callback
-
         }
         else if (viberUpdate.hasFailedCallback()) {
             logger.info("Received FailedCallback from user: " + viberUpdate.getFailedCallback().getUserId() + ", with message: " + viberUpdate.getFailedCallback().getDescription());
@@ -295,7 +294,7 @@ public class ViberService {
             logger.info("Received ConversationStartedCallback from user: " + viberUpdate.getConversationStartedCallback().getUser().getViberId());
             // handle callback
 
-            messageService.sendConversationStartedMessage(viberUpdate.getConversationStartedCallback().getUser().getViberId());
+            return messageService.getConversationStartedMessage(viberUpdate.getConversationStartedCallback().getUser().getViberId());
         }
         else if (viberUpdate.hasWebhookCallback()) {
             logger.info("Received WebhookCallback.");
@@ -308,6 +307,7 @@ public class ViberService {
 
             handleMessageCallback(viberUpdate);
         }
+        return null;
     }
 
     private void handleMessageCallback(ViberUpdate viberUpdate) {
@@ -331,7 +331,7 @@ public class ViberService {
             userService.save(user);
 
             botContext = BotContext.of(this, this.messageService, this.keyboardService, viberUpdate.getMessageCallback());
-            botState.enter(botContext);
+            // botState.enter(botContext);
 
             logger.info("New user registered: " + viberId);
         }
