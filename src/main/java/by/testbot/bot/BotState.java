@@ -1,11 +1,9 @@
 package by.testbot.bot;
 
-import java.util.Arrays;
-
 public enum BotState {
     
     // Main Menu
-    MainMenu(0, true) {
+    MainMenu(true) {
         BotState botState;
 
         @Override
@@ -140,7 +138,7 @@ public enum BotState {
     //     }
     // },
     
-    PostponeMessage(1, true) {
+    PostponeMessage(true) {
         @Override
         public void enter(BotContext botContext) {
 
@@ -157,12 +155,12 @@ public enum BotState {
         }
     },
     
-    Managers(2, true) {
+    Managers(true) {
         BotState botState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendListOfManagersMessage(botContext.getMessageCallback().getSender().getId());
+            botContext.getKeyboardService().sendListOfManagersMenuKeyboard(botContext.getMessageCallback().getSender().getId());
         }
 
         @Override
@@ -194,7 +192,7 @@ public enum BotState {
         }
     },
     
-    ClientsList(3, true) {
+    ClientsList(true) {
         @Override
         public void enter(BotContext botContext) {
             
@@ -211,7 +209,7 @@ public enum BotState {
         }
     },
     
-    Report(4, true) {
+    Report(true) {
         @Override
         public void enter(BotContext botContext) {
 
@@ -228,7 +226,7 @@ public enum BotState {
         }
     }, 
     
-    Integrations(5, true) {
+    Integrations(true) {
         @Override
         public void enter(BotContext botContext) {
 
@@ -245,7 +243,7 @@ public enum BotState {
         }
     },
     
-    Settings(6, true) {
+    Settings(true) {
         @Override
         public void enter(BotContext botContext) {
 
@@ -266,7 +264,7 @@ public enum BotState {
 
 
     // Managers
-    ListOfManagers(7, false) {
+    ListOfManagers(false) {
         @Override
         public void enter(BotContext botContext) {
 
@@ -283,7 +281,7 @@ public enum BotState {
         }
     },
     
-    AddManager(8, true) {
+    AddManager(true) {
         @Override
         public void enter(BotContext botContext) {
 
@@ -300,7 +298,7 @@ public enum BotState {
         }
     }, 
     
-    DeleteManager(9, true) {
+    DeleteManager(true) {
         @Override
         public void enter(BotContext botContext) {
 
@@ -317,7 +315,7 @@ public enum BotState {
         }
     }, 
     
-    ChangeManagerPrivilegies(10, true) {
+    ChangeManagerPrivilegies(true) {
         @Override
         public void enter(BotContext botContext) {
 
@@ -334,7 +332,7 @@ public enum BotState {
         }
     },
     
-    ManagersBack(11, false) {
+    ManagersBack(false) {
         @Override
         public void enter(BotContext botContext) {
 
@@ -352,23 +350,13 @@ public enum BotState {
     };
 
     private final Boolean isInputNeeded;
-    private final Integer id;
 
-    BotState(Integer id, Boolean isInputNeeded) {
-        this.id = id;
+    BotState(Boolean isInputNeeded) {
         this.isInputNeeded = isInputNeeded;
     }
 
     public static BotState getInitialState() {
-        return byId(0);
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public static BotState byId(Integer id) {
-        return Arrays.asList(BotState.values()).stream().filter(b -> b.getId().equals(id)).findFirst().orElse(MainMenu);
+        return MainMenu;
     }
 
     public Boolean getIsInputNeeded() { return isInputNeeded; }

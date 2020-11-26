@@ -323,7 +323,7 @@ public class ViberService {
             user = new User();
 
             user.setViberId(viberId);
-            user.setBotState(botState.ordinal());
+            user.setBotState(botState);
             user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
             user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
             user.setName(viberUpdate.getMessageCallback().getSender().getName());
@@ -336,11 +336,9 @@ public class ViberService {
             logger.info("New user registered: " + viberId);
         }
         else {
-            botState = BotState.byId(user.getBotState());
+            botState = user.getBotState();
             botContext = BotContext.of(this, this.messageService, this.keyboardService, viberUpdate.getMessageCallback());
         }
-
-        System.out.println(botState);
 
         botState.handleInput(botContext);
 
@@ -349,7 +347,7 @@ public class ViberService {
             botState.enter(botContext);
         } while (!botState.getIsInputNeeded());
 
-        user.setBotState(botState.getId());
+        user.setBotState(botState);
 
         userService.update(user);
     }
