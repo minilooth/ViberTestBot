@@ -27,7 +27,9 @@ by\testbot\bot\BotState$1.class
 by\testbot\payload\responses\SendMessageResponse.class
 by\testbot\payload\requests\message\SendFileMessageRequest.class
 by\testbot\payload\callbacks\UnsubscribedCallback.class
+by\testbot\bot\BotState$8.class
 by\testbot\models\Location.class
+by\testbot\bot\BotState$10.class
 by\testbot\models\Button.class
 by\testbot\models\enums\button\ActionType.class
 by\testbot\services\UserService.class
@@ -41,6 +43,7 @@ by\testbot\proxy\ViberProxy.class
 by\testbot\utils\Utils.class
 by\testbot\payload\requests\message\SendRichMediaMessageRequest.class
 by\testbot\payload\callbacks\WebhookCallback.class
+by\testbot\bot\BotState$12.class
 by\testbot\bot\BotState.class
 by\testbot\payload\requests\message\SendContactMessageRequest.class
 by\testbot\models\enums\button\BackgroundMediaType.class
@@ -51,12 +54,14 @@ by\testbot\payload\requests\SetWebhookRequest.class
 by\testbot\payload\callbacks\MessageCallback.class
 by\testbot\payload\requests\message\SendStickerMessageRequest.class
 by\testbot\bot\BotState$7.class
+by\testbot\bot\BotState$11.class
 by\testbot\services\WebhookService$1.class
 by\testbot\models\enums\EventType.class
 by\testbot\payload\callbacks\FailedCallback.class
 by\testbot\payload\responses\SetWebhookResponse.class
 by\testbot\models\ViberUpdate.class
 by\testbot\services\KeyboardService.class
+by\testbot\bot\BotState$9.class
 by\testbot\bot\BotState$6.class
 by\testbot\payload\requests\message\SendPictureMessageRequest.class
 by\testbot\bot\BotState$3.class

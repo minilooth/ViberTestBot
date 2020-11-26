@@ -1,6 +1,8 @@
 package by.testbot.bot;
 
 public enum BotState {
+    
+    // Main Menu
     MainMenu(true) {
         BotState botState;
 
@@ -18,7 +20,7 @@ public enum BotState {
                     botState = PostponeMessage;
                     break;
                 case "Список менеджеров":
-                    botState = ManagersList;
+                    botState = Managers;
                     break;
                 case "Список клиентов": 
                     botState = ClientsList;
@@ -153,27 +155,47 @@ public enum BotState {
         }
     },
     
-    ManagersList(true) {
+    Managers(true) {
+        BotState botState;
+
         @Override
         public void enter(BotContext botContext) {
-
+            botContext.getMessageService().sendListOfManagersMessage(botContext.getMessageCallback().getSender().getId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
 
+            switch(text) {
+                case "Получить список менеджеров":
+                    botState = ListOfManagers;
+                    break;
+                case "Добавить менеджера": 
+                    botState = AddManager;
+                    break;
+                case "Удалить менеджера":
+                    botState = DeleteManager;
+                    break;
+                case "Изменение привелегий":
+                    botState = ChangeManagerPrivilegies;
+                    break;
+                default:
+                    botState = Managers;
+                    break;
+            }
         }
 
         @Override
         public BotState nextState() {
-            return MainMenu;
+            return botState;
         }
     },
     
     ClientsList(true) {
         @Override
         public void enter(BotContext botContext) {
-
+            
         }
 
         @Override
@@ -236,15 +258,98 @@ public enum BotState {
         public BotState nextState() {
             return MainMenu;
         }
+    },
+    
+
+
+
+    // Managers
+    ListOfManagers(false) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return Managers;
+        }
+    },
+    
+    AddManager(true) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return Managers;
+        }
+    }, 
+    
+    DeleteManager(true) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return Managers;
+        }
+    }, 
+    
+    ChangeManagerPrivilegies(true) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return Managers;
+        }
+    },
+    
+    ManagersBack(false) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return MainMenu;
+        }
     };
 
     private final Boolean isInputNeeded;
-    // private final Integer id;
-
-    // BotState(Integer id, Boolean isInputNeeded) {
-    //     this.id = id;
-    //     this.isInputNeeded = isInputNeeded;
-    // }
     
     BotState(Boolean isInputNeeded) {
         this.isInputNeeded = isInputNeeded;
@@ -253,14 +358,6 @@ public enum BotState {
     public static BotState getInitialState() {
         return MainMenu;
     }
-
-    // public Integer getId() {
-    //     return id;
-    // }
-
-    // public static BotState byId(Integer id) {
-    //     return Arrays.asList(BotState.values()).stream().filter(b -> b.getId().equals(id)).findFirst().orElse(Subscribed);
-    // }
 
     public Boolean getIsInputNeeded() { return isInputNeeded; }
 
