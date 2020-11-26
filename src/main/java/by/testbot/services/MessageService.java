@@ -17,7 +17,7 @@ public class MessageService {
 
         sender.setName("AutoCapitalBot");
 
-        sendTextMessageRequest.setText("Привет, это бот AutoCapitalBot");
+        sendTextMessageRequest.setText("Привет, это бот AutoCapitalBot. Чтобы начать отправьте любое сообщение.");
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setUserId(viberId);
 
