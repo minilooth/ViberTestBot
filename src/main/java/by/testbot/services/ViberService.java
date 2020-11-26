@@ -295,7 +295,7 @@ public class ViberService {
             logger.info("Received ConversationStartedCallback from user: " + viberUpdate.getConversationStartedCallback().getUser().getViberId());
             // handle callback
 
-            // messageService.sendConversationStartedMessage(viberUpdate.getConversationStartedCallback().getUser().getViberId());
+            messageService.sendConversationStartedMessage(viberUpdate.getConversationStartedCallback().getUser().getViberId());
         }
         else if (viberUpdate.hasWebhookCallback()) {
             logger.info("Received WebhookCallback.");
