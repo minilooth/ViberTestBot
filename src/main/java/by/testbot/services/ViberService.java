@@ -324,6 +324,9 @@ public class ViberService {
 
             user.setViberId(viberId);
             user.setBotState(botState);
+            if (viberUpdate.getMessageCallback().getSender().getAvatarUrl()!= null) {
+                user.setAvatar(viberUpdate.getMessageCallback().getSender().getAvatarUrl());
+            } else user.setAvatar("");
             user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
             user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
             user.setName(viberUpdate.getMessageCallback().getSender().getName());

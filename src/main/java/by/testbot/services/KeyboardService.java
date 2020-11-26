@@ -39,7 +39,21 @@ public class KeyboardService {
         sendTextMessageRequest.setSender(sender);
 
         viberService.sendTextMessage(sendTextMessageRequest);
-    } 
+    }
+
+    public void sendPostponeMessageMenuKeyboard(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName("AutoCapitalBot");
+
+        sendTextMessageRequest.setText("Отложенное сообщение");
+        sendTextMessageRequest.setKeyboard(KeyboardSource.getPostponeMessageMenuKeyboard());
+        sendTextMessageRequest.setUserId(viberId);
+        sendTextMessageRequest.setSender(sender);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
+    }
 
     public void sendListOfManagersMenuKeyboard(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();

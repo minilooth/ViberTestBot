@@ -47,19 +47,39 @@ public enum BotState {
     },
     
     PostponeMessage(true) {
+        BotState botState;
+
         @Override
         public void enter(BotContext botContext) {
-
+            botContext.getKeyboardService().sendPostponeMessageMenuKeyboard(botContext.getMessageCallback().getSender().getId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
 
+            switch(text) {
+                case "Добавить текст + фото":
+                    botState = AddTextAndPhoto;
+                    break;
+                case "Выбрать день и время":
+                    botState = SetDayAndTime;
+                    break;
+                case "Подтвердить отправку":
+                    botState = ConfirmationForSendMessage;
+                    break;
+                case "Назад":
+                    botState = MainMenu;
+                    break;
+                default:
+                    botState = PostponeMessage;
+                    break;
+            }
         }
 
         @Override
         public BotState nextState() {
-            return MainMenu;
+            return botState;
         }
     },
     
@@ -154,7 +174,7 @@ public enum BotState {
                     botState = ReportAboutManagersWork;
                     break;
                 case "Отчет о работе бота":
-                    botState = ReportAbountBotWork;
+                    botState = ReportAboutBotWork;
                     break;
                 case "Назад":
                     botState = MainMenu;
@@ -221,11 +241,11 @@ public enum BotState {
             String text = botContext.getMessageCallback().getMessage().getText();
 
             switch (text) {
-                case "Редактировать текст, отправляемый ботом": 
-                    botState = ListOfMessagesWhichBotSend;
+                case "Редактирование текстов, отправляемых клиентам через бота":
+                    botState = EditTextSendedByBot;
                     break;
                 case "Настройка периода временного использования бота":
-                    botState = SetBotUsingPeriod;
+                    botState = SetTimePeriodForBotActivity;
                     break;
                 case "Назад":
                     botState = MainMenu;
@@ -243,8 +263,203 @@ public enum BotState {
     },
 
     //endregion
-    
+
+    //region Settings
+
+    EditTextSendedByBot(true) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return Managers;
+        }
+    },
+
+    SetTimePeriodForBotActivity(true) {
+        BotState botState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getKeyboardService().sendBotUsagePeriodMenuKeyboard(botContext.getMessageCallback().getSender().getId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            switch (text) {
+                case "В чате(время обработки)":
+                    botState = InChatPeriodTime;
+                    break;
+                case "В ночное время":
+                    botState = InNightTime;
+                    break;
+                case "Назад":
+                    botState = Settings;
+                    break;
+                default:
+                    botState = SetTimePeriodForBotActivity;
+                    break;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return botState;
+        }
+    },
+
+    InChatPeriodTime(true) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return SetTimePeriodForBotActivity;
+        }
+    },
+
+    InNightTime(true) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return SetTimePeriodForBotActivity;
+        }
+    },
+    //end region
+
+    //region PostponeMessage
+
+    AddTextAndPhoto(true) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return PostponeMessage;
+        }
+    },
+
+    SetDayAndTime(true) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return PostponeMessage;
+        }
+    },
+
+    ConfirmationForSendMessage(true) {
+        BotState botState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getKeyboardService().sendConfirmPostponeMessageKeyboard(botContext.getMessageCallback().getSender().getId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            switch (text) {
+                case "Да":
+                    botState = ConfirmButtonForSendMessage;
+                    break;
+                case "Нет":
+                    botState = DeclineButtonForSendMessage;
+                    break;
+                case "Назад":
+                    botState = PostponeMessage;
+                    break;
+                default:
+                    botState = MainMenu;
+                    break;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return PostponeMessage;
+        }
+    },
+
+    ConfirmButtonForSendMessage(false) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return PostponeMessage;
+        }
+    },
+
+
+    DeclineButtonForSendMessage(false) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return PostponeMessage;
+        }
+    },
+    //end region
+
     //region Managers
+
     ListOfManagers(false) {
         @Override
         public void enter(BotContext botContext) {
@@ -363,7 +578,7 @@ public enum BotState {
         }
     },
 
-    ReportAbountBotWork(false) {
+    ReportAboutBotWork(false) {
         @Override
         public void enter(BotContext botContext) {
 
