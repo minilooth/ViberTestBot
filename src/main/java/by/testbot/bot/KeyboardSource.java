@@ -362,6 +362,50 @@ public class KeyboardSource {
         return keyboard;
     }
 
+    public static Keyboard getPostponeMessageMenuKeyboard() {
+        Keyboard keyboard = new Keyboard();
+        List<Button> buttons = new ArrayList<>();
+
+        Button addTextAndPhotoButton = new Button();
+        addTextAndPhotoButton.setText("Добавить текст + фото");
+        addTextAndPhotoButton.setActionBody("Добавить текст + фото");
+        addTextAndPhotoButton.setColumns(6);
+        addTextAndPhotoButton.setRows(1);
+        addTextAndPhotoButton.setBackgroundColor("#2db9b9");
+        addTextAndPhotoButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(addTextAndPhotoButton);
+
+        Button setDayAndTimeButton = new Button();
+        setDayAndTimeButton.setText("Выбрать день и время");
+        setDayAndTimeButton.setActionBody("Выбрать день и время");
+        setDayAndTimeButton.setColumns(6);
+        setDayAndTimeButton.setRows(1);
+        setDayAndTimeButton.setBackgroundColor("#2db9b9");
+        setDayAndTimeButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(setDayAndTimeButton);
+
+        Button confirmSendMessageButton = new Button();
+        confirmSendMessageButton.setText("Подтвердить отправку");
+        confirmSendMessageButton.setActionBody("Подтвердить отправку");
+        confirmSendMessageButton.setColumns(6);
+        confirmSendMessageButton.setRows(1);
+        confirmSendMessageButton.setBackgroundColor("#2db9b9");
+        confirmSendMessageButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(confirmSendMessageButton);
+
+        Button backButton = new Button();
+        backButton.setText("Назад");
+        backButton.setActionBody("Назад");
+        backButton.setColumns(6);
+        backButton.setRows(1);
+        backButton.setBackgroundColor("#2db9b9");
+        backButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(backButton);
+
+        keyboard.setButtons(buttons);
+        return keyboard;
+    }
+
     public static Keyboard getConfirmPostponeMessageKeyboard() {
         Keyboard keyboard = new Keyboard();
         List<Button> buttons = new ArrayList<>();
@@ -383,6 +427,15 @@ public class KeyboardSource {
         noButton.setBackgroundColor("#2db9b9");
         noButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(noButton);
+
+        Button backButton = new Button();
+        backButton.setText("Назад");
+        backButton.setActionBody("Назад");
+        backButton.setColumns(6);
+        backButton.setRows(1);
+        backButton.setBackgroundColor("#2db9b9");
+        backButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(backButton);
 
         keyboard.setButtons(buttons);
         return keyboard;
