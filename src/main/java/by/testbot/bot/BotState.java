@@ -180,6 +180,9 @@ public enum BotState {
                 case "Изменение привелегий":
                     botState = ChangeManagerPrivilegies;
                     break;
+                case "Назад":
+                    botState = MainMenu;
+                    break;
                 default:
                     botState = Managers;
                     break;
