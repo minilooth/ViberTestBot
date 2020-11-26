@@ -716,6 +716,23 @@ public enum BotState {
         public BotState nextState() {
             return SetBotUsingPeriod;
         }
+    },
+    
+    StartUserDialog(true) {
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getMessageService().sendUserStartMessage(botContext.getMessageCallback().getSender().getId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return StartUserDialog;
+        }
     };
 
     //endregion
@@ -726,8 +743,12 @@ public enum BotState {
         this.isInputNeeded = isInputNeeded;
     }
 
-    public static BotState getInitialState() {
+    public static BotState getAdminInitialState() {
         return MainMenu;
+    }
+
+    public static BotState getUserInitialState() {
+        return StartUserDialog;
     }
 
     public Boolean getIsInputNeeded() { return isInputNeeded; }

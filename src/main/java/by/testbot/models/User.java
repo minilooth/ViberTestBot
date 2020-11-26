@@ -38,7 +38,7 @@ public class User {
     private String name;
 
     @JsonProperty("avatar")
-    @Column(name = "Avatar", nullable = false)
+    @Column(name = "Avatar")
     private String avatar;
 
     @JsonProperty("country")

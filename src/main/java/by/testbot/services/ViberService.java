@@ -318,7 +318,12 @@ public class ViberService {
         User user = userService.getByViberId(viberId);
 
         if (user == null) {
-            botState = BotState.getInitialState();
+            if (viberId.equals("gbcD9ezHUeQkbrYUwyU3Bw==")) {
+                botState = BotState.getAdminInitialState();
+            }
+            else {
+                botState = BotState.getUserInitialState();
+            }
 
             user = new User();
 

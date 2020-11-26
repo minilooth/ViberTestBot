@@ -24,6 +24,19 @@ public class MessageService {
         return sendTextMessageRequest;
     }
 
+    public void sendUserStartMessage(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName("AutoCapitalBot");
+
+        sendTextMessageRequest.setText("Привет.");
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
+    }
+
     public void sendAddTextMessage(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
