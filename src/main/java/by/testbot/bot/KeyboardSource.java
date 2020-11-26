@@ -1,6 +1,7 @@
 package by.testbot.bot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import by.testbot.models.Button;
@@ -8,59 +9,59 @@ import by.testbot.models.Keyboard;
 import by.testbot.models.RichMediaKeyboard;
 
 public class KeyboardSource {
-    public static RichMediaKeyboard getAdminMainMenuRichMediaKeyboard() {
-        RichMediaKeyboard richMediaKeyboard = new RichMediaKeyboard();
-        richMediaKeyboard.setButtonGroupColumns(6);
-        richMediaKeyboard.setButtonGroupRows(7);
-        richMediaKeyboard.setColor("#FFFFFF");
+    // public static RichMediaKeyboard getAdminMainMenuRichMediaKeyboard() {
+    //     RichMediaKeyboard richMediaKeyboard = new RichMediaKeyboard();
+    //     richMediaKeyboard.setButtonGroupColumns(6);
+    //     richMediaKeyboard.setButtonGroupRows(7);
+    //     richMediaKeyboard.setColor("#FFFFFF");
 
-        List<Button> buttons = new ArrayList<>();
+    //     List<Button> buttons = new ArrayList<>();
 
-        Button postponeMessageButton = new Button();
-        postponeMessageButton.setText("Отложенное сообщение");
-        postponeMessageButton.setActionBody("Отложенное сообщение");
-        postponeMessageButton.setColumns(3);
-        postponeMessageButton.setRows(1);
-        buttons.add(postponeMessageButton);
+    //     Button postponeMessageButton = new Button();
+    //     postponeMessageButton.setText("Отложенное сообщение");
+    //     postponeMessageButton.setActionBody("Отложенное сообщение");
+    //     postponeMessageButton.setColumns(3);
+    //     postponeMessageButton.setRows(1);
+    //     buttons.add(postponeMessageButton);
 
-        Button listOfManagersButton = new Button();
-        listOfManagersButton.setText("Список менеджеров");
-        listOfManagersButton.setActionBody("Список менеджеров");
-        listOfManagersButton.setColumns(3);
-        listOfManagersButton.setRows(1);
-        buttons.add(listOfManagersButton);
+    //     Button listOfManagersButton = new Button();
+    //     listOfManagersButton.setText("Список менеджеров");
+    //     listOfManagersButton.setActionBody("Список менеджеров");
+    //     listOfManagersButton.setColumns(3);
+    //     listOfManagersButton.setRows(1);
+    //     buttons.add(listOfManagersButton);
 
-        Button listOfClientsButton = new Button();
-        listOfClientsButton.setText("Список клиентов");
-        listOfClientsButton.setActionBody("Список клиентов");
-        listOfClientsButton.setColumns(3);
-        listOfClientsButton.setRows(1);
-        buttons.add(listOfClientsButton);
+    //     Button listOfClientsButton = new Button();
+    //     listOfClientsButton.setText("Список клиентов");
+    //     listOfClientsButton.setActionBody("Список клиентов");
+    //     listOfClientsButton.setColumns(3);
+    //     listOfClientsButton.setRows(1);
+    //     buttons.add(listOfClientsButton);
 
-        Button reportButton = new Button();
-        reportButton.setText("Отчет");
-        reportButton.setActionBody("Отчет");
-        reportButton.setColumns(3);
-        reportButton.setRows(1);
-        buttons.add(reportButton);
+    //     Button reportButton = new Button();
+    //     reportButton.setText("Отчет");
+    //     reportButton.setActionBody("Отчет");
+    //     reportButton.setColumns(3);
+    //     reportButton.setRows(1);
+    //     buttons.add(reportButton);
 
-        Button integrationButton = new Button();
-        integrationButton.setText("Интеграции");
-        integrationButton.setActionBody("Интеграции");
-        integrationButton.setColumns(3);
-        integrationButton.setRows(1);
-        buttons.add(integrationButton);
+    //     Button integrationButton = new Button();
+    //     integrationButton.setText("Интеграции");
+    //     integrationButton.setActionBody("Интеграции");
+    //     integrationButton.setColumns(3);
+    //     integrationButton.setRows(1);
+    //     buttons.add(integrationButton);
 
-        Button settingsButton = new Button();
-        settingsButton.setText("Настройка");
-        settingsButton.setActionBody("Настройка");
-        settingsButton.setColumns(3);
-        settingsButton.setRows(1);
-        buttons.add(settingsButton);
+    //     Button settingsButton = new Button();
+    //     settingsButton.setText("Настройка");
+    //     settingsButton.setActionBody("Настройка");
+    //     settingsButton.setColumns(3);
+    //     settingsButton.setRows(1);
+    //     buttons.add(settingsButton);
 
-        richMediaKeyboard.setButtons(buttons);
-        return richMediaKeyboard;
-    }
+    //     richMediaKeyboard.setButtons(buttons);
+    //     return richMediaKeyboard;
+    // }
 
     public static Keyboard getAdminMainMenuKeyboard() {
         Keyboard keyboard = new Keyboard();
@@ -71,6 +72,9 @@ public class KeyboardSource {
         postponeMessageButton.setActionBody("Отложенное сообщение");
         postponeMessageButton.setColumns(3);
         postponeMessageButton.setRows(1);
+        postponeMessageButton.setBackgroundColor("#2db9b9");
+        postponeMessageButton.setTextOpacity(60);
+        postponeMessageButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(postponeMessageButton);
 
         Button listOfManagersButton = new Button();
@@ -78,6 +82,8 @@ public class KeyboardSource {
         listOfManagersButton.setActionBody("Список менеджеров");
         listOfManagersButton.setColumns(3);
         listOfManagersButton.setRows(1);
+        listOfManagersButton.setBackgroundColor("#2db9b9");
+        listOfManagersButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(listOfManagersButton);
 
         Button listOfClientsButton = new Button();
@@ -85,6 +91,8 @@ public class KeyboardSource {
         listOfClientsButton.setActionBody("Список клиентов");
         listOfClientsButton.setColumns(3);
         listOfClientsButton.setRows(1);
+        listOfClientsButton.setBackgroundColor("#2db9b9");
+        listOfClientsButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(listOfClientsButton);
 
         Button reportButton = new Button();
@@ -92,6 +100,8 @@ public class KeyboardSource {
         reportButton.setActionBody("Отчет");
         reportButton.setColumns(3);
         reportButton.setRows(1);
+        reportButton.setBackgroundColor("#2db9b9");
+        reportButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(reportButton);
 
         Button integrationButton = new Button();
@@ -99,6 +109,8 @@ public class KeyboardSource {
         integrationButton.setActionBody("Интеграции");
         integrationButton.setColumns(3);
         integrationButton.setRows(1);
+        integrationButton.setBackgroundColor("#2db9b9");
+        integrationButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(integrationButton);
 
         Button settingsButton = new Button();
@@ -106,6 +118,8 @@ public class KeyboardSource {
         settingsButton.setActionBody("Настройка");
         settingsButton.setColumns(3);
         settingsButton.setRows(1);
+        settingsButton.setBackgroundColor("#2db9b9");
+        settingsButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(settingsButton);
 
         keyboard.setButtons(buttons);

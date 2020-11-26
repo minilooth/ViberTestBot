@@ -13,19 +13,19 @@ public class KeyboardService {
     @Autowired
     private ViberService viberService;
 
-    public void sendAdminMainMenuRichMediaKeyboard(String viberId) {
-        SendRichMediaMessageRequest sendRichMediaMessageRequest = new SendRichMediaMessageRequest();
-        Sender sender = new Sender();
+    // public void sendAdminMainMenuRichMediaKeyboard(String viberId) {
+    //     SendRichMediaMessageRequest sendRichMediaMessageRequest = new SendRichMediaMessageRequest();
+    //     Sender sender = new Sender();
 
-        sender.setName("AutoCapitalBot");
+    //     sender.setName("AutoCapitalBot");
 
-        sendRichMediaMessageRequest.setRichMediaKeyboard(KeyboardSource.getAdminMainMenuRichMediaKeyboard());
-        sendRichMediaMessageRequest.setViberId(viberId);
-        sendRichMediaMessageRequest.setAltText("Admin menu");
-        sendRichMediaMessageRequest.setSender(sender);
+    //     sendRichMediaMessageRequest.setRichMediaKeyboard(KeyboardSource.getAdminMainMenuRichMediaKeyboard());
+    //     sendRichMediaMessageRequest.setViberId(viberId);
+    //     sendRichMediaMessageRequest.setAltText("Admin menu");
+    //     sendRichMediaMessageRequest.setSender(sender);
 
-        viberService.sendRichMediaMessage(sendRichMediaMessageRequest);
-    }
+    //     viberService.sendRichMediaMessage(sendRichMediaMessageRequest);
+    // }
 
     public void sendAdminMainMenuKeyboard(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();

@@ -21,6 +21,7 @@ by\testbot\models\User.class
 by\testbot\services\WebhookService.class
 by\testbot\config\FeignConfiguration.class
 by\testbot\services\ViberService.class
+by\testbot\bot\BotState$13.class
 by\testbot\payload\requests\message\SendLocationMessageRequest.class
 by\testbot\controllers\WebhookController.class
 by\testbot\bot\BotState$1.class

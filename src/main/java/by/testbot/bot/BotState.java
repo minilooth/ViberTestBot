@@ -2,7 +2,7 @@ package by.testbot.bot;
 
 public enum BotState {
     
-    // Main Menu
+    //region Main Menu
     MainMenu(true) {
         BotState botState;
 
@@ -23,7 +23,7 @@ public enum BotState {
                     botState = Managers;
                     break;
                 case "Список клиентов": 
-                    botState = ClientsList;
+                    botState = Clients;
                     break;
                 case "Отчет":
                     botState = Report;
@@ -45,98 +45,6 @@ public enum BotState {
             return botState;
         }
     },
-    
-    // EnterMessage(true) {
-    //     @Override
-    //     public void enter(BotContext botContext) {
-    //         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
-    //         Sender sender = new Sender();
-
-    //         sender.setName("AutoCapitalBot");
-            
-    //         sendTextMessageRequest.setUserId(botContext.getMessageCallback().getSender().getId());
-    //         sendTextMessageRequest.setText("Введи любое сообщение(Стэйт EnterMessage)");
-    //         sendTextMessageRequest.setSender(sender);
-
-    //         botContext.getViberService().sendTextMessage(sendTextMessageRequest);
-    //     }
-
-    //     @Override
-    //     public void handleInput(BotContext botContext) {
-    //         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
-    //         Sender sender = new Sender();
-
-    //         sender.setName("AutoCapitalBot");
-            
-    //         sendTextMessageRequest.setUserId(botContext.getMessageCallback().getSender().getId());
-    //         sendTextMessageRequest.setText("Ты ввел: " + botContext.getMessageCallback().getMessage().getText());
-    //         sendTextMessageRequest.setSender(sender);
-
-    //         botContext.getViberService().sendTextMessage(sendTextMessageRequest);
-    //     }
-
-    //     @Override
-    //     public BotState nextState() {
-    //         return EnterHelloMessage;
-    //     }
-    // },
-    
-    // EnterHelloMessage(true) {
-    //     BotState botState;
-
-    //     @Override
-    //     public void enter(BotContext botContext) {
-    //         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
-    //         Sender sender = new Sender();
-
-    //         sender.setName("AutoCapitalBot");
-            
-    //         sendTextMessageRequest.setUserId(botContext.getMessageCallback().getSender().getId());
-    //         sendTextMessageRequest.setText("Сейчас пройдет только сообщение Hello(Стэйт EnterHelloMessage)");
-    //         sendTextMessageRequest.setSender(sender);
-
-    //         botContext.getViberService().sendTextMessage(sendTextMessageRequest);
-    //     }
-
-    //     @Override
-    //     public void handleInput(BotContext botContext) {
-    //         String text = botContext.getMessageCallback().getMessage().getText();
-
-    //         if (text.equals("Hello")) {
-    //             SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
-    //             Sender sender = new Sender();
-
-    //             sender.setName("AutoCapitalBot");
-                
-    //             sendTextMessageRequest.setUserId(botContext.getMessageCallback().getSender().getId());
-    //             sendTextMessageRequest.setText("Вы ввели Hello!");
-    //             sendTextMessageRequest.setSender(sender);
-
-    //             botContext.getViberService().sendTextMessage(sendTextMessageRequest);
-
-    //             botState = BotState.EnterMessage;
-    //         }
-    //         else {
-    //             SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
-    //             Sender sender = new Sender();
-
-    //             sender.setName("AutoCapitalBot");
-                
-    //             sendTextMessageRequest.setUserId(botContext.getMessageCallback().getSender().getId());
-    //             sendTextMessageRequest.setText("Неверный ввод!");
-    //             sendTextMessageRequest.setSender(sender);
-
-    //             botContext.getViberService().sendTextMessage(sendTextMessageRequest);
-
-    //             botState = EnterHelloMessage;
-    //         }
-    //     }
-
-    //     @Override
-    //     public BotState nextState() {
-    //         return botState;
-    //     }
-    // },
     
     PostponeMessage(true) {
         @Override
@@ -195,23 +103,40 @@ public enum BotState {
         }
     },
     
-    ClientsList(true) {
+    Clients(true) {
+        BotState botState;
+
         @Override
         public void enter(BotContext botContext) {
-            
+            botContext.getKeyboardService().sendListOfClientsMenuKeyboard(botContext.getMessageCallback().getSender().getId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
 
+            switch(text) {
+                case "Получить список клиентов и информацию о них":
+                    botState = GetListOfClients;
+                    break;
+                case "Дополнительные операции с клиентами":
+                    botState = AdditionalOperationsWithClients;
+                    break;
+                case "Назад":
+                    botState = MainMenu;
+                    break;
+                default: 
+                    botState = Clients;
+                    break;
+            }
         }
 
         @Override
         public BotState nextState() {
-            return MainMenu;
+            return botState;
         }
     },
-    
+
     Report(true) {
         @Override
         public void enter(BotContext botContext) {
@@ -262,11 +187,11 @@ public enum BotState {
             return MainMenu;
         }
     },
+
+    //endregion
     
 
-
-
-    // Managers
+    //region Managers
     ListOfManagers(false) {
         @Override
         public void enter(BotContext botContext) {
@@ -334,8 +259,26 @@ public enum BotState {
             return Managers;
         }
     },
+
+
+    //endregion
     
-    ManagersBack(false) {
+    
+    //region Clients
+    
+    GetListOfClients(false) {
+        @Override
+        public void enter(BotContext botContext) {
+
+        }
+
+        @Override
+        public BotState nextState() {
+            return Clients;
+        }
+    },
+    
+    AdditionalOperationsWithClients(true) {
         @Override
         public void enter(BotContext botContext) {
 
@@ -348,9 +291,11 @@ public enum BotState {
 
         @Override
         public BotState nextState() {
-            return MainMenu;
+            return Clients;
         }
     };
+
+    //endregion
 
     private final Boolean isInputNeeded;
 
