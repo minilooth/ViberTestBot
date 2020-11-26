@@ -338,14 +338,14 @@ public class ViberService {
 
             userService.save(user);
 
-            botContext = BotContext.of(this, this.messageService, this.keyboardService, viberUpdate.getMessageCallback());
+            botContext = BotContext.of(this, this.messageService, this.keyboardService, this.userService, viberUpdate.getMessageCallback());
             // botState.enter(botContext);
 
             logger.info("New user registered: " + viberId);
         }
         else {
             botState = user.getBotState();
-            botContext = BotContext.of(this, this.messageService, this.keyboardService, viberUpdate.getMessageCallback());
+            botContext = BotContext.of(this, this.messageService, this.keyboardService, this.userService, viberUpdate.getMessageCallback());
         }
 
         botState.handleInput(botContext);

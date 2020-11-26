@@ -1,5 +1,7 @@
 package by.testbot.bot;
 
+import by.testbot.models.User;
+
 public enum BotState {
     
     //region Main Menu
@@ -721,17 +723,261 @@ public enum BotState {
     StartUserDialog(true) {
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendUserStartMessage(botContext.getMessageCallback().getSender().getId());
+            botContext.getMessageService().sendAskClientNameMessage(botContext.getMessageCallback().getSender().getId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
+            String tempName = botContext.getMessageCallback().getMessage().getText();
+            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
+            // Null check
+            user.setTempName(tempName);
 
+            botContext.getUserService().update(user);
         }
 
         @Override
         public BotState nextState() {
-            return StartUserDialog;
+            return BotOffersServices;
+        }
+    },
+    
+    BotOffersServices(true) {
+        BotState botState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
+            // Null check
+            botContext.getKeyboardService().sendBotOffersServicesMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            switch(text) {
+                case "Да":
+                    botState = HaveRelations;
+                    break;
+                case "Нет":
+                    botState = EndDialog;
+                    break;
+                default: 
+                    botState = BotOffersServices;
+                    break;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return botState;
+        }
+    },
+    
+    HaveRelations(true) {
+        BotState botState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
+            // Null check
+            botContext.getKeyboardService().sendApproximatePriceMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            switch(text) {
+                case "Да":
+                    botState = ApproximatePrice;
+                    break;
+                case "Нет":
+                    botState = EndDialog;
+                    break;
+                default: 
+                    botState = HaveRelations;
+                    break;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return botState;
+        }
+    },
+    
+    EndDialog(true) {
+        BotState botState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getKeyboardService().sendEndDialogMessageKeyboard(botContext.getMessageCallback().getSender().getId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            if (text.equals("Начать новый диалог")) {
+                botState = StartUserDialog;
+            }
+            else {
+                botState = EndDialog;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return botState;
+        }
+    },
+    
+    ApproximatePrice(true) {
+        BotState botState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
+            // TODO: Null check
+            botContext.getKeyboardService().sendDontWorryMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            switch(text) {
+                case "Да":
+                    botState = ResearchCarPrices;
+                    break;
+                case "Нет":
+                    botState = EndDialog;
+                    break;
+                default: 
+                    botState = ApproximatePrice;
+                    break;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return botState;
+        }
+    },
+    
+    ResearchCarPrices(true) {
+        BotState botState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
+            // TODO: Null check
+            botContext.getKeyboardService().sendResearchCarPricesKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            if (text.equals("В ближайшее время") || text.equals("После НГ")) {
+                //TODO: Set input
+                botState = SpecificOptions;
+            }
+            else {
+                botState = ResearchCarPrices;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return botState;
+        }
+    },
+    
+    SpecificOptions(true) {
+        BotState botState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
+            // TODO: Null check
+            botContext.getKeyboardService().sendSpecificOptionsKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            switch(text) {
+                case "Да":
+                    botState = Proposal;
+                    break;
+                case "Нет":
+                    botState = EndDialog;
+                    break;
+                default: 
+                    botState = SpecificOptions;
+                    break;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return botState;
+        }
+    },
+    
+    Proposal(true) {
+        BotState botState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
+            // TODO: Null check
+            botContext.getKeyboardService().sendProposalKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            switch(text) {
+                case "Да":
+                    botState = AskForPhoneNumber;
+                    break;
+                case "Нет":
+                    botState = EndDialog;
+                    break;
+                default: 
+                    botState = Proposal;
+                    break;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return botState;
+        }
+    },
+    
+    AskForPhoneNumber(true) {
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getMessageService().sendAskForPhoneNumberMessage(botContext.getMessageCallback().getSender().getId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            //TODO: Set phone number
+        }
+
+        @Override
+        public BotState nextState() {
+            return EndDialog;
         }
     };
 

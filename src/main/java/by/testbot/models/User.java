@@ -37,6 +37,10 @@ public class User {
     @Column(name = "Name", nullable = false)
     private String name;
 
+    @JsonIgnore
+    @Column(name = "TempName")
+    private String tempName;
+
     @JsonProperty("avatar")
     @Column(name = "Avatar")
     private String avatar;

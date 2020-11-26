@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import by.testbot.models.Sender;
+import by.testbot.models.User;
 import by.testbot.payload.requests.message.SendTextMessageRequest;
 
 @Service
@@ -24,17 +25,30 @@ public class MessageService {
         return sendTextMessageRequest;
     }
 
-    public void sendUserStartMessage(String viberId) {
+    public void sendAskClientNameMessage(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName("AutoCapitalBot");
 
-        sendTextMessageRequest.setText("Привет.");
+        sendTextMessageRequest.setText("Как к Вам можно обращаться?");
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setUserId(viberId);
 
         viberService.sendTextMessage(sendTextMessageRequest);
+    }
+
+    public void sendBotOfferServicesMessage(String viberId, String name) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName("AutoCapitalBot");
+
+        sendTextMessageRequest.setText(name + ", подскажите есть ли у Вас (или Ваших знакомых) льгота по 140-у указу для возмещения 50% таможенных пошлин?\nЯ спрашиваю это, для того чтобы более точно Вас сориентировать по окончательной сумме и условиям необходимым для приобретения такого автомобиля из США.");
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+    
+        viberService.sendTextMessage(sendTextMessageRequest);    
     }
 
     public void sendAddTextMessage(String viberId) {
@@ -139,5 +153,18 @@ public class MessageService {
 
     public void sendAtNightBotWorkTimePeriodSettingsMessage(String viberId) {
         //TODO: send at night bot work time period settings details
+    }
+
+    public void sendAskForPhoneNumberMessage(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName("AutoCapitalBot");
+
+        sendTextMessageRequest.setText("Отлично, напишите свой номер телефона, я Вас наберу, и мы быстро осбудим все вопросы.");
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
     }
 }

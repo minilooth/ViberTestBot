@@ -441,4 +441,73 @@ public class KeyboardSource {
         return keyboard;
     }
 
+    public static Keyboard getYesNoKeyboard() {
+        Keyboard keyboard = new Keyboard();
+        List<Button> buttons = new ArrayList<>();
+
+        Button yesButton = new Button();
+        yesButton.setText("Да");
+        yesButton.setActionBody("Да");
+        yesButton.setColumns(6);
+        yesButton.setRows(1);
+        yesButton.setBackgroundColor("#2db9b9");
+        yesButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(yesButton);
+
+        Button noButton = new Button();
+        noButton.setText("Нет");
+        noButton.setActionBody("Нет");
+        noButton.setColumns(6);
+        noButton.setRows(1);
+        noButton.setBackgroundColor("#2db9b9");
+        noButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(noButton);
+
+        keyboard.setButtons(buttons);
+        return keyboard;
+    }
+
+    public static Keyboard getEndDialogKeyboard() {
+        Keyboard keyboard = new Keyboard();
+        List<Button> buttons = new ArrayList<>();
+
+        Button startNewDialogButton = new Button();
+        startNewDialogButton.setText("Начать новый диалог");
+        startNewDialogButton.setActionBody("Начать новый диалог");
+        startNewDialogButton.setColumns(6);
+        startNewDialogButton.setRows(1);
+        startNewDialogButton.setBackgroundColor("#2db9b9");
+        startNewDialogButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(startNewDialogButton);
+
+        keyboard.setButtons(buttons);
+        return keyboard;
+    }
+
+    public static Keyboard getWhenWillBuyCarKeyboard() {
+        Keyboard keyboard = new Keyboard();
+        List<Button> buttons = new ArrayList<>();
+
+        Button yesButton = new Button();
+        yesButton.setText("В ближайшее время");
+        yesButton.setActionBody("В ближайшее время");
+        yesButton.setColumns(6);
+        yesButton.setRows(1);
+        yesButton.setBackgroundColor("#2db9b9");
+        yesButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(yesButton);
+
+        Button noButton = new Button();
+        noButton.setText("После НГ");
+        noButton.setActionBody("После НГ");
+        noButton.setColumns(6);
+        noButton.setRows(1);
+        noButton.setBackgroundColor("#2db9b9");
+        noButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(noButton);
+
+        keyboard.setButtons(buttons);
+        return keyboard;
+    }
+
 }
