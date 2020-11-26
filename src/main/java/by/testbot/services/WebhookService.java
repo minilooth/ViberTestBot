@@ -23,7 +23,7 @@ public class WebhookService {
     @Autowired
     private ViberService viberService;
 
-    public Object onWebhookUpdateReceived(JSONObject update) {
+    public void onWebhookUpdateReceived(JSONObject update) {
         Object callback = tryParseJson(update);
         ViberUpdate viberUpdate = new ViberUpdate();
 
@@ -55,7 +55,7 @@ public class WebhookService {
             throw new IllegalArgumentException("Could not find type of callback.");
         }
 
-        return viberService.handleUpdate(viberUpdate);
+        viberService.handleUpdate(viberUpdate);
     }
 
     private Object tryParseJson(JSONObject update) {

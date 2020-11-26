@@ -15,7 +15,7 @@ public class WebhookController {
     private WebhookService webhookService;
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public Object onUpdateReceived(@RequestBody String update) {
-        return webhookService.onWebhookUpdateReceived(new JSONObject(update));
+    public void onUpdateReceived(@RequestBody String update) {
+        webhookService.onWebhookUpdateReceived(new JSONObject(update));
     }
 }

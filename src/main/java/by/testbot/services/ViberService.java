@@ -264,51 +264,50 @@ public class ViberService {
         }
     }
 
-    public Object handleUpdate(ViberUpdate viberUpdate) {
+    public void handleUpdate(ViberUpdate viberUpdate) {
         if (viberUpdate.hasDeliveredCallback()) {
             logger.info("Received DeliveredCallback from user: " + viberUpdate.getDeliveredCallback().getUserId());
             // handle callback
 
-            return null;
+            // return null;
         }
         else if (viberUpdate.hasSeenCallback()) {
             logger.info("Received SeenCallback from user: " + viberUpdate.getSeenCallback().getUserId());
             // handle callback
 
-            return null;
+            // return null;
         }
         else if (viberUpdate.hasFailedCallback()) {
             logger.info("Received FailedCallback from user: " + viberUpdate.getFailedCallback().getUserId() + ", with message: " + viberUpdate.getFailedCallback().getDescription());
             // handle callback
 
-            return null;
+            // return null;
         }
         else if (viberUpdate.hasSubscribedCallback()) {
             logger.info("Received SubscribedCallback from user: " + viberUpdate.getSubscribedCallback().getUser().getViberId());
             
             // handle callback
 
-            return null;
+            // return null;
         }
         else if (viberUpdate.hasUnsubscribedCallback()) {
             logger.info("Received UnsubscribedCallback from user: " + viberUpdate.getUnsubscribedCallback().getUserId());
             // handle callback
 
-            return null;
+            // return null;
         }
         else if (viberUpdate.hasConversationStartedCallback()) {
             logger.info("Received ConversationStartedCallback from user: " + viberUpdate.getConversationStartedCallback().getUser().getViberId());
             // handle callback
 
             messageService.sendConversationStartedMessage(viberUpdate.getConversationStartedCallback().getUser().getViberId());
-
-            return null;
+            // return null;
         }
         else if (viberUpdate.hasWebhookCallback()) {
             logger.info("Received WebhookCallback.");
             // handle callback
 
-            return null;
+            // return null;
         }
         else if (viberUpdate.hasMessageCallback()) {
             logger.info("Received MessageCallback from user: " + viberUpdate.getMessageCallback().getSender().getId() + ", message type: " + viberUpdate.getMessageCallback().getMessage().getMessageType());
@@ -316,9 +315,9 @@ public class ViberService {
 
             handleMessageCallback(viberUpdate);
 
-            return null;
+            // return null;
         }
-        return null;
+        // return null;
     }
 
     private void handleMessageCallback(ViberUpdate viberUpdate) {
