@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import by.testbot.models.Sender;
-import by.testbot.models.User;
 import by.testbot.payload.requests.message.SendTextMessageRequest;
 
 @Service

@@ -10,7 +10,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendAdminMainMenuKeyboard(botContext.getMessageCallback().getSender().getId());
+            if (botContext.getMessageCallback() != null) {
+                botContext.getKeyboardService().sendAdminMainMenuKeyboard(botContext.getMessageCallback().getSender().getId());
+            }
+            if (botContext.getSubscribedCallback() != null) {
+                botContext.getKeyboardService().sendAdminMainMenuKeyboard(botContext.getSubscribedCallback().getUser().getViberId());
+            }
         }
 
         @Override 
@@ -352,7 +357,8 @@ public enum BotState {
             return SetTimePeriodForBotActivity;
         }
     },
-    //end region
+
+    //endregion
 
     //region PostponeMessage
 
@@ -458,7 +464,7 @@ public enum BotState {
             return PostponeMessage;
         }
     },
-    //end region
+    //endregion
 
     //region Managers
 
@@ -719,11 +725,20 @@ public enum BotState {
             return SetBotUsingPeriod;
         }
     },
+
+    //endregion
     
+    //region UserDialog
+
     StartUserDialog(true) {
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendAskClientNameMessage(botContext.getMessageCallback().getSender().getId());
+            if (botContext.getMessageCallback() != null) {
+                botContext.getMessageService().sendAskClientNameMessage(botContext.getMessageCallback().getSender().getId());
+            }
+            if (botContext.getSubscribedCallback() != null) {
+                botContext.getMessageService().sendAskClientNameMessage(botContext.getSubscribedCallback().getUser().getViberId());
+            }
         }
 
         @Override

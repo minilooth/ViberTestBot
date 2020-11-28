@@ -268,7 +268,6 @@ public class ViberService {
         if (viberUpdate.hasDeliveredCallback()) {
             logger.info("Received DeliveredCallback from user: " + viberUpdate.getDeliveredCallback().getUserId());
             // handle callback
-
         }
         else if (viberUpdate.hasSeenCallback()) {
             logger.info("Received SeenCallback from user: " + viberUpdate.getSeenCallback().getUserId());
@@ -277,41 +276,84 @@ public class ViberService {
         else if (viberUpdate.hasFailedCallback()) {
             logger.info("Received FailedCallback from user: " + viberUpdate.getFailedCallback().getUserId() + ", with message: " + viberUpdate.getFailedCallback().getDescription());
             // handle callback
-
         }
         else if (viberUpdate.hasSubscribedCallback()) {
             logger.info("Received SubscribedCallback from user: " + viberUpdate.getSubscribedCallback().getUser().getViberId());
-            
-            // handle callback
-
+            handleSubscribedCallback(viberUpdate);
         }
         else if (viberUpdate.hasUnsubscribedCallback()) {
             logger.info("Received UnsubscribedCallback from user: " + viberUpdate.getUnsubscribedCallback().getUserId());
-            // handle callback
-
+            handleUnsubscribedCallback(viberUpdate);
         }
         else if (viberUpdate.hasConversationStartedCallback()) {
             logger.info("Received ConversationStartedCallback from user: " + viberUpdate.getConversationStartedCallback().getUser().getViberId());
-            // handle callback
-
             return messageService.getConversationStartedMessage(viberUpdate.getConversationStartedCallback().getUser().getViberId());
         }
         else if (viberUpdate.hasWebhookCallback()) {
             logger.info("Received WebhookCallback.");
             // handle callback
-
         }
         else if (viberUpdate.hasMessageCallback()) {
             logger.info("Received MessageCallback from user: " + viberUpdate.getMessageCallback().getSender().getId() + ", message type: " + viberUpdate.getMessageCallback().getMessage().getMessageType());
             // handle callback
 
-            handleMessageCallback(viberUpdate);
+            if (viberUpdate.hasText()) {
+                handleTextMessage(viberUpdate);
+            }
         }
         return null;
     }
 
-    private void handleMessageCallback(ViberUpdate viberUpdate) {
+    private void handleTextMessage(ViberUpdate viberUpdate) {
         final String viberId = viberUpdate.getMessageCallback().getSender().getId();
+        BotContext botContext = null;
+        BotState botState = null;
+
+        User user = userService.getByViberId(viberId);
+
+        if (user == null) {
+            if (viberId.equals("gbcD9ezHUeQkbrYUwyU3Bw==1")) {
+                botState = BotState.getAdminInitialState();
+            }
+            else {
+                botState = BotState.getUserInitialState();
+            }
+
+            user = new User();
+
+            user.setViberId(viberId);
+            user.setBotState(botState);
+            user.setAvatar(viberUpdate.getMessageCallback().getSender().getAvatarUrl());
+            user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
+            user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
+            user.setName(viberUpdate.getMessageCallback().getSender().getName());
+
+            userService.save(user);
+
+            botContext = BotContext.of(this, this.messageService, this.keyboardService, this.userService, viberUpdate.getMessageCallback());
+            botState.enter(botContext);
+
+            logger.info("New user registered: " + viberId);
+        }
+        else {
+            botState = user.getBotState();
+            botContext = BotContext.of(this, this.messageService, this.keyboardService, this.userService, viberUpdate.getMessageCallback());
+
+            botState.handleInput(botContext);
+
+            do {
+                botState = botState.nextState();
+                botState.enter(botContext);
+            } while (!botState.getIsInputNeeded());
+
+            user.setBotState(botState);
+
+            userService.update(user);
+        }
+    }
+
+    private void handleSubscribedCallback(ViberUpdate viberUpdate) {
+        final String viberId = viberUpdate.getSubscribedCallback().getUser().getViberId();
         BotContext botContext = null;
         BotState botState = null;
 
@@ -329,36 +371,29 @@ public class ViberService {
 
             user.setViberId(viberId);
             user.setBotState(botState);
-            if (viberUpdate.getMessageCallback().getSender().getAvatarUrl()!= null) {
-                user.setAvatar(viberUpdate.getMessageCallback().getSender().getAvatarUrl());
-            } else user.setAvatar("");
-            user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
-            user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
-            user.setName(viberUpdate.getMessageCallback().getSender().getName());
+            user.setAvatar(viberUpdate.getSubscribedCallback().getUser().getAvatar());
+            user.setCountry(viberUpdate.getSubscribedCallback().getUser().getCountry());
+            user.setLanguage(viberUpdate.getSubscribedCallback().getUser().getLanguage());
+            user.setName(viberUpdate.getSubscribedCallback().getUser().getName());
 
             userService.save(user);
 
-            botContext = BotContext.of(this, this.messageService, this.keyboardService, this.userService, viberUpdate.getMessageCallback());
+            botContext = BotContext.of(this, this.messageService, this.keyboardService, this.userService, viberUpdate.getSubscribedCallback());
             botState.enter(botContext);
 
             logger.info("New user registered: " + viberId);
-            
-            return;
+        } else {
+            logger.warn("User already registered: " + viberId);
         }
-        else {
-            botState = user.getBotState();
-            botContext = BotContext.of(this, this.messageService, this.keyboardService, this.userService, viberUpdate.getMessageCallback());
+    } 
+
+    private void handleUnsubscribedCallback(ViberUpdate viberUpdate) {
+        final String viberId = viberUpdate.getUnsubscribedCallback().getUserId();
+
+        User user = userService.getByViberId(viberId);
+
+        if (user != null) {
+            userService.delete(user);
         }
-
-        botState.handleInput(botContext);
-
-        do {
-            botState = botState.nextState();
-            botState.enter(botContext);
-        } while (!botState.getIsInputNeeded());
-
-        user.setBotState(botState);
-
-        userService.update(user);
     }
 }
