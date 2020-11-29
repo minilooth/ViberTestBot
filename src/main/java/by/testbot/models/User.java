@@ -38,8 +38,8 @@ public class User {
     private String name;
 
     @JsonIgnore
-    @Column(name = "TempName")
-    private String tempName;
+    @Column(name = "TreatName")
+    private String treatName;
 
     @JsonProperty("avatar")
     @Column(name = "Avatar")

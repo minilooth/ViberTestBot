@@ -2,7 +2,6 @@ package by.testbot.models;
 
 import java.util.Objects;
 
-import by.testbot.models.enums.MessageType;
 import by.testbot.payload.callbacks.ConversationStartedCallback;
 import by.testbot.payload.callbacks.DeliveredCallback;
 import by.testbot.payload.callbacks.FailedCallback;
@@ -54,37 +53,5 @@ public class ViberUpdate {
 
     public Boolean hasWebhookCallback() {
         return !Objects.isNull(this.unsubscribedCallback);
-    }
-
-    public Boolean hasContact() {
-        return (hasMessageCallback() && this.messageCallback.getMessage().getMessageType() == MessageType.CONTACT);
-    }
-
-    public Boolean hasText() {
-        return (hasMessageCallback() && this.messageCallback.getMessage().getMessageType() == MessageType.TEXT);
-    }
-
-    public Boolean hasLocation() {
-        return (hasMessageCallback() && this.messageCallback.getMessage().getMessageType() == MessageType.CONTACT);
-    }
-
-    public Boolean hasPicture() {
-        return (hasMessageCallback() && this.messageCallback.getMessage().getMessageType() == MessageType.PICTURE);
-    }
-
-    public Boolean hasVideo() {
-        return (hasMessageCallback() && this.messageCallback.getMessage().getMessageType() == MessageType.VIDEO);
-    }
-
-    public Boolean hasFile() {
-        return (hasMessageCallback() && this.messageCallback.getMessage().getMessageType() == MessageType.FILE);
-    }
-
-    public Boolean hasSticker() {
-        return (hasMessageCallback() && this.messageCallback.getMessage().getMessageType() == MessageType.STICKER);
-    }
-
-    public Boolean hasUrl() {
-        return (hasMessageCallback() && this.messageCallback.getMessage().getMessageType() == MessageType.URL);
     }
 }

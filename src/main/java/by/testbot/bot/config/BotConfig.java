@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
+import by.testbot.bot.KeyboardSource;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,5 +21,10 @@ public class BotConfig {
         reloadableResourceBundleMessageSource.setDefaultEncoding("UTF-8");
 
         return reloadableResourceBundleMessageSource;
+    }
+
+    @Bean
+    public KeyboardSource keyboardSource() {
+        return new KeyboardSource();
     }
 }

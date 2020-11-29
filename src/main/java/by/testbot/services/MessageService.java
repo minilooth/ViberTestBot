@@ -122,15 +122,48 @@ public class MessageService {
     }
 
     public void sendListOfMessagesWhichBotSendMessage(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
         //TODO: get and send list of messages which bot send
+
+        sendTextMessageRequest.setText(localeMessageService.getMessage("button.settings.editTextsWhichBotSend"));
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
     }
 
-    public void sendInChatBotWorkTimePeriodSettingsMessage(String viberId) {
+    public void sendInChatBotUsagePeriodSettingsMessage(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
         //TODO: send in chat bot work time period settings details
+
+        sendTextMessageRequest.setText(localeMessageService.getMessage("button.botUsagePeriodMenu.inChat"));
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
     }
 
-    public void sendAtNightBotWorkTimePeriodSettingsMessage(String viberId) {
+    public void sendAtNightBotUsagePeriodSettingsMessage(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
         //TODO: send at night bot work time period settings details
+
+        sendTextMessageRequest.setText(localeMessageService.getMessage("button.botUsagePeriodMenu.atNight"));
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
     }
 
     // User messages

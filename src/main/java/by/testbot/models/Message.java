@@ -39,4 +39,36 @@ public class Message {
 
     @JsonProperty("sticker_id")
     private Integer stickerId;
+
+    public Boolean hasContact() {
+        return messageType == MessageType.CONTACT;
+    }
+
+    public Boolean hasText() {
+        return messageType == MessageType.TEXT;
+    }
+
+    public Boolean hasLocation() {
+        return messageType == MessageType.CONTACT;
+    }
+
+    public Boolean hasPicture() {
+        return messageType == MessageType.PICTURE;
+    }
+
+    public Boolean hasVideo() {
+        return messageType == MessageType.VIDEO;
+    }
+
+    public Boolean hasFile() {
+        return messageType == MessageType.FILE;
+    }
+
+    public Boolean hasSticker() {
+        return messageType == MessageType.STICKER;
+    }
+
+    public Boolean hasUrl() {
+        return messageType == MessageType.URL;
+    }
 }

@@ -1,8 +1,5 @@
 package by.testbot.bot;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import by.testbot.models.User;
 
 public enum BotState {
@@ -13,17 +10,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            if (botContext.getMessageCallback() != null) {
-                botContext.getKeyboardService().sendAdminMainMenuKeyboard(botContext.getMessageCallback().getSender().getId());
-            }
-            if (botContext.getSubscribedCallback() != null) {
-                botContext.getKeyboardService().sendAdminMainMenuKeyboard(botContext.getSubscribedCallback().getUser().getViberId());
-            }
+            botContext.getKeyboardService().sendAdminMainMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override 
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch(text) {
                 case "Отложенное сообщение": 
@@ -41,7 +33,7 @@ public enum BotState {
                 case "Интеграции":
                     botState = Integrations;
                     break;
-                case "Настройка":
+                case "Настройки":
                     botState = Settings;
                     break;
                 default:
@@ -61,12 +53,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendPostponeMessageMenuKeyboard(botContext.getMessageCallback().getSender().getId());
+            botContext.getKeyboardService().sendPostponeMessageMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch(text) {
                 case "Добавить текст + фото":
@@ -98,12 +90,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendListOfManagersMenuKeyboard(botContext.getMessageCallback().getSender().getId());
+            botContext.getKeyboardService().sendManagersMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch(text) {
                 case "Получить список менеджеров":
@@ -138,15 +130,15 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendListOfClientsMenuKeyboard(botContext.getMessageCallback().getSender().getId());
+            botContext.getKeyboardService().sendClientsMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch(text) {
-                case "Получить список клиентов и информацию о них":
+                case "Получение списка клиентов и их информацию, которую получил бот":
                     botState = GetListOfClients;
                     break;
                 case "Дополнительные операции с клиентами":
@@ -172,18 +164,18 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendReportMenuKeyboard(botContext.getMessageCallback().getSender().getId());
+            botContext.getKeyboardService().sendReportMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch (text) {
-                case "Отчет о работе менеджеров": 
+                case "Получение отчёта о работе менеджеров": 
                     botState = ReportAboutManagersWork;
                     break;
-                case "Отчет о работе бота":
+                case "Получение отчета о работе бота":
                     botState = ReportAboutBotWork;
                     break;
                 case "Назад":
@@ -206,20 +198,20 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendIntegrationsMenuKeyboard(botContext.getMessageCallback().getSender().getId());
+            botContext.getKeyboardService().sendIntegrationsMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch (text) {
-                case "Добавление новой интеграции": 
-                    botState = AddIntegration;
+                case "Добавление/удаление новой интеграции(AmoCRM) = ввод токена для соединения": 
+                    botState = AddOrDeleteIntegration;
                     break;
-                case "Удаление интергации":
-                    botState = DeleteIntegration;
-                    break;
+                // case "Удаление интергации":
+                //     botState = DeleteIntegration;
+                //     break;
                 case "Новые интеграции":
                     botState = NewIntegrations;
                     break;
@@ -243,19 +235,19 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendSettingsMenuKeyboard(botContext.getMessageCallback().getSender().getId());
+            botContext.getKeyboardService().sendSettingsMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch (text) {
                 case "Редактирование текстов, отправляемых клиентам через бота":
-                    botState = EditTextSendedByBot;
+                    botState = EditTextsWhitchBotSend;
                     break;
                 case "Настройка периода временного использования бота":
-                    botState = SetTimePeriodForBotActivity;
+                    botState = BotUsagePeriod;
                     break;
                 case "Назад":
                     botState = MainMenu;
@@ -276,10 +268,10 @@ public enum BotState {
 
     //region Settings
 
-    EditTextSendedByBot(true) {
+    EditTextsWhitchBotSend(false) {
         @Override
         public void enter(BotContext botContext) {
-
+            botContext.getMessageService().sendListOfMessagesWhichBotSendMessage(botContext.getUser().getViberId());
         }
 
         @Override
@@ -289,34 +281,34 @@ public enum BotState {
 
         @Override
         public BotState nextState() {
-            return Managers;
+            return Settings;
         }
     },
 
-    SetTimePeriodForBotActivity(true) {
+    BotUsagePeriod(true) {
         BotState botState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendBotUsagePeriodMenuKeyboard(botContext.getMessageCallback().getSender().getId());
+            botContext.getKeyboardService().sendBotUsagePeriodMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch (text) {
                 case "В чате(время обработки)":
-                    botState = InChatPeriodTime;
+                    botState = InChatChatBotUsagePeriod;
                     break;
                 case "В ночное время":
-                    botState = InNightTime;
+                    botState = AtNightBotUsagePeriod;
                     break;
                 case "Назад":
                     botState = Settings;
                     break;
                 default:
-                    botState = SetTimePeriodForBotActivity;
+                    botState = BotUsagePeriod;
                     break;
             }
         }
@@ -327,10 +319,10 @@ public enum BotState {
         }
     },
 
-    InChatPeriodTime(true) {
+    InChatChatBotUsagePeriod(false) {
         @Override
         public void enter(BotContext botContext) {
-
+            botContext.getMessageService().sendInChatBotUsagePeriodSettingsMessage(botContext.getUser().getViberId());
         }
 
         @Override
@@ -340,14 +332,14 @@ public enum BotState {
 
         @Override
         public BotState nextState() {
-            return SetTimePeriodForBotActivity;
+            return BotUsagePeriod;
         }
     },
 
-    InNightTime(true) {
+    AtNightBotUsagePeriod(false) {
         @Override
         public void enter(BotContext botContext) {
-
+            botContext.getMessageService().sendAtNightBotUsagePeriodSettingsMessage(botContext.getUser().getViberId());
         }
 
         @Override
@@ -357,7 +349,7 @@ public enum BotState {
 
         @Override
         public BotState nextState() {
-            return SetTimePeriodForBotActivity;
+            return BotUsagePeriod;
         }
     },
 
@@ -404,12 +396,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendConfirmPostponeMessageKeyboard(botContext.getMessageCallback().getSender().getId());
+            botContext.getKeyboardService().sendConfirmPostponeMessageKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch (text) {
                 case "Да":
@@ -605,7 +597,7 @@ public enum BotState {
 
     //region Integrations
 
-    AddIntegration(false) {
+    AddOrDeleteIntegration(false) {
         @Override
         public void enter(BotContext botContext) {
 
@@ -617,17 +609,17 @@ public enum BotState {
         }
     },
 
-    DeleteIntegration(false) {
-        @Override
-        public void enter(BotContext botContext) {
+    // DeleteIntegration(false) {
+    //     @Override
+    //     public void enter(BotContext botContext) {
 
-        }
+    //     }
 
-        @Override
-        public BotState nextState() {
-            return Integrations;
-        }
-    },
+    //     @Override
+    //     public BotState nextState() {
+    //         return Integrations;
+    //     }
+    // },
 
     NewIntegrations(false) {
         @Override
@@ -642,132 +634,27 @@ public enum BotState {
     }, 
 
     //endregion
-
-    //region Settings
-    
-    ListOfMessagesWhichBotSend(false) {
-        @Override
-        public void enter(BotContext botContext) {
-
-        }
-
-        @Override
-        public BotState nextState() {
-            return Settings;
-        }
-    }, 
-    
-    SetBotUsingPeriod(true) {
-        BotState botState;
-
-        @Override
-        public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendBotUsagePeriodMenuKeyboard(botContext.getMessageCallback().getSender().getId());
-        }
-
-        @Override
-        public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
-
-            switch(text) {
-                case "В чате(время обработки)":
-                    botState = InChatBotUsingPeriod;
-                    break;
-                case "В ночное время":
-                    botState = AtNightChatBotUsingPeriod;
-                    break;
-                case "Назад":
-                    botState = Settings;
-                    break;
-                default: 
-                    botState = SetBotUsingPeriod;
-                    break;
-            }
-        }
-
-        @Override
-        public BotState nextState() {
-            return botState;
-        }
-    },
-
-    //endregion
-
-    //region SetBotUsingPeriod
-
-    InChatBotUsingPeriod(true) {
-        @Override
-        public void enter(BotContext botContext) {
-            
-        }
-
-        @Override
-        public void handleInput(BotContext botContext) {
-
-        }
-
-        @Override
-        public BotState nextState() {
-            return SetBotUsingPeriod;
-        }
-    },
-
-    AtNightChatBotUsingPeriod(true) {
-        @Override
-        public void enter(BotContext botContext) {
-
-        }
-
-        @Override
-        public void handleInput(BotContext botContext) {
-
-        }
-
-        @Override
-        public BotState nextState() {
-            return SetBotUsingPeriod;
-        }
-    },
-
-    //endregion
     
     //region UserDialog
 
     StartUserDialogAndAskClientName(true) {
-        BotState botState;
-
         @Override
         public void enter(BotContext botContext) {
-            if (botContext.getMessageCallback() != null) {
-                botContext.getMessageService().sendAskClientNameMessage(botContext.getMessageCallback().getSender().getId());
-            }
-            if (botContext.getSubscribedCallback() != null) {
-                botContext.getMessageService().sendAskClientNameMessage(botContext.getSubscribedCallback().getUser().getViberId());
-            }
+            botContext.getMessageService().sendAskClientNameMessage(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String tempName = botContext.getMessageCallback().getMessage().getText();
+            String treatName = botContext.getMessage().getText();
 
-            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
-            
-            if (user != null) {
-                user.setTempName(tempName);
-                botContext.getUserService().update(user);
+            User user = botContext.getUser();
 
-                botState = IsHaveAnyBenefits;
-            }
-            else {
-                logger.warn("User not found in state: " + this);
-
-                botState = StartUserDialogAndAskClientName;
-            }
+            user.setTreatName(treatName);
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return IsHaveAnyBenefits;
         }
     },
     
@@ -776,19 +663,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
-
-            if (user != null) {
-                botContext.getKeyboardService().sendIsHaveAnyBenefitsMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
-            }
-            else {
-                logger.warn("User not found in state: " + this);
-            }
+            botContext.getKeyboardService().sendIsHaveAnyBenefitsMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch(text) {
                 case "Да":
@@ -814,14 +694,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
-            // Null check
-            botContext.getKeyboardService().sendAreInterestedToKnowAdditionalDataAboutCarsAtAuctionsMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+            botContext.getKeyboardService().sendAreInterestedToKnowAdditionalDataAboutCarsAtAuctionsMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch(text) {
                 case "Да":
@@ -847,12 +725,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendNegativeDialogEndMessageKeyboard(botContext.getMessageCallback().getSender().getId());
+            botContext.getKeyboardService().sendNegativeDialogEndMessageKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             if (text.equals("Начать новый диалог")) {
                 botState = StartUserDialogAndAskClientName;
@@ -873,19 +751,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
-
-            if (user != null) {
-                botContext.getKeyboardService().sendDontWorryAboutPricesAndIsLinkOpensMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
-            }
-            else {
-                logger.warn("User not found in state: " + this);
-            }
+            botContext.getKeyboardService().sendDontWorryAboutPricesAndIsLinkOpensMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch(text) {
                 case "Да":
@@ -911,19 +782,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
-            
-            if (user != null) {
-                botContext.getKeyboardService().sendWhenArePlanningToBuyCarMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
-            }
-            else {
-                logger.warn("User not found in state: " + this);
-            }
+            botContext.getKeyboardService().sendWhenArePlanningToBuyCarMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             if (text.equals("В ближайшее время") || text.equals("После НГ")) {
                 //TODO: Set input
@@ -945,19 +809,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
-            
-            if (user != null) {
-                botContext.getKeyboardService().sendIsInterestedInSpecificCarVariantsMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
-            }
-            else {
-                logger.warn("User not found in state: " + this);
-            }
+            botContext.getKeyboardService().sendIsInterestedInSpecificCarVariantsMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch(text) {
                 case "Да":
@@ -983,14 +840,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
-            // TODO: Null check
-            botContext.getKeyboardService().sendWillAskFewQuestionsRegardingYourCriteriaMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+            botContext.getKeyboardService().sendWillAskFewQuestionsRegardingYourCriteriaMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             switch(text) {
                 case "Да":
@@ -1014,12 +869,12 @@ public enum BotState {
     AskAndEnterPhoneNumber(true) {
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendAskAndEnterPhoneNumberMessage(botContext.getMessageCallback().getSender().getId());
+            botContext.getMessageService().sendAskAndEnterPhoneNumberMessage(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             //TODO: Set phone number
         }
@@ -1035,12 +890,12 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendPositiveDialogEndMessageKeyboard(botContext.getMessageCallback().getSender().getId());
+            botContext.getKeyboardService().sendPositiveDialogEndMessageKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-            String text = botContext.getMessageCallback().getMessage().getText();
+            String text = botContext.getMessage().getText();
 
             if (text.equals("Начать новый диалог")) {
                 botState = StartUserDialogAndAskClientName;
@@ -1057,8 +912,6 @@ public enum BotState {
     };
 
     //endregion
-
-    private static final Logger logger = LoggerFactory.getLogger(BotState.class);
 
     private final Boolean isInputNeeded;
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import by.testbot.bot.BotContext;
 import by.testbot.bot.BotState;
+import by.testbot.models.Message;
 import by.testbot.models.User;
 import by.testbot.models.ViberUpdate;
 import by.testbot.models.enums.Status;
@@ -314,17 +315,22 @@ public class ViberService {
         }
         else if (viberUpdate.hasMessageCallback()) {
             logger.info("Received MessageCallback from user: " + viberUpdate.getMessageCallback().getSender().getId() + ", message type: " + viberUpdate.getMessageCallback().getMessage().getMessageType());
-            // handle callback
-
-            if (viberUpdate.hasText()) {
-                handleTextMessage(viberUpdate);
-            }
+            handleMessageCallback(viberUpdate);
         }
         return null;
     }
 
+    private void handleMessageCallback(ViberUpdate viberUpdate) {
+        Message message = viberUpdate.getMessageCallback().getMessage();
+
+        if (message.hasText()) {
+            handleTextMessage(viberUpdate);
+        }
+    }
+
     private void handleTextMessage(ViberUpdate viberUpdate) {
         final String viberId = viberUpdate.getMessageCallback().getSender().getId();
+        final Message message = viberUpdate.getMessageCallback().getMessage();
         BotContext botContext = null;
         BotState botState = null;
 
@@ -349,14 +355,14 @@ public class ViberService {
 
             userService.save(user);
 
-            botContext = BotContext.of(this, this.messageService, this.keyboardService, this.userService, viberUpdate.getMessageCallback());
+            botContext = BotContext.of(user, message, this, this.messageService, this.keyboardService, this.userService);
             botState.enter(botContext);
 
             logger.info("New user registered: " + viberId);
         }
         else {
             botState = user.getBotState();
-            botContext = BotContext.of(this, this.messageService, this.keyboardService, this.userService, viberUpdate.getMessageCallback());
+            botContext = BotContext.of(user, message, this, this.messageService, this.keyboardService, this.userService);
 
             botState.handleInput(botContext);
 
@@ -397,7 +403,7 @@ public class ViberService {
 
             userService.save(user);
 
-            botContext = BotContext.of(this, this.messageService, this.keyboardService, this.userService, viberUpdate.getSubscribedCallback());
+            botContext = BotContext.of(user, null, this, this.messageService, this.keyboardService, this.userService);
             botState.enter(botContext);
 
             logger.info("New user registered: " + viberId);

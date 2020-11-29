@@ -15,6 +15,9 @@ public class KeyboardService {
     @Autowired
     private LocaleMessageService localeMessageService;
 
+    @Autowired
+    private KeyboardSource keyboardSource;
+
     //region AdminMessageKeyboards
 
     public void sendAdminMainMenuKeyboard(String viberId) {
@@ -23,8 +26,8 @@ public class KeyboardService {
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Главное меню");
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getAdminMainMenuKeyboard());
+        sendTextMessageRequest.setText(localeMessageService.getMessage("keyboardMessage.mainMenu"));
+        sendTextMessageRequest.setKeyboard(keyboardSource.getAdminMainMenuKeyboard());
         sendTextMessageRequest.setUserId(viberId);
         sendTextMessageRequest.setSender(sender);
 
@@ -37,36 +40,36 @@ public class KeyboardService {
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Отложенное сообщение");
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getPostponeMessageMenuKeyboard());
+        sendTextMessageRequest.setText(localeMessageService.getMessage("keyboardMessage.postponedMessage"));
+        sendTextMessageRequest.setKeyboard(keyboardSource.getPostponeMessageMenuKeyboard());
         sendTextMessageRequest.setUserId(viberId);
         sendTextMessageRequest.setSender(sender);
 
         viberService.sendTextMessage(sendTextMessageRequest);
     }
 
-    public void sendListOfManagersMenuKeyboard(String viberId) {
+    public void sendManagersMenuKeyboard(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Список менеджеров");
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getListOfManagersMenuKeyboard());
+        sendTextMessageRequest.setText(localeMessageService.getMessage("keyboardMessage.managers"));
+        sendTextMessageRequest.setKeyboard(keyboardSource.getManagersMenuKeyboard());
         sendTextMessageRequest.setUserId(viberId);
         sendTextMessageRequest.setSender(sender);
 
         viberService.sendTextMessage(sendTextMessageRequest);
     }
 
-    public void sendListOfClientsMenuKeyboard(String viberId) {
+    public void sendClientsMenuKeyboard(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Список клиентов");
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getListOfClientsMenuKeyboard());
+        sendTextMessageRequest.setText(localeMessageService.getMessage("keyboardMessage.clients"));
+        sendTextMessageRequest.setKeyboard(keyboardSource.getClientsMenuKeyboard());
         sendTextMessageRequest.setUserId(viberId);
         sendTextMessageRequest.setSender(sender);
 
@@ -79,8 +82,8 @@ public class KeyboardService {
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Отчет");
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getReportMenuKeyboard());
+        sendTextMessageRequest.setText(localeMessageService.getMessage("keyboardMessage.report"));
+        sendTextMessageRequest.setKeyboard(keyboardSource.getReportMenuKeyboard());
         sendTextMessageRequest.setUserId(viberId);
         sendTextMessageRequest.setSender(sender);
 
@@ -93,8 +96,8 @@ public class KeyboardService {
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Интеграции");
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getIntegrationsMenuKeyboard());
+        sendTextMessageRequest.setText(localeMessageService.getMessage("keyboardMessage.integrations"));
+        sendTextMessageRequest.setKeyboard(keyboardSource.getIntegrationsMenuKeyboard());
         sendTextMessageRequest.setUserId(viberId);
         sendTextMessageRequest.setSender(sender);
 
@@ -107,8 +110,8 @@ public class KeyboardService {
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Настройки");
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getSettingsMenuKeyboard());
+        sendTextMessageRequest.setText(localeMessageService.getMessage("keyboardMessage.settings"));
+        sendTextMessageRequest.setKeyboard(keyboardSource.getSettingsMenuKeyboard());
         sendTextMessageRequest.setUserId(viberId);
         sendTextMessageRequest.setSender(sender);
 
@@ -121,8 +124,8 @@ public class KeyboardService {
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Настройка периода временного использования бота");
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getSetBotUsagePeriodMenuKeyboard());
+        sendTextMessageRequest.setText(localeMessageService.getMessage("keyboardMessage.botUsagePeriod"));
+        sendTextMessageRequest.setKeyboard(keyboardSource.getBotUsagePeriodMenuKeyboard());
         sendTextMessageRequest.setUserId(viberId);
         sendTextMessageRequest.setSender(sender);
 
@@ -136,7 +139,7 @@ public class KeyboardService {
         sender.setName(viberService.getSenderName());
 
         sendTextMessageRequest.setText("Подтвердите отправку отложенного сообщения");
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getConfirmPostponeMessageKeyboard());
+        sendTextMessageRequest.setKeyboard(keyboardSource.getConfirmPostponeMessageKeyboard());
         sendTextMessageRequest.setUserId(viberId);
         sendTextMessageRequest.setSender(sender);
 
@@ -155,7 +158,7 @@ public class KeyboardService {
 
         sendTextMessageRequest.setText(localeMessageService.getMessage("reply.isHaveAnyBenefits", name));
         sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getYesNoKeyboard());
+        sendTextMessageRequest.setKeyboard(keyboardSource.getYesNoKeyboard());
         sendTextMessageRequest.setUserId(viberId);
     
         viberService.sendTextMessage(sendTextMessageRequest); 
@@ -167,9 +170,9 @@ public class KeyboardService {
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Вы ответили нет. Если вы хотите начать диалог заново, то нажмите кнопку снизу.");
+        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.negativeDialogEnd"));
         sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getEndDialogKeyboard());
+        sendTextMessageRequest.setKeyboard(keyboardSource.getEndDialogKeyboard());
         sendTextMessageRequest.setUserId(viberId);
     
         viberService.sendTextMessage(sendTextMessageRequest); 
@@ -181,9 +184,9 @@ public class KeyboardService {
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Ваш номер телефона успешно записан. В ближайшее время с вами свяжется менеджер.\nЕсли вы хотите начать диалог заново, то нажмите кнопку снизу.");
+        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.positiveDialogEnd"));
         sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getEndDialogKeyboard());
+        sendTextMessageRequest.setKeyboard(keyboardSource.getEndDialogKeyboard());
         sendTextMessageRequest.setUserId(viberId);
     
         viberService.sendTextMessage(sendTextMessageRequest); 
@@ -197,7 +200,7 @@ public class KeyboardService {
 
         sendTextMessageRequest.setText(localeMessageService.getMessage("reply.areInterestedToKnowAdditionalDataAboutCarsAtAuctions", "", "", "", name));
         sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getYesNoKeyboard());
+        sendTextMessageRequest.setKeyboard(keyboardSource.getYesNoKeyboard());
         sendTextMessageRequest.setUserId(viberId);
     
         viberService.sendTextMessage(sendTextMessageRequest); 
@@ -211,7 +214,7 @@ public class KeyboardService {
 
         sendTextMessageRequest.setText(localeMessageService.getMessage("reply.dontWorryAboutPricesAndIsLinkOpens", name));
         sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getYesNoKeyboard());
+        sendTextMessageRequest.setKeyboard(keyboardSource.getYesNoKeyboard());
         sendTextMessageRequest.setUserId(viberId);
     
         viberService.sendTextMessage(sendTextMessageRequest); 
@@ -225,7 +228,7 @@ public class KeyboardService {
 
         sendTextMessageRequest.setText(localeMessageService.getMessage("reply.whenArePlanningToBuyCar", name));
         sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getWhenWillBuyCarKeyboard());
+        sendTextMessageRequest.setKeyboard(keyboardSource.getWhenWillBuyCarKeyboard());
         sendTextMessageRequest.setUserId(viberId);
     
         viberService.sendTextMessage(sendTextMessageRequest); 
@@ -239,7 +242,7 @@ public class KeyboardService {
 
         sendTextMessageRequest.setText(localeMessageService.getMessage("reply.isInterestedInSpecificCarVariants", name));
         sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getYesNoKeyboard());
+        sendTextMessageRequest.setKeyboard(keyboardSource.getYesNoKeyboard());
         sendTextMessageRequest.setUserId(viberId);
     
         viberService.sendTextMessage(sendTextMessageRequest); 
@@ -253,7 +256,7 @@ public class KeyboardService {
 
         sendTextMessageRequest.setText(localeMessageService.getMessage("reply.willAskFewQuestionsRegardingYourCriteria", name));
         sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setKeyboard(KeyboardSource.getYesNoKeyboard());
+        sendTextMessageRequest.setKeyboard(keyboardSource.getYesNoKeyboard());
         sendTextMessageRequest.setUserId(viberId);
     
         viberService.sendTextMessage(sendTextMessageRequest); 
