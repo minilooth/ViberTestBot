@@ -4,10 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import by.testbot.models.Button;
 import by.testbot.models.Keyboard;
+import by.testbot.services.LocaleMessageService;
 
 public class KeyboardSource {
+
+    @Autowired
+    private LocaleMessageService localeMessageService;
+
+    //region AdminKeyboards
 
     public static Keyboard getAdminMainMenuKeyboard() {
         Keyboard keyboard = new Keyboard();
@@ -387,6 +395,10 @@ public class KeyboardSource {
         return keyboard;
     }
 
+    //endregion
+
+    //region UserKeyboards
+
     public static Keyboard getYesNoKeyboard() {
         Keyboard keyboard = new Keyboard();
         List<Button> buttons = new ArrayList<>();
@@ -455,5 +467,7 @@ public class KeyboardSource {
         keyboard.setButtons(buttons);
         return keyboard;
     }
+
+    //endregion
 
 }

@@ -11,50 +11,29 @@ public class MessageService {
     @Autowired
     private ViberService viberService;
 
+    @Autowired
+    private LocaleMessageService localeMessageService;
+
     public SendTextMessageRequest getConversationStartedMessage(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
-        sender.setName("AutoCapitalBot");
+        sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Привет, это бот AutoCapitalBot. Чтобы начать отправьте любое сообщение.");
+        sendTextMessageRequest.setText(localeMessageService.getMessage("message.welcome"));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setUserId(viberId);
 
         return sendTextMessageRequest;
     }
 
-    public void sendAskClientNameMessage(String viberId) {
-        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
-        Sender sender = new Sender();
-
-        sender.setName("AutoCapitalBot");
-
-        sendTextMessageRequest.setText("Как к Вам можно обращаться?");
-        sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setUserId(viberId);
-
-        viberService.sendTextMessage(sendTextMessageRequest);
-    }
-
-    public void sendBotOfferServicesMessage(String viberId, String name) {
-        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
-        Sender sender = new Sender();
-
-        sender.setName("AutoCapitalBot");
-
-        sendTextMessageRequest.setText(name + ", подскажите есть ли у Вас (или Ваших знакомых) льгота по 140-у указу для возмещения 50% таможенных пошлин?\nЯ спрашиваю это, для того чтобы более точно Вас сориентировать по окончательной сумме и условиям необходимым для приобретения такого автомобиля из США.");
-        sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setUserId(viberId);
-    
-        viberService.sendTextMessage(sendTextMessageRequest);    
-    }
+    // Admin messages
 
     public void sendAddTextMessage(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
-        sender.setName("AutoCapitalBot");
+        sender.setName(viberService.getSenderName());
 
         sendTextMessageRequest.setText("Введите текст, который будет отправлен");
         sendTextMessageRequest.setSender(sender);
@@ -67,7 +46,7 @@ public class MessageService {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
-        sender.setName("AutoCapitalBot");
+        sender.setName(viberService.getSenderName());
 
         sendTextMessageRequest.setText("Загрузите фото, которое будет отправлено");
         sendTextMessageRequest.setSender(sender);
@@ -80,7 +59,7 @@ public class MessageService {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
-        sender.setName("AutoCapitalBot");
+        sender.setName(viberService.getSenderName());
 
         sendTextMessageRequest.setText("Выберите день и время когда сообщение будет отправлено");
         sendTextMessageRequest.setSender(sender);
@@ -125,7 +104,7 @@ public class MessageService {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
-        sender.setName("AutoCapitalBot");
+        sender.setName(viberService.getSenderName());
 
         sendTextMessageRequest.setText("Введите токен для добавления интеграции");
         sendTextMessageRequest.setSender(sender);
@@ -154,13 +133,28 @@ public class MessageService {
         //TODO: send at night bot work time period settings details
     }
 
-    public void sendAskForPhoneNumberMessage(String viberId) {
+    // User messages
+
+    public void sendAskClientNameMessage(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
-        sender.setName("AutoCapitalBot");
+        sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Отлично, напишите свой номер телефона, я Вас наберу, и мы быстро осбудим все вопросы.");
+        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.askName"));
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
+    }
+
+    public void sendAskAndEnterPhoneNumberMessage(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
+        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.askAndEnterPhoneNumber"));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setUserId(viberId);
 

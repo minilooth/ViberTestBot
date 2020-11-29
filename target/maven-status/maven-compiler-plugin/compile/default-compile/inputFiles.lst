@@ -37,6 +37,7 @@ D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\req
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\requests\message\SendLocationMessageRequest.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\ViberService.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\callbacks\WebhookCallback.java
+D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\bot\config\BotConfig.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\proxy\ViberProxy.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\requests\message\SendFileMessageRequest.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\utils\Utils.java
@@ -54,3 +55,4 @@ D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\enum
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\bot\KeyboardSource.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\callbacks\SubscribedCallback.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\callbacks\SeenCallback.java
+D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\LocaleMessageService.java

@@ -40,6 +40,13 @@ public class ViberService {
     @Value("${testbot.webhookUrl}")
     private String webhookUrl;
 
+    @Value("${testbot.sender.name}")
+    private String senderName;
+
+    public String getSenderName() {
+        return this.senderName;
+    }
+
     public void setWeebhook() {
         if (authenticationToken == null || authenticationToken.isEmpty() || authenticationToken.isBlank()) {
             logger.error("Authentication token has invalid type.");
@@ -253,6 +260,18 @@ public class ViberService {
         if (sendRichMediaMessageRequest == null) {
             throw new IllegalArgumentException("Send rich media message request is null.");
         }
+        if (sendRichMediaMessageRequest.getRichMediaKeyboard().getButtonGroupColumns() == null) {
+            throw new IllegalArgumentException("Button group collumns is null.");
+        }
+        if (sendRichMediaMessageRequest.getRichMediaKeyboard().getButtonGroupRows() == null) {
+            throw new IllegalArgumentException("Button group rows is null.");
+        }
+        if (sendRichMediaMessageRequest.getRichMediaKeyboard().getButtons().isEmpty()) {
+            throw new IllegalArgumentException("Buttons list is empty.");
+        }
+        if (sendRichMediaMessageRequest.getAltText() == null || sendRichMediaMessageRequest.getAltText().isEmpty() || sendRichMediaMessageRequest.getAltText().isBlank()) {
+            throw new IllegalArgumentException("Alt text is null or empty.");
+        }
 
         SendMessageResponse sendMessageResponse = viberProxy.sendRichMediaMessage(authenticationToken, sendRichMediaMessageRequest);
 
@@ -283,7 +302,7 @@ public class ViberService {
         }
         else if (viberUpdate.hasUnsubscribedCallback()) {
             logger.info("Received UnsubscribedCallback from user: " + viberUpdate.getUnsubscribedCallback().getUserId());
-            handleUnsubscribedCallback(viberUpdate);
+            // handleUnsubscribedCallback(viberUpdate);
         }
         else if (viberUpdate.hasConversationStartedCallback()) {
             logger.info("Received ConversationStartedCallback from user: " + viberUpdate.getConversationStartedCallback().getUser().getViberId());
@@ -382,18 +401,16 @@ public class ViberService {
             botState.enter(botContext);
 
             logger.info("New user registered: " + viberId);
-        } else {
-            logger.warn("User already registered: " + viberId);
         }
     } 
 
-    private void handleUnsubscribedCallback(ViberUpdate viberUpdate) {
-        final String viberId = viberUpdate.getUnsubscribedCallback().getUserId();
+    // private void handleUnsubscribedCallback(ViberUpdate viberUpdate) {
+    //     final String viberId = viberUpdate.getUnsubscribedCallback().getUserId();
 
-        User user = userService.getByViberId(viberId);
+    //     User user = userService.getByViberId(viberId);
 
-        if (user != null) {
-            userService.delete(user);
-        }
-    }
+    //     if (user != null) {
+    //         userService.delete(user);
+    //     }
+    // }
 }

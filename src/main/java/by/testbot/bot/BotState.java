@@ -1,5 +1,8 @@
 package by.testbot.bot;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import by.testbot.models.User;
 
 public enum BotState {
@@ -730,7 +733,9 @@ public enum BotState {
     
     //region UserDialog
 
-    StartUserDialog(true) {
+    StartUserDialogAndAskClientName(true) {
+        BotState botState;
+
         @Override
         public void enter(BotContext botContext) {
             if (botContext.getMessageCallback() != null) {
@@ -744,27 +749,41 @@ public enum BotState {
         @Override
         public void handleInput(BotContext botContext) {
             String tempName = botContext.getMessageCallback().getMessage().getText();
-            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
-            // Null check
-            user.setTempName(tempName);
 
-            botContext.getUserService().update(user);
+            User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
+            
+            if (user != null) {
+                user.setTempName(tempName);
+                botContext.getUserService().update(user);
+
+                botState = IsHaveAnyBenefits;
+            }
+            else {
+                logger.warn("User not found in state: " + this);
+
+                botState = StartUserDialogAndAskClientName;
+            }
         }
 
         @Override
         public BotState nextState() {
-            return BotOffersServices;
+            return botState;
         }
     },
     
-    BotOffersServices(true) {
+    IsHaveAnyBenefits(true) {
         BotState botState;
 
         @Override
         public void enter(BotContext botContext) {
             User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
-            // Null check
-            botContext.getKeyboardService().sendBotOffersServicesMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+
+            if (user != null) {
+                botContext.getKeyboardService().sendIsHaveAnyBenefitsMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+            }
+            else {
+                logger.warn("User not found in state: " + this);
+            }
         }
 
         @Override
@@ -773,13 +792,13 @@ public enum BotState {
 
             switch(text) {
                 case "Да":
-                    botState = HaveRelations;
+                    botState = AreInterestedToKnowAdditionalDataAboutCarsAtAuctions;
                     break;
                 case "Нет":
-                    botState = EndDialog;
+                    botState = NegativeDialogEnd;
                     break;
                 default: 
-                    botState = BotOffersServices;
+                    botState = IsHaveAnyBenefits;
                     break;
             }
         }
@@ -790,14 +809,14 @@ public enum BotState {
         }
     },
     
-    HaveRelations(true) {
+    AreInterestedToKnowAdditionalDataAboutCarsAtAuctions(true) {
         BotState botState;
 
         @Override
         public void enter(BotContext botContext) {
             User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
             // Null check
-            botContext.getKeyboardService().sendApproximatePriceMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+            botContext.getKeyboardService().sendAreInterestedToKnowAdditionalDataAboutCarsAtAuctionsMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
         }
 
         @Override
@@ -806,13 +825,13 @@ public enum BotState {
 
             switch(text) {
                 case "Да":
-                    botState = ApproximatePrice;
+                    botState = DontWorryAboutPricesAndIsLinkOpens;
                     break;
                 case "Нет":
-                    botState = EndDialog;
+                    botState = NegativeDialogEnd;
                     break;
                 default: 
-                    botState = HaveRelations;
+                    botState = AreInterestedToKnowAdditionalDataAboutCarsAtAuctions;
                     break;
             }
         }
@@ -823,12 +842,12 @@ public enum BotState {
         }
     },
     
-    EndDialog(true) {
+    NegativeDialogEnd(true) {
         BotState botState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendEndDialogMessageKeyboard(botContext.getMessageCallback().getSender().getId());
+            botContext.getKeyboardService().sendNegativeDialogEndMessageKeyboard(botContext.getMessageCallback().getSender().getId());
         }
 
         @Override
@@ -836,10 +855,10 @@ public enum BotState {
             String text = botContext.getMessageCallback().getMessage().getText();
 
             if (text.equals("Начать новый диалог")) {
-                botState = StartUserDialog;
+                botState = StartUserDialogAndAskClientName;
             }
             else {
-                botState = EndDialog;
+                botState = NegativeDialogEnd;
             }
         }
 
@@ -849,14 +868,19 @@ public enum BotState {
         }
     },
     
-    ApproximatePrice(true) {
+    DontWorryAboutPricesAndIsLinkOpens(true) {
         BotState botState;
 
         @Override
         public void enter(BotContext botContext) {
             User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
-            // TODO: Null check
-            botContext.getKeyboardService().sendDontWorryMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+
+            if (user != null) {
+                botContext.getKeyboardService().sendDontWorryAboutPricesAndIsLinkOpensMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+            }
+            else {
+                logger.warn("User not found in state: " + this);
+            }
         }
 
         @Override
@@ -865,13 +889,13 @@ public enum BotState {
 
             switch(text) {
                 case "Да":
-                    botState = ResearchCarPrices;
+                    botState = WhenArePlanningToBuyCar;
                     break;
                 case "Нет":
-                    botState = EndDialog;
+                    botState = NegativeDialogEnd;
                     break;
                 default: 
-                    botState = ApproximatePrice;
+                    botState = DontWorryAboutPricesAndIsLinkOpens;
                     break;
             }
         }
@@ -882,14 +906,19 @@ public enum BotState {
         }
     },
     
-    ResearchCarPrices(true) {
+    WhenArePlanningToBuyCar(true) {
         BotState botState;
 
         @Override
         public void enter(BotContext botContext) {
             User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
-            // TODO: Null check
-            botContext.getKeyboardService().sendResearchCarPricesKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+            
+            if (user != null) {
+                botContext.getKeyboardService().sendWhenArePlanningToBuyCarMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+            }
+            else {
+                logger.warn("User not found in state: " + this);
+            }
         }
 
         @Override
@@ -898,10 +927,10 @@ public enum BotState {
 
             if (text.equals("В ближайшее время") || text.equals("После НГ")) {
                 //TODO: Set input
-                botState = SpecificOptions;
+                botState = IsInterestedInSpecificCarVariants;
             }
             else {
-                botState = ResearchCarPrices;
+                botState = WhenArePlanningToBuyCar;
             }
         }
 
@@ -911,14 +940,19 @@ public enum BotState {
         }
     },
     
-    SpecificOptions(true) {
+    IsInterestedInSpecificCarVariants(true) {
         BotState botState;
 
         @Override
         public void enter(BotContext botContext) {
             User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
-            // TODO: Null check
-            botContext.getKeyboardService().sendSpecificOptionsKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+            
+            if (user != null) {
+                botContext.getKeyboardService().sendIsInterestedInSpecificCarVariantsMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+            }
+            else {
+                logger.warn("User not found in state: " + this);
+            }
         }
 
         @Override
@@ -927,13 +961,13 @@ public enum BotState {
 
             switch(text) {
                 case "Да":
-                    botState = Proposal;
+                    botState = WillAskFewQuestionsRegardingYourCriteria;
                     break;
                 case "Нет":
-                    botState = EndDialog;
+                    botState = NegativeDialogEnd;
                     break;
                 default: 
-                    botState = SpecificOptions;
+                    botState = IsInterestedInSpecificCarVariants;
                     break;
             }
         }
@@ -944,14 +978,14 @@ public enum BotState {
         }
     },
     
-    Proposal(true) {
+    WillAskFewQuestionsRegardingYourCriteria(true) {
         BotState botState;
 
         @Override
         public void enter(BotContext botContext) {
             User user = botContext.getUserService().getByViberId(botContext.getMessageCallback().getSender().getId());
             // TODO: Null check
-            botContext.getKeyboardService().sendProposalKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
+            botContext.getKeyboardService().sendWillAskFewQuestionsRegardingYourCriteriaMessageKeyboard(botContext.getMessageCallback().getSender().getId(), user.getTempName());
         }
 
         @Override
@@ -960,13 +994,13 @@ public enum BotState {
 
             switch(text) {
                 case "Да":
-                    botState = AskForPhoneNumber;
+                    botState = AskAndEnterPhoneNumber;
                     break;
                 case "Нет":
-                    botState = EndDialog;
+                    botState = NegativeDialogEnd;
                     break;
                 default: 
-                    botState = Proposal;
+                    botState = WillAskFewQuestionsRegardingYourCriteria;
                     break;
             }
         }
@@ -977,10 +1011,10 @@ public enum BotState {
         }
     },
     
-    AskForPhoneNumber(true) {
+    AskAndEnterPhoneNumber(true) {
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendAskForPhoneNumberMessage(botContext.getMessageCallback().getSender().getId());
+            botContext.getMessageService().sendAskAndEnterPhoneNumberMessage(botContext.getMessageCallback().getSender().getId());
         }
 
         @Override
@@ -992,11 +1026,39 @@ public enum BotState {
 
         @Override
         public BotState nextState() {
-            return EndDialog;
+            return PositiveDialogEnd;
+        }
+    },
+    
+    PositiveDialogEnd(true) {
+        BotState botState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getKeyboardService().sendPositiveDialogEndMessageKeyboard(botContext.getMessageCallback().getSender().getId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessageCallback().getMessage().getText();
+
+            if (text.equals("Начать новый диалог")) {
+                botState = StartUserDialogAndAskClientName;
+            }
+            else {
+                botState = PositiveDialogEnd;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return botState;
         }
     };
 
     //endregion
+
+    private static final Logger logger = LoggerFactory.getLogger(BotState.class);
 
     private final Boolean isInputNeeded;
 
@@ -1009,7 +1071,7 @@ public enum BotState {
     }
 
     public static BotState getUserInitialState() {
-        return StartUserDialog;
+        return StartUserDialogAndAskClientName;
     }
 
     public Boolean getIsInputNeeded() { return isInputNeeded; }
