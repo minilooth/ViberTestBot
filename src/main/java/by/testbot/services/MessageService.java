@@ -61,7 +61,33 @@ public class MessageService {
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Выберите день и время когда сообщение будет отправлено");
+        sendTextMessageRequest.setText("Выберите день и время когда сообщение будет отправлено(В формате дд.мм.гггг чч:мм)");
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
+    }
+
+    public void sendSuccessPostponedMessageMessage(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
+        sendTextMessageRequest.setText("Сообщение успешно сохранено");
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
+    }
+
+    public void sendDeclinePostponeMessageMessage(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
+        sendTextMessageRequest.setText("Отправка сообщения отменена");
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setUserId(viberId);
 

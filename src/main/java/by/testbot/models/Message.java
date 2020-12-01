@@ -40,6 +40,9 @@ public class Message {
     @JsonProperty("sticker_id")
     private Integer stickerId;
 
+    @JsonProperty("thumbnail")
+    private String thumbnailUrl;
+
     public Boolean hasContact() {
         return messageType == MessageType.CONTACT;
     }

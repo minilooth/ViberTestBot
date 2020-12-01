@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import by.testbot.bot.BotState;
+import by.testbot.models.enums.Role;
 import lombok.Data;
 
 @Data
@@ -77,4 +78,14 @@ public class User {
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "BotState", nullable = false)
     private BotState botState;
+
+    @JsonIgnore
+    @Column(name = "MobilePhone")
+    private String mobilePhone;
+
+    @JsonIgnore
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "Role", nullable = false)
+    private Role role;
 }
+

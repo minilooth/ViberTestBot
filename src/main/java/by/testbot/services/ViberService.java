@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 
 import by.testbot.bot.BotContext;
 import by.testbot.bot.BotState;
+import by.testbot.models.ClientChatMessageHistory;
 import by.testbot.models.Message;
 import by.testbot.models.User;
 import by.testbot.models.ViberUpdate;
+import by.testbot.models.enums.Role;
 import by.testbot.models.enums.Status;
 import by.testbot.payload.requests.message.*;
 import by.testbot.payload.requests.SetWebhookRequest;
@@ -35,6 +37,12 @@ public class ViberService {
     @Autowired
     private KeyboardService keyboardService;
 
+    @Autowired
+    private ClientChatMessageHistoryService clientChatMessageHistoryService;
+
+    @Autowired
+    private PostponeMessageService postponeMessageService;
+
     @Value("${testbot.authenticationToken}")
     private String authenticationToken;
 
@@ -43,6 +51,9 @@ public class ViberService {
 
     @Value("${testbot.sender.name}")
     private String senderName;
+
+    @Value("${testbot.codeWord}")
+    private String codeWord;
 
     public String getSenderName() {
         return this.senderName;
@@ -326,6 +337,34 @@ public class ViberService {
         if (message.hasText()) {
             handleTextMessage(viberUpdate);
         }
+        else if (message.hasPicture()) {
+            handlePictureMessage(viberUpdate);
+        }
+    }
+
+    private void handlePictureMessage(ViberUpdate viberUpdate) {
+        final String viberId = viberUpdate.getMessageCallback().getSender().getId();
+        final Message message = viberUpdate.getMessageCallback().getMessage();
+        BotContext botContext = null;
+        BotState botState = null;
+
+        User user = userService.getByViberId(viberId);
+
+        if (user != null) {
+            botState = user.getBotState();
+            botContext = BotContext.of(user, message, this, this.messageService, this.keyboardService, this.userService, this.clientChatMessageHistoryService, this.postponeMessageService);
+
+            botState.handlePicture(botContext);
+
+            do {
+                botState = botState.nextState();
+                botState.enter(botContext);
+            } while (!botState.getIsInputNeeded());
+
+            user.setBotState(botState);
+
+            userService.update(user);
+        }
     }
 
     private void handleTextMessage(ViberUpdate viberUpdate) {
@@ -337,14 +376,20 @@ public class ViberService {
         User user = userService.getByViberId(viberId);
 
         if (user == null) {
-            if (viberId.equals("gbcD9ezHUeQkbrYUwyU3Bw==1")) {
+            user = new User();
+
+            if (message.getText().equals(this.codeWord)) {
+                user.setRole(Role.MANAGER);
                 botState = BotState.getAdminInitialState();
+            } 
+            else if (viberId.equals("gbcD9ezHUeQkbrYUwyU3Bw==1")) {
+                botState = BotState.getAdminInitialState();
+                user.setRole(Role.ADMIN);
             }
             else {
                 botState = BotState.getUserInitialState();
+                user.setRole(Role.USER);
             }
-
-            user = new User();
 
             user.setViberId(viberId);
             user.setBotState(botState);
@@ -355,14 +400,14 @@ public class ViberService {
 
             userService.save(user);
 
-            botContext = BotContext.of(user, message, this, this.messageService, this.keyboardService, this.userService);
+            botContext = BotContext.of(user, message, this, this.messageService, this.keyboardService, this.userService, this.clientChatMessageHistoryService, this.postponeMessageService);
             botState.enter(botContext);
 
             logger.info("New user registered: " + viberId);
         }
         else {
             botState = user.getBotState();
-            botContext = BotContext.of(user, message, this, this.messageService, this.keyboardService, this.userService);
+            botContext = BotContext.of(user, message, this, this.messageService, this.keyboardService, this.userService, this.clientChatMessageHistoryService, this.postponeMessageService);
 
             botState.handleInput(botContext);
 
@@ -385,14 +430,16 @@ public class ViberService {
         User user = userService.getByViberId(viberId);
 
         if (user == null) {
+            user = new User();
+
             if (viberId.equals("gbcD9ezHUeQkbrYUwyU3Bw==")) {
                 botState = BotState.getAdminInitialState();
+                user.setRole(Role.ADMIN);
             }
             else {
                 botState = BotState.getUserInitialState();
+                user.setRole(Role.USER);
             }
-
-            user = new User();
 
             user.setViberId(viberId);
             user.setBotState(botState);
@@ -403,7 +450,7 @@ public class ViberService {
 
             userService.save(user);
 
-            botContext = BotContext.of(user, null, this, this.messageService, this.keyboardService, this.userService);
+            botContext = BotContext.of(user, null, this, this.messageService, this.keyboardService, this.userService, this.clientChatMessageHistoryService, this.postponeMessageService);
             botState.enter(botContext);
 
             logger.info("New user registered: " + viberId);
