@@ -7,12 +7,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "client_chat_message_history")
-public class ClientChatMessageHistory {
+@Table(name = "client_message")
+public class ClientMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id", nullable = false)
@@ -26,6 +32,18 @@ public class ClientChatMessageHistory {
 
     @Column(name = "Timestamp", nullable = false)
     private Long timestamp;
+
+    @Column(name = "Brand")
+    private String brand;
+
+    @Column(name = "Model")
+    private String model;
+
+    @Column(name = "YearOfIssueFrom")
+    private Integer yearOfIssueFrom;
+
+    @Column(name = "YearOfIssueTo")
+    private Integer yearOfIssueTo;
 
     @Column(name = "Step1")
     private String step1;

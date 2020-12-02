@@ -1,5 +1,7 @@
 package by.testbot.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,32 @@ public class MessageService {
         return sendTextMessageRequest;
     }
 
+    public void sendTextMessage(String viberId, String message) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
+        sendTextMessageRequest.setText(message);
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
+    }
+
+    public void sendTextMessageToAll(List<String> broadcastList, String message) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
+        sendTextMessageRequest.setText(message);
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setBroadcastList(broadcastList);
+
+        viberService.broadcastTextMessage(sendTextMessageRequest);
+    }
+
     // Admin messages
 
     public void sendAddTextMessage(String viberId) {
@@ -35,20 +63,7 @@ public class MessageService {
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Введите текст, который будет отправлен");
-        sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setUserId(viberId);
-
-        viberService.sendTextMessage(sendTextMessageRequest);
-    }
-
-    public void sendAddPhotoMessage(String viberId) {
-        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
-        Sender sender = new Sender();
-
-        sender.setName(viberService.getSenderName());
-
-        sendTextMessageRequest.setText("Загрузите фото, которое будет отправлено");
+        sendTextMessageRequest.setText(localeMessageService.getMessage("message.postponeMessage.enterText"));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setUserId(viberId);
 
@@ -61,33 +76,33 @@ public class MessageService {
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Выберите день и время когда сообщение будет отправлено(В формате дд.мм.гггг чч:мм)");
+        sendTextMessageRequest.setText(localeMessageService.getMessage("message.postponeMessage.setDateAndTime"));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setUserId(viberId);
 
         viberService.sendTextMessage(sendTextMessageRequest);
     }
 
-    public void sendSuccessPostponedMessageMessage(String viberId) {
+    public void sendSuccessPostponeMessageConfirmationMessage(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Сообщение успешно сохранено");
+        sendTextMessageRequest.setText(localeMessageService.getMessage("message.postponeMessage.successPostponeMessageConfirmation"));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setUserId(viberId);
 
         viberService.sendTextMessage(sendTextMessageRequest);
     }
 
-    public void sendDeclinePostponeMessageMessage(String viberId) {
+    public void sendDeclinePostponeMessageConfirmationMessage(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText("Отправка сообщения отменена");
+        sendTextMessageRequest.setText(localeMessageService.getMessage("message.postponeMessage.declinePostponeMessageConfirmation"));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setUserId(viberId);
 
@@ -201,19 +216,6 @@ public class MessageService {
         sender.setName(viberService.getSenderName());
 
         sendTextMessageRequest.setText(localeMessageService.getMessage("reply.askName"));
-        sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setUserId(viberId);
-
-        viberService.sendTextMessage(sendTextMessageRequest);
-    }
-
-    public void sendAskAndEnterPhoneNumberMessage(String viberId) {
-        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
-        Sender sender = new Sender();
-
-        sender.setName(viberService.getSenderName());
-
-        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.askAndEnterPhoneNumber"));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setUserId(viberId);
 

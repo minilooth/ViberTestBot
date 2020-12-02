@@ -2,23 +2,23 @@ package by.testbot.bot;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.temporal.TemporalField;
 import java.util.Date;
 
-import by.testbot.models.ClientChatMessageHistory;
+import by.testbot.models.ClientMessage;
 import by.testbot.models.PostponeMessage;
 import by.testbot.models.User;
+import by.testbot.validation.ValidationResult;
+import by.testbot.validation.Validator;
 
 public enum BotState {
 
     // region Main Menu
     MainMenu(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendAdminMainMenuKeyboard(botContext.getUser().getViberId());
+            botContext.getViberService().getKeyboardService().sendAdminMainMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
@@ -27,78 +27,41 @@ public enum BotState {
 
             switch (text) {
                 case "Отложенное сообщение":
-                    botState = AddText;
+                    nextState = AddText;
                     break;
                 case "Список менеджеров":
-                    botState = Managers;
+                    nextState = Managers;
                     break;
                 case "Список клиентов":
-                    botState = Clients;
+                    nextState = Clients;
                     break;
                 case "Отчет":
-                    botState = Report;
+                    nextState = Report;
                     break;
                 case "Интеграции":
-                    botState = Integrations;
+                    nextState = Integrations;
                     break;
                 case "Настройки":
-                    botState = Settings;
+                    nextState = Settings;
                     break;
                 default:
-                    botState = MainMenu;
+                    nextState = MainMenu;
                     break;
             }
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
 
-    // PostponeMessage(true) {
-    //     BotState botState;
-
-    //     @Override
-    //     public void enter(BotContext botContext) {
-    //         botContext.getKeyboardService().sendPostponeMessageMenuKeyboard(botContext.getUser().getViberId());
-    //     }
-
-    //     @Override
-    //     public void handleInput(BotContext botContext) {
-    //         String text = botContext.getMessage().getText();
-
-    //         switch (text) {
-    //             case "Добавить текст + фото":
-    //                 botState = AddTextAndPhoto;
-    //                 break;
-    //             case "Выбрать день и время":
-    //                 botState = SetDayAndTime;
-    //                 break;
-    //             case "Подтвердить отправку":
-    //                 botState = ConfirmationForSendMessage;
-    //                 break;
-    //             case "Назад":
-    //                 botState = MainMenu;
-    //                 break;
-    //             default:
-    //                 botState = PostponeMessage;
-    //                 break;
-    //         }
-    //     }
-
-    //     @Override
-    //     public BotState nextState() {
-    //         return botState;
-    //     }
-    // },
-
     Managers(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendManagersMenuKeyboard(botContext.getUser().getViberId());
+            botContext.getViberService().getKeyboardService().sendManagersMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
@@ -107,38 +70,38 @@ public enum BotState {
 
             switch (text) {
                 case "Получить список менеджеров":
-                    botState = ListOfManagers;
+                    nextState = ListOfManagers;
                     break;
                 case "Добавить менеджера":
-                    botState = AddManager;
+                    nextState = AddManager;
                     break;
                 case "Удалить менеджера":
-                    botState = DeleteManager;
+                    nextState = DeleteManager;
                     break;
                 case "Изменение привелегий":
-                    botState = ChangeManagerPrivilegies;
+                    nextState = ChangeManagerPrivilegies;
                     break;
                 case "Назад":
-                    botState = MainMenu;
+                    nextState = MainMenu;
                     break;
                 default:
-                    botState = Managers;
+                    nextState = Managers;
                     break;
             }
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
 
     Clients(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendClientsMenuKeyboard(botContext.getUser().getViberId());
+            botContext.getViberService().getKeyboardService().sendClientsMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
@@ -147,32 +110,32 @@ public enum BotState {
 
             switch (text) {
                 case "Получение списка клиентов и их информацию, которую получил бот":
-                    botState = GetListOfClients;
+                    nextState = GetListOfClients;
                     break;
                 case "Дополнительные операции с клиентами":
-                    botState = AdditionalOperationsWithClients;
+                    nextState = AdditionalOperationsWithClients;
                     break;
                 case "Назад":
-                    botState = MainMenu;
+                    nextState = MainMenu;
                     break;
                 default:
-                    botState = Clients;
+                    nextState = Clients;
                     break;
             }
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
 
     Report(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendReportMenuKeyboard(botContext.getUser().getViberId());
+            botContext.getViberService().getKeyboardService().sendReportMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
@@ -181,32 +144,32 @@ public enum BotState {
 
             switch (text) {
                 case "Получение отчёта о работе менеджеров":
-                    botState = ReportAboutManagersWork;
+                    nextState = ReportAboutManagersWork;
                     break;
                 case "Получение отчета о работе бота":
-                    botState = ReportAboutBotWork;
+                    nextState = ReportAboutBotWork;
                     break;
                 case "Назад":
-                    botState = MainMenu;
+                    nextState = MainMenu;
                     break;
                 default:
-                    botState = Report;
+                    nextState = Report;
                     break;
             }
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
 
     Integrations(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendIntegrationsMenuKeyboard(botContext.getUser().getViberId());
+            botContext.getViberService().getKeyboardService().sendIntegrationsMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
@@ -215,35 +178,35 @@ public enum BotState {
 
             switch (text) {
                 case "Добавление/удаление новой интеграции(AmoCRM) = ввод токена для соединения":
-                    botState = AddOrDeleteIntegration;
+                    nextState = AddOrDeleteIntegration;
                     break;
                 // case "Удаление интергации":
                 // botState = DeleteIntegration;
                 // break;
                 case "Новые интеграции":
-                    botState = NewIntegrations;
+                    nextState = NewIntegrations;
                     break;
                 case "Назад":
-                    botState = MainMenu;
+                    nextState = MainMenu;
                     break;
                 default:
-                    botState = Integrations;
+                    nextState = Integrations;
                     break;
             }
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
 
     Settings(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendSettingsMenuKeyboard(botContext.getUser().getViberId());
+            botContext.getViberService().getKeyboardService().sendSettingsMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
@@ -252,23 +215,23 @@ public enum BotState {
 
             switch (text) {
                 case "Редактирование текстов, отправляемых клиентам через бота":
-                    botState = EditTextsWhitchBotSend;
+                    nextState = EditTextsWhitchBotSend;
                     break;
                 case "Настройка периода временного использования бота":
-                    botState = BotUsagePeriod;
+                    nextState = BotUsagePeriod;
                     break;
                 case "Назад":
-                    botState = MainMenu;
+                    nextState = MainMenu;
                     break;
                 default:
-                    botState = Settings;
+                    nextState = Settings;
                     break;
             }
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
 
@@ -277,28 +240,30 @@ public enum BotState {
     // region Settings
 
     EditTextsWhitchBotSend(false) {
+        BotState nextState;
+
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendListOfMessagesWhichBotSendMessage(botContext.getUser().getViberId());
+            botContext.getViberService().getMessageService().sendListOfMessagesWhichBotSendMessage(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-
+            nextState = Settings;
         }
 
         @Override
         public BotState nextState() {
-            return Settings;
+            return nextState;
         }
     },
 
     BotUsagePeriod(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendBotUsagePeriodMenuKeyboard(botContext.getUser().getViberId());
+            botContext.getViberService().getKeyboardService().sendBotUsagePeriodMenuKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
@@ -307,57 +272,61 @@ public enum BotState {
 
             switch (text) {
                 case "В чате(время обработки)":
-                    botState = InChatChatBotUsagePeriod;
+                    nextState = InChatChatBotUsagePeriod;
                     break;
                 case "В ночное время":
-                    botState = AtNightBotUsagePeriod;
+                    nextState = AtNightBotUsagePeriod;
                     break;
                 case "Назад":
-                    botState = Settings;
+                    nextState = Settings;
                     break;
                 default:
-                    botState = BotUsagePeriod;
+                    nextState = BotUsagePeriod;
                     break;
             }
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
 
     InChatChatBotUsagePeriod(false) {
+        BotState nextState;
+
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendInChatBotUsagePeriodSettingsMessage(botContext.getUser().getViberId());
+            botContext.getViberService().getMessageService().sendInChatBotUsagePeriodSettingsMessage(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-
+            nextState = BotUsagePeriod;
         }
 
         @Override
         public BotState nextState() {
-            return BotUsagePeriod;
+            return nextState;
         }
     },
 
     AtNightBotUsagePeriod(false) {
+        BotState nextState;
+
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendAtNightBotUsagePeriodSettingsMessage(botContext.getUser().getViberId());
+            botContext.getViberService().getMessageService().sendAtNightBotUsagePeriodSettingsMessage(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
-
+            nextState = BotUsagePeriod;
         }
 
         @Override
         public BotState nextState() {
-            return BotUsagePeriod;
+            return nextState;
         }
     },
 
@@ -366,9 +335,11 @@ public enum BotState {
     // region PostponeMessage
 
     AddText(true) {
+        BotState nextState;
+
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendAddTextMessage(botContext.getUser().getViberId());
+            botContext.getViberService().getMessageService().sendAddTextMessage(botContext.getUser().getViberId());
         }
 
         @Override
@@ -380,21 +351,23 @@ public enum BotState {
             postponeMessage.setViberId(botContext.getUser().getViberId());
             postponeMessage.setIsLast(true);
 
-            botContext.getPostponeMessageService().save(postponeMessage);
+            botContext.getViberService().getPostponeMessageService().save(postponeMessage);
+
+            nextState = AddPhoto;
         }
 
         @Override
         public BotState nextState() {
-            return AddPhoto;
+            return nextState;
         }
     },
 
     AddPhoto(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendAddPhotoMessage(botContext.getUser().getViberId());
+            botContext.getViberService().getKeyboardService().sendAddPhotoMessageKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
@@ -403,10 +376,10 @@ public enum BotState {
 
             switch (text) {
                 case "Без фото":
-                    botState = SetDayAndTime;
+                    nextState = SetDayAndTime;
                     break;
                 default:
-                    botState = AddPhoto;
+                    nextState = AddPhoto;
                     break;
             }
         }
@@ -414,94 +387,101 @@ public enum BotState {
         @Override
         public void handlePicture(BotContext botContext) {
             String pictureUrl = botContext.getMessage().getMedia();
-            PostponeMessage postponeMessage = botContext.getPostponeMessageService()
-                    .getLastByViberId(botContext.getUser().getViberId());
+            PostponeMessage postponeMessage = botContext.getViberService().getPostponeMessageService().getLastByViberId(botContext.getUser().getViberId());
 
             postponeMessage.setPhotoFilename(pictureUrl);
 
-            botContext.getPostponeMessageService().update(postponeMessage);
+            botContext.getViberService().getPostponeMessageService().update(postponeMessage);
 
-            botState = SetDayAndTime;
+            nextState = SetDayAndTime;
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
 
     SetDayAndTime(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendSelectDateAndTimeMessage(botContext.getUser().getViberId());
+            botContext.getViberService().getMessageService().sendSelectDateAndTimeMessage(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
-            PostponeMessage postponedMessage = botContext.getPostponeMessageService().getLastByViberId(botContext.getUser().getViberId());
+            PostponeMessage postponedMessage = botContext.getViberService().getPostponeMessageService().getLastByViberId(botContext.getUser().getViberId());
 
-            try {
-                postponedMessage.setDate(new SimpleDateFormat("dd.MM.yyyy hh:ss").parse(text));
-
-                botContext.getPostponeMessageService().update(postponedMessage);
-
-                botState = ConfirmationForSendMessage;
-            } catch (ParseException e) {
-                botState = SetDayAndTime;
+            ValidationResult validationResult = null;
+            validationResult = Validator.validateDate(text);
+            if (!validationResult.getIsValid()) {
+                botContext.getViberService().getMessageService().sendTextMessage(botContext.getUser().getViberId(), validationResult.getMessage());
+                nextState = SetDayAndTime;
+            }
+            else {
+                try {
+                    postponedMessage.setDate(new SimpleDateFormat("dd.MM.yyyy hh:mm").parse(text));
+    
+                    botContext.getViberService().getPostponeMessageService().update(postponedMessage);
+    
+                    nextState = ConfirmationForSendMessage;
+                } catch (ParseException e) {
+                    nextState = SetDayAndTime;
+                }
             }
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
 
     ConfirmationForSendMessage(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendConfirmPostponeMessageKeyboard(botContext.getUser().getViberId());
+            botContext.getViberService().getKeyboardService().sendConfirmPostponeMessageKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
-            PostponeMessage postponeMessage = botContext.getPostponeMessageService().getLastByViberId(botContext.getUser().getViberId());
+            PostponeMessage postponeMessage = botContext.getViberService().getPostponeMessageService().getLastByViberId(botContext.getUser().getViberId());
 
             switch (text) {
                 case "Да":
                     postponeMessage.setIsLast(false);
-                    botState = SuccessPostponedMessageConfirmation;
+                    nextState = SuccessPostponeMessageConfirmation;
                     break;
                 case "Нет":
-                    botContext.getPostponeMessageService().delete(postponeMessage);
-                    botState = DeclinePostponedMessageConfirmation;
+                    botContext.getViberService().getPostponeMessageService().delete(postponeMessage);
+                    nextState = DeclinePostponeMessageConfirmation;
                     break;
                 case "Назад":
-                    botContext.getPostponeMessageService().delete(postponeMessage);
-                    botState = MainMenu;
+                    botContext.getViberService().getPostponeMessageService().delete(postponeMessage);
+                    nextState = MainMenu;
                     break;
                 default:
-                    botState = ConfirmationForSendMessage;
+                    nextState = ConfirmationForSendMessage;
                     break;
             }
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
 
-    SuccessPostponedMessageConfirmation(false) {
+    SuccessPostponeMessageConfirmation(false) {
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendSuccessPostponedMessageMessage(botContext.getUser().getViberId());
+            botContext.getViberService().getMessageService().sendSuccessPostponeMessageConfirmationMessage(botContext.getUser().getViberId());
         }
 
         @Override
@@ -511,10 +491,10 @@ public enum BotState {
     },
 
 
-    DeclinePostponedMessageConfirmation(false) {
+    DeclinePostponeMessageConfirmation(false) {
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendDeclinePostponeMessageMessage(botContext.getUser().getViberId());
+            botContext.getViberService().getMessageService().sendDeclinePostponeMessageConfirmationMessage(botContext.getUser().getViberId());
         }
 
         @Override
@@ -544,6 +524,8 @@ public enum BotState {
     },
     
     AddManager(true) {
+        BotState nextState;
+        
         @Override
         public void enter(BotContext botContext) {
 
@@ -551,16 +533,18 @@ public enum BotState {
 
         @Override
         public void handleInput(BotContext botContext) {
-
+            nextState = Managers;
         }
 
         @Override
         public BotState nextState() {
-            return Managers;
+            return nextState;
         }
     }, 
     
     DeleteManager(true) {
+        BotState nextState;
+
         @Override
         public void enter(BotContext botContext) {
 
@@ -568,16 +552,18 @@ public enum BotState {
 
         @Override
         public void handleInput(BotContext botContext) {
-
+            nextState = Managers;
         }
 
         @Override
         public BotState nextState() {
-            return Managers;
+            return nextState;
         }
     }, 
     
     ChangeManagerPrivilegies(true) {
+        BotState nextState;
+
         @Override
         public void enter(BotContext botContext) {
 
@@ -585,12 +571,12 @@ public enum BotState {
 
         @Override
         public void handleInput(BotContext botContext) {
-
+            nextState = Managers;
         }
 
         @Override
         public BotState nextState() {
-            return Managers;
+            return nextState;
         }
     },
 
@@ -701,9 +687,11 @@ public enum BotState {
     //region UserDialog
 
     StartUserDialogAndAskClientName(true) {
+        BotState nextState;
+
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendAskClientNameMessage(botContext.getUser().getViberId());
+            botContext.getViberService().getMessageService().sendAskClientNameMessage(botContext.getUser().getViberId());
         }
 
         @Override
@@ -713,329 +701,460 @@ public enum BotState {
             User user = botContext.getUser();
 
             user.setTreatName(treatName);
+
+            nextState = AskBrand;
         }
 
         @Override
         public BotState nextState() {
-            return IsHaveAnyBenefits;
+            return nextState;
         }
     },
-    
-    IsHaveAnyBenefits(true) {
-        BotState botState;
+
+    AskBrand(true) {
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendIsHaveAnyBenefitsMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
+            botContext.getViberService().getKeyboardService().sendAskBrandMessageKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
-            ClientChatMessageHistory clientChatMessageHistory = new ClientChatMessageHistory();
-
-            clientChatMessageHistory.setViberId(botContext.getUser().getViberId());
-            clientChatMessageHistory.setTimestamp(new Date().getTime());
+            ClientMessage clientMessage = ClientMessage.builder()
+                                                .viberId(botContext.getUser().getViberId())
+                                                .timestamp(new Date().getTime())
+                                                .build();
 
             switch(text) {
-                case "Да":
-                    clientChatMessageHistory.setStep1(text);
-                    botState = AreInterestedToKnowAdditionalDataAboutCarsAtAuctions;
+                case "Пропустить": 
+                    nextState = IsHaveAnyBenefits;
                     break;
-                case "Нет":
-                    clientChatMessageHistory.setStep1(text);
-                    botState = NegativeDialogEnd;
-                    break;
-                default: 
-                    clientChatMessageHistory.setText(text);
-                    botState = IsHaveAnyBenefits;
+                default:
+                    clientMessage.setBrand(text);
+                    nextState = AskModel;
                     break;
             }
 
-            botContext.getClientChatMessageHistoryService().save(clientChatMessageHistory);
+            botContext.getViberService().getClientMessageService().save(clientMessage);
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
+        }
+    },
+    
+    AskModel(true) {
+        BotState nextState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getViberService().getKeyboardService().sendAskModelMessageKeyboard(botContext.getUser().getViberId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessage().getText();
+            ClientMessage clientMessage = ClientMessage.builder()
+                                                .viberId(botContext.getUser().getViberId())
+                                                .timestamp(new Date().getTime())
+                                                .build();
+
+            switch(text) {
+                case "Пропустить": 
+                    nextState = AskYearOfIssue;
+                    break;
+                default:
+                    clientMessage.setModel(text);
+                    nextState = AskYearOfIssue;
+                    break;
+            }
+
+            botContext.getViberService().getClientMessageService().save(clientMessage);
+        }
+
+        @Override
+        public BotState nextState() {
+            return nextState;
+        }
+    },
+
+    AskYearOfIssue(true) {
+        BotState nextState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getViberService().getKeyboardService().sendAskYearOfIssueMessageKeyboard(botContext.getUser().getViberId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessage().getText();
+            ClientMessage clientMessage = ClientMessage.builder()
+                                                .viberId(botContext.getUser().getViberId())
+                                                .timestamp(new Date().getTime())
+                                                .build();
+
+            switch(text) {
+                case "Пропустить":
+                    break;
+                default:
+                    String[] years = text.split("-");
+
+                    clientMessage.setYearOfIssueFrom(Integer.parseInt(years[0]));
+                    clientMessage.setYearOfIssueTo(Integer.parseInt(years[1]));
+                    break;
+            }
+
+            botContext.getViberService().getClientMessageService().save(clientMessage);
+            nextState = IsHaveAnyBenefits;
+        }
+
+        @Override
+        public BotState nextState() {
+            return nextState;
+        }
+    },
+
+    IsHaveAnyBenefits(true) {
+        BotState nextState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getViberService().getKeyboardService().sendIsHaveAnyBenefitsMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessage().getText();
+            ClientMessage clientMessage = ClientMessage.builder()
+                                                .viberId(botContext.getUser().getViberId())
+                                                .timestamp(new Date().getTime())
+                                                .build();
+
+            switch(text) {
+                case "Да":
+                    clientMessage.setStep1(text);
+                    nextState = AreInterestedToKnowAdditionalDataAboutCarsAtAuctions;
+                    break;
+                case "Нет":
+                    clientMessage.setStep1(text);
+                    nextState = NegativeDialogEnd;
+                    break;
+                default: 
+                    clientMessage.setText(text);
+                    nextState = IsHaveAnyBenefits;
+                    break;
+            }
+
+            botContext.getViberService().getClientMessageService().save(clientMessage);
+        }
+
+        @Override
+        public BotState nextState() {
+            return nextState;
         }
     },
     
     AreInterestedToKnowAdditionalDataAboutCarsAtAuctions(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendAreInterestedToKnowAdditionalDataAboutCarsAtAuctionsMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
+            botContext.getViberService().getKeyboardService().sendAreInterestedToKnowAdditionalDataAboutCarsAtAuctionsMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
-            ClientChatMessageHistory clientChatMessageHistory = new ClientChatMessageHistory();
-
-            clientChatMessageHistory.setViberId(botContext.getUser().getViberId());
-            clientChatMessageHistory.setTimestamp(new Date().getTime());
+            ClientMessage clientMessage = ClientMessage.builder()
+                                                .viberId(botContext.getUser().getViberId())
+                                                .timestamp(new Date().getTime())
+                                                .build();
 
             switch(text) {
                 case "Да":
-                    clientChatMessageHistory.setStep2(text);
-                    botState = DontWorryAboutPricesAndIsLinkOpens;
+                    clientMessage.setStep2(text);
+                    nextState = DontWorryAboutPricesAndIsLinkOpens;
                     break;
                 case "Нет":
-                    clientChatMessageHistory.setStep2(text);
-                    botState = NegativeDialogEnd;
+                    clientMessage.setStep2(text);
+                    nextState = NegativeDialogEnd;
                     break;
                 default: 
-                    clientChatMessageHistory.setText(text);
-                    botState = AreInterestedToKnowAdditionalDataAboutCarsAtAuctions;
+                    clientMessage.setText(text);
+                    nextState = AreInterestedToKnowAdditionalDataAboutCarsAtAuctions;
                     break;
             }
 
-            botContext.getClientChatMessageHistoryService().save(clientChatMessageHistory);
+            botContext.getViberService().getClientMessageService().save(clientMessage);
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
     
     NegativeDialogEnd(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendNegativeDialogEndMessageKeyboard(botContext.getUser().getViberId());
+            botContext.getViberService().getKeyboardService().sendNegativeDialogEndMessageKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
-            ClientChatMessageHistory clientChatMessageHistory = new ClientChatMessageHistory();
+            ClientMessage clientMessage = ClientMessage.builder()
+                                                .viberId(botContext.getUser().getViberId())
+                                                .timestamp(new Date().getTime())
+                                                .step7(text)
+                                                .build();
 
-            clientChatMessageHistory.setViberId(botContext.getUser().getViberId());
-            clientChatMessageHistory.setTimestamp(new Date().getTime());
-            clientChatMessageHistory.setStep7(text);
-
-            botContext.getClientChatMessageHistoryService().save(clientChatMessageHistory);
+            botContext.getViberService().getClientMessageService().save(clientMessage);
 
             if (text.equals("Начать новый диалог")) {
-                botState = StartUserDialogAndAskClientName;
+                nextState = StartUserDialogAndAskClientName;
             }
             else {
-                botState = NegativeDialogEnd;
+                nextState = NegativeDialogEnd;
             }
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
     
     DontWorryAboutPricesAndIsLinkOpens(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendDontWorryAboutPricesAndIsLinkOpensMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
+            botContext.getViberService().getKeyboardService().sendDontWorryAboutPricesAndIsLinkOpensMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
-            ClientChatMessageHistory clientChatMessageHistory = new ClientChatMessageHistory();
-
-            clientChatMessageHistory.setViberId(botContext.getUser().getViberId());
-            clientChatMessageHistory.setTimestamp(new Date().getTime());
+            ClientMessage clientMessage = ClientMessage.builder()
+                                                .viberId(botContext.getUser().getViberId())
+                                                .timestamp(new Date().getTime())
+                                                .build();
 
             switch(text) {
                 case "Да":
-                    clientChatMessageHistory.setStep3(text);
-                    botState = WhenArePlanningToBuyCar;
+                    clientMessage.setStep3(text);
+                    nextState = WhenArePlanningToBuyCar;
                     break;
                 case "Нет":
-                    clientChatMessageHistory.setStep3(text);
-                    botState = NegativeDialogEnd;
+                    clientMessage.setStep3(text);
+                    nextState = NegativeDialogEnd;
                     break;
                 default: 
-                    clientChatMessageHistory.setText(text);
-                    botState = DontWorryAboutPricesAndIsLinkOpens;
+                    clientMessage.setText(text);
+                    nextState = DontWorryAboutPricesAndIsLinkOpens;
                     break;
             }
 
-            botContext.getClientChatMessageHistoryService().save(clientChatMessageHistory);
+            botContext.getViberService().getClientMessageService().save(clientMessage);
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
     
     WhenArePlanningToBuyCar(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendWhenArePlanningToBuyCarMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
+            botContext.getViberService().getKeyboardService().sendWhenArePlanningToBuyCarMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
-            ClientChatMessageHistory clientChatMessageHistory = new ClientChatMessageHistory();
-
-            clientChatMessageHistory.setViberId(botContext.getUser().getViberId());
-            clientChatMessageHistory.setTimestamp(new Date().getTime());
+            ClientMessage clientMessage = ClientMessage.builder()
+                                                .viberId(botContext.getUser().getViberId())
+                                                .timestamp(new Date().getTime())
+                                                .build();
 
             if (text.equals("В ближайшее время") || text.equals("После НГ")) {
-                clientChatMessageHistory.setStep4(text);
-                botState = IsInterestedInSpecificCarVariants;
+                clientMessage.setStep4(text);
+                nextState = IsInterestedInSpecificCarVariants;
             }
             else {
-                clientChatMessageHistory.setText(text);
-                botState = WhenArePlanningToBuyCar;
+                clientMessage.setText(text);
+                nextState = WhenArePlanningToBuyCar;
             }
 
-            botContext.getClientChatMessageHistoryService().save(clientChatMessageHistory);
+            botContext.getViberService().getClientMessageService().save(clientMessage);
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
     
     IsInterestedInSpecificCarVariants(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendIsInterestedInSpecificCarVariantsMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
+            botContext.getViberService().getKeyboardService().sendIsInterestedInSpecificCarVariantsMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
-            ClientChatMessageHistory clientChatMessageHistory = new ClientChatMessageHistory();
-
-            clientChatMessageHistory.setViberId(botContext.getUser().getViberId());
-            clientChatMessageHistory.setTimestamp(new Date().getTime());
+            ClientMessage clientMessage = ClientMessage.builder()
+                                                .viberId(botContext.getUser().getViberId())
+                                                .timestamp(new Date().getTime())
+                                                .build();
 
             switch(text) {
                 case "Да":
-                    clientChatMessageHistory.setStep5(text);
-                    botState = WillAskFewQuestionsRegardingYourCriteria;
+                    clientMessage.setStep5(text);
+                    nextState = WillAskFewQuestionsRegardingYourCriteria;
                     break;
                 case "Нет":
-                    clientChatMessageHistory.setStep5(text);
-                    botState = NegativeDialogEnd;
+                    clientMessage.setStep5(text);
+                    nextState = NegativeDialogEnd;
                     break;
                 default:
-                    clientChatMessageHistory.setText(text); 
-                    botState = IsInterestedInSpecificCarVariants;
+                    clientMessage.setText(text); 
+                    nextState = IsInterestedInSpecificCarVariants;
                     break;
             }
 
-            botContext.getClientChatMessageHistoryService().save(clientChatMessageHistory);
+            botContext.getViberService().getClientMessageService().save(clientMessage);
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
     
     WillAskFewQuestionsRegardingYourCriteria(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendWillAskFewQuestionsRegardingYourCriteriaMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
+            botContext.getViberService().getKeyboardService().sendWillAskFewQuestionsRegardingYourCriteriaMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
-            ClientChatMessageHistory clientChatMessageHistory = new ClientChatMessageHistory();
-
-            clientChatMessageHistory.setViberId(botContext.getUser().getViberId());
-            clientChatMessageHistory.setTimestamp(new Date().getTime());
+            ClientMessage clientMessage = ClientMessage.builder()
+                                                .viberId(botContext.getUser().getViberId())
+                                                .timestamp(new Date().getTime())
+                                                .build();
 
             switch(text) {
                 case "Да":
-                    clientChatMessageHistory.setStep6(text);
-                    botState = AskAndEnterPhoneNumber;
+                    clientMessage.setStep6(text);
+                    nextState = AskAndEnterPhoneNumber;
                     break;
                 case "Нет":
-                    clientChatMessageHistory.setStep6(text);
-                    botState = NegativeDialogEnd;
+                    clientMessage.setStep6(text);
+                    nextState = NegativeDialogEnd;
                     break;
                 default:
-                    clientChatMessageHistory.setText(text); 
-                    botState = WillAskFewQuestionsRegardingYourCriteria;
+                    clientMessage.setText(text); 
+                    nextState = WillAskFewQuestionsRegardingYourCriteria;
                     break;
             }
+
+            botContext.getViberService().getClientMessageService().save(clientMessage);
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     },
     
     AskAndEnterPhoneNumber(true) {
+        BotState nextState;
+
         @Override
         public void enter(BotContext botContext) {
-            botContext.getMessageService().sendAskAndEnterPhoneNumberMessage(botContext.getUser().getViberId());
+            botContext.getViberService().getKeyboardService().sendAskAndEnterPhoneNumberMessageKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
 
-            botContext.getUser().setMobilePhone(text);
+            ValidationResult validationResult = Validator.validatePhoneNumber(text);
+            
+            if (!validationResult.getIsValid()) {
+                botContext.getViberService().getMessageService().sendTextMessage(botContext.getUser().getViberId(), validationResult.getMessage());
+                nextState = AskAndEnterPhoneNumber;
+            }
+            else {
+                botContext.getUser().setMobilePhone(text);
+                nextState = PositiveDialogEnd;
+            }
+        }
+
+        @Override
+        public void handleContact(BotContext botContext) {
+            String phoneNumber = botContext.getMessage().getContact().getPhoneNumber();
+
+            botContext.getUser().setMobilePhone(phoneNumber);
+            
+            nextState = PositiveDialogEnd;
         }
 
         @Override
         public BotState nextState() {
-            return PositiveDialogEnd;
+            return nextState;
         }
     },
     
     PositiveDialogEnd(true) {
-        BotState botState;
+        BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getKeyboardService().sendPositiveDialogEndMessageKeyboard(botContext.getUser().getViberId());
+            botContext.getViberService().getKeyboardService().sendPositiveDialogEndMessageKeyboard(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
-            ClientChatMessageHistory clientChatMessageHistory = new ClientChatMessageHistory();
-
-            clientChatMessageHistory.setViberId(botContext.getUser().getViberId());
-            clientChatMessageHistory.setTimestamp(new Date().getTime());
+            ClientMessage clientMessage = ClientMessage.builder()
+                                                .viberId(botContext.getUser().getViberId())
+                                                .timestamp(new Date().getTime())
+                                                .build();
 
             if (text.equals("Начать новый диалог")) {
-                clientChatMessageHistory.setStep7(text);
-                botState = StartUserDialogAndAskClientName;
+                clientMessage.setStep7(text);
+                nextState = StartUserDialogAndAskClientName;
             }
             else {
-                clientChatMessageHistory.setText(text);
-                botState = PositiveDialogEnd;
+                clientMessage.setText(text);
+                nextState = PositiveDialogEnd;
             }
 
-            botContext.getClientChatMessageHistoryService().save(clientChatMessageHistory);
+            botContext.getViberService().getClientMessageService().save(clientMessage);
         }
 
         @Override
         public BotState nextState() {
-            return botState;
+            return nextState;
         }
     };
 
@@ -1059,6 +1178,7 @@ public enum BotState {
 
     public void handleInput(BotContext botContext) {}
     public void handlePicture(BotContext botContext) {}
+    public void handleContact(BotContext botContext) {}
 
     public abstract void enter(BotContext botContext);
     public abstract BotState nextState();

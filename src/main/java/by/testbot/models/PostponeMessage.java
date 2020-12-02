@@ -20,7 +20,7 @@ public class PostponeMessage {
     @Column(name = "Id", nullable = false)
     private Long id;
 
-    @Column(name = "Text", nullable = false)
+    @Column(name = "Text", nullable = false, columnDefinition = "LONGTEXT")
     private String text;
 
     @Column(name = "PhotoFilename", columnDefinition = "LONGTEXT")

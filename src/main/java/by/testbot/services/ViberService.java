@@ -1,5 +1,9 @@
 package by.testbot.services;
 
+import java.util.List;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import by.testbot.bot.BotContext;
 import by.testbot.bot.BotState;
-import by.testbot.models.ClientChatMessageHistory;
 import by.testbot.models.Message;
 import by.testbot.models.User;
 import by.testbot.models.ViberUpdate;
@@ -20,7 +23,10 @@ import by.testbot.payload.responses.SendMessageResponse;
 import by.testbot.payload.responses.SetWebhookResponse;
 import by.testbot.proxy.ViberProxy;
 import by.testbot.utils.Utils;
+import lombok.Getter;
+import lombok.SneakyThrows;
 
+@Getter
 @Service
 public class ViberService {
     private static final Logger logger = LoggerFactory.getLogger(ViberService.class);
@@ -38,7 +44,7 @@ public class ViberService {
     private KeyboardService keyboardService;
 
     @Autowired
-    private ClientChatMessageHistoryService clientChatMessageHistoryService;
+    private ClientMessageService clientMessageService;
 
     @Autowired
     private PostponeMessageService postponeMessageService;
@@ -55,8 +61,17 @@ public class ViberService {
     @Value("${testbot.codeWord}")
     private String codeWord;
 
-    public String getSenderName() {
-        return this.senderName;
+    private List<List<String>> cars;
+
+    @SneakyThrows
+    public void parseCarsAndModels() {
+        Document doc = Jsoup.connect("https://bidfax.info/")
+                            .userAgent("Chrome/4.0.249.0 Safari/532.5")
+                            // .referrer("https://bidfax.info/")
+                            .get();
+
+        System.out.println(doc.body().text());
+
     }
 
     public void setWeebhook() {
@@ -95,6 +110,9 @@ public class ViberService {
         if (sendTextMessageRequest.getText() == null || sendTextMessageRequest.getText().isEmpty() || sendTextMessageRequest.getText().isBlank()) {
             throw new IllegalArgumentException("Text is null or empty.");
         }
+        if (sendTextMessageRequest.getText().length() > 7000) {
+            throw new IllegalArgumentException("Maximum text length for text message is 7000. Text length: " + sendTextMessageRequest.getText().length());
+        }
 
         SendMessageResponse sendMessageResponse = viberProxy.sendTextMessage(authenticationToken, sendTextMessageRequest);
 
@@ -103,6 +121,30 @@ public class ViberService {
         }
         else {
             logger.warn("Text message not sended: " + sendMessageResponse.getStatus() + ". Error: " + sendMessageResponse.getStatusMessage());
+        }
+    }
+
+    public void broadcastTextMessage(SendTextMessageRequest sendTextMessageRequest) {
+        if (sendTextMessageRequest == null) {
+            throw new IllegalArgumentException("Send text message request is null.");
+        }
+        if (sendTextMessageRequest.getSender().getName() == null || sendTextMessageRequest.getSender().getName().isEmpty() || sendTextMessageRequest.getSender().getName().isBlank()) {
+            throw new IllegalArgumentException("Sender name is null or empty.");
+        }
+        if (sendTextMessageRequest.getText() == null || sendTextMessageRequest.getText().isEmpty() || sendTextMessageRequest.getText().isBlank()) {
+            throw new IllegalArgumentException("Text is null or empty.");
+        }
+        if (sendTextMessageRequest.getText().length() > 7000) {
+            throw new IllegalArgumentException("Maximum text length for text message is 7000. Text length: " + sendTextMessageRequest.getText().length());
+        }
+
+        SendMessageResponse sendMessageResponse = viberProxy.broadcastTextMessage(authenticationToken, sendTextMessageRequest);
+
+        if (sendMessageResponse.getStatus() == Status.OK) {
+            logger.info("Broadcast text message sended.");
+        }
+        else {
+            logger.warn("Broadcast text message not sended: " + sendMessageResponse.getStatus() + ". Error: " + sendMessageResponse.getStatusMessage());
         }
     }
 
@@ -118,6 +160,9 @@ public class ViberService {
         }
         if (sendPictureMessageRequest.getMediaUrl() == null || sendPictureMessageRequest.getMediaUrl().isEmpty() || sendPictureMessageRequest.getMediaUrl().isBlank()) {
             throw new IllegalArgumentException("Media url is null or empty.");
+        }
+        if (sendPictureMessageRequest.getText().length() > 120) {
+            throw new IllegalArgumentException("Maximum text length for picture message is 120. Text length: " + sendPictureMessageRequest.getText().length());
         }
 
         SendMessageResponse sendMessageResponse = viberProxy.sendPictureMessage(authenticationToken, sendPictureMessageRequest);
@@ -340,6 +385,62 @@ public class ViberService {
         else if (message.hasPicture()) {
             handlePictureMessage(viberUpdate);
         }
+        else if (message.hasContact()) {
+            handleContactMessage(viberUpdate);
+        }
+    }
+
+    private void handleContactMessage(ViberUpdate viberUpdate) {
+        final String viberId = viberUpdate.getMessageCallback().getSender().getId();
+        final Message message = viberUpdate.getMessageCallback().getMessage();
+        BotContext botContext = null;
+        BotState botState = null;
+
+        User user = userService.getByViberId(viberId);
+
+        if (user == null) {
+            user = new User();
+
+            if (message.getText().equals(this.codeWord)) {
+                user.setRole(Role.MANAGER);
+                botState = BotState.getAdminInitialState();
+            } 
+            else {
+                botState = BotState.getUserInitialState();
+                user.setRole(Role.USER);
+            }
+
+            user.setViberId(viberId);
+            user.setBotState(botState);
+            user.setAvatar(viberUpdate.getMessageCallback().getSender().getAvatarUrl());
+            user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
+            user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
+            user.setName(viberUpdate.getMessageCallback().getSender().getName());
+
+            userService.save(user);
+
+            botContext = BotContext.of(user, message, this);
+            botState.enter(botContext);
+
+            logger.info("New user registered: " + viberId);
+        }
+        else {
+            botState = user.getBotState();
+            botContext = BotContext.of(user, message, this);
+
+            botState.handleContact(botContext);
+
+            do {
+                if (botState.nextState() != null) {
+                    botState = botState.nextState();
+                    botState.enter(botContext);
+                }
+            } while (!botState.getIsInputNeeded());
+
+            user.setBotState(botState);
+
+            userService.update(user);
+        }
     }
 
     private void handlePictureMessage(ViberUpdate viberUpdate) {
@@ -350,15 +451,43 @@ public class ViberService {
 
         User user = userService.getByViberId(viberId);
 
-        if (user != null) {
+        if (user == null) {
+            user = new User();
+
+            if (message.getText().equals(this.codeWord)) {
+                user.setRole(Role.MANAGER);
+                botState = BotState.getAdminInitialState();
+            } 
+            else {
+                botState = BotState.getUserInitialState();
+                user.setRole(Role.USER);
+            }
+
+            user.setViberId(viberId);
+            user.setBotState(botState);
+            user.setAvatar(viberUpdate.getMessageCallback().getSender().getAvatarUrl());
+            user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
+            user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
+            user.setName(viberUpdate.getMessageCallback().getSender().getName());
+
+            userService.save(user);
+
+            botContext = BotContext.of(user, message, this);
+            botState.enter(botContext);
+
+            logger.info("New user registered: " + viberId);
+        }
+        else {
             botState = user.getBotState();
-            botContext = BotContext.of(user, message, this, this.messageService, this.keyboardService, this.userService, this.clientChatMessageHistoryService, this.postponeMessageService);
+            botContext = BotContext.of(user, message, this);
 
             botState.handlePicture(botContext);
 
             do {
-                botState = botState.nextState();
-                botState.enter(botContext);
+                if (botState.nextState() != null) {
+                    botState = botState.nextState();
+                    botState.enter(botContext);
+                }
             } while (!botState.getIsInputNeeded());
 
             user.setBotState(botState);
@@ -382,10 +511,6 @@ public class ViberService {
                 user.setRole(Role.MANAGER);
                 botState = BotState.getAdminInitialState();
             } 
-            else if (viberId.equals("gbcD9ezHUeQkbrYUwyU3Bw==1")) {
-                botState = BotState.getAdminInitialState();
-                user.setRole(Role.ADMIN);
-            }
             else {
                 botState = BotState.getUserInitialState();
                 user.setRole(Role.USER);
@@ -400,20 +525,22 @@ public class ViberService {
 
             userService.save(user);
 
-            botContext = BotContext.of(user, message, this, this.messageService, this.keyboardService, this.userService, this.clientChatMessageHistoryService, this.postponeMessageService);
+            botContext = BotContext.of(user, message, this);
             botState.enter(botContext);
 
             logger.info("New user registered: " + viberId);
         }
         else {
             botState = user.getBotState();
-            botContext = BotContext.of(user, message, this, this.messageService, this.keyboardService, this.userService, this.clientChatMessageHistoryService, this.postponeMessageService);
+            botContext = BotContext.of(user, message, this);
 
             botState.handleInput(botContext);
 
             do {
-                botState = botState.nextState();
-                botState.enter(botContext);
+                if (botState.nextState() != null) {
+                    botState = botState.nextState();
+                    botState.enter(botContext);
+                }
             } while (!botState.getIsInputNeeded());
 
             user.setBotState(botState);
@@ -450,20 +577,10 @@ public class ViberService {
 
             userService.save(user);
 
-            botContext = BotContext.of(user, null, this, this.messageService, this.keyboardService, this.userService, this.clientChatMessageHistoryService, this.postponeMessageService);
+            botContext = BotContext.of(user, null, this);
             botState.enter(botContext);
 
             logger.info("New user registered: " + viberId);
         }
     } 
-
-    // private void handleUnsubscribedCallback(ViberUpdate viberUpdate) {
-    //     final String viberId = viberUpdate.getUnsubscribedCallback().getUserId();
-
-    //     User user = userService.getByViberId(viberId);
-
-    //     if (user != null) {
-    //         userService.delete(user);
-    //     }
-    // }
 }

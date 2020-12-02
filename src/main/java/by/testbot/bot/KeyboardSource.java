@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import by.testbot.models.Button;
 import by.testbot.models.Keyboard;
+import by.testbot.models.enums.button.ActionType;
 import by.testbot.services.LocaleMessageService;
 
 public class KeyboardSource {
@@ -21,8 +22,8 @@ public class KeyboardSource {
         List<Button> buttons = new ArrayList<>();
 
         Button postponeMessageButton = new Button();
-        postponeMessageButton.setText(localeMessageService.getMessage("button.mainMenu.postponedMessage"));
-        postponeMessageButton.setActionBody(localeMessageService.getMessage("button.mainMenu.postponedMessage"));
+        postponeMessageButton.setText(localeMessageService.getMessage("button.mainMenu.postponeMessage"));
+        postponeMessageButton.setActionBody(localeMessageService.getMessage("button.mainMenu.postponeMessage"));
         postponeMessageButton.setColumns(3);
         postponeMessageButton.setRows(1);
         postponeMessageButton.setBackgroundColor("#2db9b9");
@@ -315,50 +316,6 @@ public class KeyboardSource {
         return keyboard;
     }
 
-    public Keyboard getPostponeMessageMenuKeyboard() {
-        Keyboard keyboard = new Keyboard();
-        List<Button> buttons = new ArrayList<>();
-
-        Button addTextAndPhotoButton = new Button();
-        addTextAndPhotoButton.setText("Добавить текст + фото");
-        addTextAndPhotoButton.setActionBody("Добавить текст + фото");
-        addTextAndPhotoButton.setColumns(6);
-        addTextAndPhotoButton.setRows(1);
-        addTextAndPhotoButton.setBackgroundColor("#2db9b9");
-        addTextAndPhotoButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
-        buttons.add(addTextAndPhotoButton);
-
-        Button setDayAndTimeButton = new Button();
-        setDayAndTimeButton.setText("Выбрать день и время");
-        setDayAndTimeButton.setActionBody("Выбрать день и время");
-        setDayAndTimeButton.setColumns(6);
-        setDayAndTimeButton.setRows(1);
-        setDayAndTimeButton.setBackgroundColor("#2db9b9");
-        setDayAndTimeButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
-        buttons.add(setDayAndTimeButton);
-
-        Button confirmSendMessageButton = new Button();
-        confirmSendMessageButton.setText("Подтвердить отправку");
-        confirmSendMessageButton.setActionBody("Подтвердить отправку");
-        confirmSendMessageButton.setColumns(6);
-        confirmSendMessageButton.setRows(1);
-        confirmSendMessageButton.setBackgroundColor("#2db9b9");
-        confirmSendMessageButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
-        buttons.add(confirmSendMessageButton);
-
-        Button backButton = new Button();
-        backButton.setText("Назад");
-        backButton.setActionBody("Назад");
-        backButton.setColumns(6);
-        backButton.setRows(1);
-        backButton.setBackgroundColor("#2db9b9");
-        backButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
-        buttons.add(backButton);
-
-        keyboard.setButtons(buttons);
-        return keyboard;
-    }
-
     public Keyboard getConfirmPostponeMessageKeyboard() {
         Keyboard keyboard = new Keyboard();
         List<Button> buttons = new ArrayList<>();
@@ -403,8 +360,8 @@ public class KeyboardSource {
         List<Button> buttons = new ArrayList<>();
 
         Button yesButton = new Button();
-        yesButton.setText("Да");
-        yesButton.setActionBody("Да");
+        yesButton.setText(localeMessageService.getMessage("button.yes"));
+        yesButton.setActionBody(localeMessageService.getMessage("button.yes"));
         yesButton.setColumns(6);
         yesButton.setRows(1);
         yesButton.setBackgroundColor("#2db9b9");
@@ -412,8 +369,8 @@ public class KeyboardSource {
         buttons.add(yesButton);
 
         Button noButton = new Button();
-        noButton.setText("Нет");
-        noButton.setActionBody("Нет");
+        noButton.setText(localeMessageService.getMessage("button.no"));
+        noButton.setActionBody(localeMessageService.getMessage("button.no"));
         noButton.setColumns(6);
         noButton.setRows(1);
         noButton.setBackgroundColor("#2db9b9");
@@ -429,8 +386,8 @@ public class KeyboardSource {
         List<Button> buttons = new ArrayList<>();
 
         Button startNewDialogButton = new Button();
-        startNewDialogButton.setText("Начать новый диалог");
-        startNewDialogButton.setActionBody("Начать новый диалог");
+        startNewDialogButton.setText(localeMessageService.getMessage("button.userDialog.startNewDialog"));
+        startNewDialogButton.setActionBody(localeMessageService.getMessage("button.userDialog.startNewDialog"));
         startNewDialogButton.setColumns(6);
         startNewDialogButton.setRows(1);
         startNewDialogButton.setBackgroundColor("#2db9b9");
@@ -446,8 +403,8 @@ public class KeyboardSource {
         List<Button> buttons = new ArrayList<>();
 
         Button yesButton = new Button();
-        yesButton.setText("В ближайшее время");
-        yesButton.setActionBody("В ближайшее время");
+        yesButton.setText(localeMessageService.getMessage("button.userDialog.nearFuture"));
+        yesButton.setActionBody(localeMessageService.getMessage("button.userDialog.nearFuture"));
         yesButton.setColumns(6);
         yesButton.setRows(1);
         yesButton.setBackgroundColor("#2db9b9");
@@ -455,13 +412,65 @@ public class KeyboardSource {
         buttons.add(yesButton);
 
         Button noButton = new Button();
-        noButton.setText("После НГ");
-        noButton.setActionBody("После НГ");
+        noButton.setText(localeMessageService.getMessage("button.userDialog.afterNewYear"));
+        noButton.setActionBody(localeMessageService.getMessage("button.userDialog.afterNewYear"));
         noButton.setColumns(6);
         noButton.setRows(1);
         noButton.setBackgroundColor("#2db9b9");
         noButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(noButton);
+
+        keyboard.setButtons(buttons);
+        return keyboard;
+    }
+
+    public Keyboard getWithoutPhotoKeyboard() {
+        Keyboard keyboard = new Keyboard();
+        List<Button> buttons = new ArrayList<>();
+
+        Button withoutPhoto = new Button();
+        withoutPhoto.setText(localeMessageService.getMessage("button.postponeMessage.withoutPhoto"));
+        withoutPhoto.setActionBody(localeMessageService.getMessage("button.postponeMessage.withoutPhoto"));
+        withoutPhoto.setColumns(6);
+        withoutPhoto.setRows(1);
+        withoutPhoto.setBackgroundColor("#2db9b9");
+        withoutPhoto.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(withoutPhoto);
+
+        keyboard.setButtons(buttons);
+        return keyboard;
+    }
+
+    public Keyboard getAskAndEnterPhoneNumberKeyboard() {
+        Keyboard keyboard = new Keyboard();
+        List<Button> buttons = new ArrayList<>();
+
+        Button sharePhone = new Button();
+        sharePhone.setText(localeMessageService.getMessage("button.userDialog.sharePhone"));
+        sharePhone.setActionBody(localeMessageService.getMessage("button.userDialog.sharePhone"));
+        sharePhone.setActionType(ActionType.SHARE_PHONE);
+        sharePhone.setColumns(6);
+        sharePhone.setRows(1);
+        sharePhone.setBackgroundColor("#2db9b9");
+
+        buttons.add(sharePhone);
+
+        keyboard.setButtons(buttons);
+        return keyboard;
+    }
+
+    public Keyboard getSkipStepKeyboard() {
+        Keyboard keyboard = new Keyboard();
+        List<Button> buttons = new ArrayList<>();
+
+        Button skipButton = new Button();
+        skipButton.setText(localeMessageService.getMessage("button.userDialog.skip"));
+        skipButton.setActionBody(localeMessageService.getMessage("button.userDialog.skip"));
+        skipButton.setColumns(6);
+        skipButton.setRows(1);
+        skipButton.setBackgroundColor("#2db9b9");
+
+        buttons.add(skipButton);
 
         keyboard.setButtons(buttons);
         return keyboard;

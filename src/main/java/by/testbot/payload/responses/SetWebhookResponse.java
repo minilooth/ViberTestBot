@@ -18,4 +18,7 @@ public class SetWebhookResponse {
 
     @JsonProperty("event_types")
     private List<EventType> eventTypes;
+
+    @JsonProperty("chat_hostname")
+    private String chatHostname;
 }

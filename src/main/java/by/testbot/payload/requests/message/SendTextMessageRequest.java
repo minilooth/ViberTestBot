@@ -18,7 +18,7 @@ public class SendTextMessageRequest {
     private String userId;
 
     @JsonProperty("min_api_version")
-    private String minApiVersion;
+    private Integer minApiVersion;
 
     @JsonProperty("sender")
     private Sender sender;
