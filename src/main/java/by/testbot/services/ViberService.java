@@ -49,6 +49,9 @@ public class ViberService {
     @Autowired
     private PostponeMessageService postponeMessageService;
 
+    @Autowired
+    private CarService carService;
+
     @Value("${testbot.authenticationToken}")
     private String authenticationToken;
 
@@ -60,19 +63,6 @@ public class ViberService {
 
     @Value("${testbot.codeWord}")
     private String codeWord;
-
-    private List<List<String>> cars;
-
-    @SneakyThrows
-    public void parseCarsAndModels() {
-        Document doc = Jsoup.connect("https://bidfax.info/")
-                            .userAgent("Chrome/4.0.249.0 Safari/532.5")
-                            // .referrer("https://bidfax.info/")
-                            .get();
-
-        System.out.println(doc.body().text());
-
-    }
 
     public void setWeebhook() {
         if (authenticationToken == null || authenticationToken.isEmpty() || authenticationToken.isBlank()) {
@@ -359,7 +349,7 @@ public class ViberService {
         }
         else if (viberUpdate.hasUnsubscribedCallback()) {
             logger.info("Received UnsubscribedCallback from user: " + viberUpdate.getUnsubscribedCallback().getUserId());
-            // handleUnsubscribedCallback(viberUpdate);
+            handleUnsubscribedCallback(viberUpdate);
         }
         else if (viberUpdate.hasConversationStartedCallback()) {
             logger.info("Received ConversationStartedCallback from user: " + viberUpdate.getConversationStartedCallback().getUser().getViberId());
@@ -583,4 +573,14 @@ public class ViberService {
             logger.info("New user registered: " + viberId);
         }
     } 
+
+    private void handleUnsubscribedCallback(ViberUpdate viberUpdate) {
+        final String viberId = viberUpdate.getUnsubscribedCallback().getUserId();
+
+        User user = userService.getByViberId(viberId);
+
+        if (user != null) {
+            userService.delete(user);
+        }
+    }
 }

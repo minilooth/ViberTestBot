@@ -14,8 +14,12 @@ public class InitializationService {
     @Autowired
     private ViberService viberService;
 
+    // @Autowired
+    // private CarService carService;
+
     @SneakyThrows
     public void initalize() {
+        // carService.parseCars();
         viberService.setWeebhook();
         asynchronusService.executeAsynchronously();
     }

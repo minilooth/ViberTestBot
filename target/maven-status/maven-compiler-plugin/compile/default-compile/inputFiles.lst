@@ -28,6 +28,8 @@ D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\Mess
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\callbacks\UnsubscribedCallback.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\requests\message\SendStickerMessageRequest.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\enums\Role.java
+D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\Car.java
+D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\async\AsynchronusService.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\TestbotApplication.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\enums\button\BackgroundMediaScaleType.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\requests\message\SendUrlMessageRequest.java
@@ -61,12 +63,13 @@ D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\validation\
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\enums\button\BackgroundMediaType.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\MessageService.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\Keyboard.java
-D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\AsynchronusService.java
+D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\repositories\CarRepository.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\KeyboardService.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\Contact.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\requests\message\SendVideoMessageRequest.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\enums\InputFieldState.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\bot\KeyboardSource.java
+D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\CarService.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\callbacks\SubscribedCallback.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\callbacks\SeenCallback.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\LocaleMessageService.java

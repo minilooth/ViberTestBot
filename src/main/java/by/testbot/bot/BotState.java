@@ -751,7 +751,9 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getViberService().getKeyboardService().sendAskModelMessageKeyboard(botContext.getUser().getViberId());
+            ClientMessage clientMessage = botContext.getViberService().getClientMessageService().getLastByViberId(botContext.getUser().getViberId());
+
+            botContext.getViberService().getKeyboardService().sendAskModelMessageKeyboard(botContext.getUser().getViberId(), clientMessage.getBrand());
         }
 
         @Override
@@ -936,7 +938,13 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getViberService().getKeyboardService().sendDontWorryAboutPricesAndIsLinkOpensMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName());
+            ClientMessage brandMessage = botContext.getViberService().getClientMessageService().getBrandMessageByViberId(botContext.getUser().getViberId()); 
+            ClientMessage modelMessage = botContext.getViberService().getClientMessageService().getModelMessageByViberId(botContext.getUser().getViberId());
+            ClientMessage yearMessage = botContext.getViberService().getClientMessageService().getYearsMessageByViberId(botContext.getUser().getViberId());
+
+            String link = botContext.getViberService().getCarService().generateLink(brandMessage.getBrand(), modelMessage.getModel(), yearMessage.getYearOfIssueFrom(), yearMessage.getYearOfIssueTo());
+
+            botContext.getViberService().getKeyboardService().sendDontWorryAboutPricesAndIsLinkOpensMessageKeyboard(botContext.getUser().getViberId(), botContext.getUser().getTreatName(), link);
         }
 
         @Override

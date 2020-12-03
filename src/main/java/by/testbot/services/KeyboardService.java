@@ -18,6 +18,9 @@ public class KeyboardService {
     @Autowired
     private KeyboardSource keyboardSource;
 
+    @Autowired
+    private CarService carService;
+
     //region AdminMessageKeyboards
 
     public void sendAdminMainMenuKeyboard(String viberId) {
@@ -206,13 +209,13 @@ public class KeyboardService {
         viberService.sendTextMessage(sendTextMessageRequest); 
     }
 
-    public void sendDontWorryAboutPricesAndIsLinkOpensMessageKeyboard(String viberId, String name) {
+    public void sendDontWorryAboutPricesAndIsLinkOpensMessageKeyboard(String viberId, String name, String link) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.dontWorryAboutPricesAndIsLinkOpens", name));
+        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.dontWorryAboutPricesAndIsLinkOpens", name) + "\n" + link);
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setKeyboard(keyboardSource.getYesNoKeyboard());
         sendTextMessageRequest.setUserId(viberId);
@@ -283,7 +286,7 @@ public class KeyboardService {
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText(localeMessageService.getMessage("message.userDialog.askBrand"));
+        sendTextMessageRequest.setText(localeMessageService.getMessage("message.userDialog.askBrand") + carService.generateBrandString());
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setKeyboard(keyboardSource.getSkipStepKeyboard());
         sendTextMessageRequest.setUserId(viberId);
@@ -291,13 +294,13 @@ public class KeyboardService {
         viberService.sendTextMessage(sendTextMessageRequest); 
     }
 
-    public void sendAskModelMessageKeyboard(String viberId) {
+    public void sendAskModelMessageKeyboard(String viberId, String brand) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText(localeMessageService.getMessage("message.userDialog.askModel"));
+        sendTextMessageRequest.setText(localeMessageService.getMessage("message.userDialog.askModel") + carService.generateModelsString(brand));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setKeyboard(keyboardSource.getSkipStepKeyboard());
         sendTextMessageRequest.setUserId(viberId);

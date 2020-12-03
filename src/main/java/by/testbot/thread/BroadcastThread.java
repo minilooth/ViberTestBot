@@ -2,6 +2,8 @@ package by.testbot.thread;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -47,9 +49,9 @@ public class BroadcastThread implements Runnable {
         logger.info("Postpone message service started");
         while(true) {
             LocalDateTime localDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-            
-            List<PostponeMessage> postponeMessages = postponeMessageService.getAll();
 
+            List<PostponeMessage> postponeMessages = postponeMessageService.getAll(); 
+            
             for(PostponeMessage postponeMessage : postponeMessages) {
                 LocalDateTime messageDateTime = postponeMessage.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
