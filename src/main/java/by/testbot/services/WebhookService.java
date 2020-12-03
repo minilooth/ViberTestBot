@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import by.testbot.models.ViberUpdate;
+import by.testbot.models.viber.ViberUpdate;
 import by.testbot.models.enums.EventType;
 import by.testbot.payload.callbacks.ConversationStartedCallback;
 import by.testbot.payload.callbacks.DeliveredCallback;

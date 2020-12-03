@@ -27,12 +27,6 @@ public class ClientMessage {
     @Column(name = "ViberId", nullable = false)
     private String viberId;
 
-    @Column(name = "Text")
-    private String text;
-
-    @Column(name = "Timestamp", nullable = false)
-    private Long timestamp;
-
     @Column(name = "Brand")
     private String brand;
 
@@ -63,6 +57,9 @@ public class ClientMessage {
     @Column(name = "Step6")
     private String step6;
 
-    @Column(name = "Step7")
-    private String step7;
+    // @Column(name = "Step7")
+    // private String step7;
+
+    @Column(name = "DialogIsOver", nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean dialogIsOver;
 }

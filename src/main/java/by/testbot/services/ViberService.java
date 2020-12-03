@@ -1,9 +1,5 @@
 package by.testbot.services;
 
-import java.util.List;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +8,9 @@ import org.springframework.stereotype.Service;
 
 import by.testbot.bot.BotContext;
 import by.testbot.bot.BotState;
-import by.testbot.models.Message;
+import by.testbot.models.viber.Message;
 import by.testbot.models.User;
-import by.testbot.models.ViberUpdate;
+import by.testbot.models.viber.ViberUpdate;
 import by.testbot.models.enums.Role;
 import by.testbot.models.enums.Status;
 import by.testbot.payload.requests.message.*;
@@ -24,7 +20,6 @@ import by.testbot.payload.responses.SetWebhookResponse;
 import by.testbot.proxy.ViberProxy;
 import by.testbot.utils.Utils;
 import lombok.Getter;
-import lombok.SneakyThrows;
 
 @Getter
 @Service
@@ -162,6 +157,30 @@ public class ViberService {
         }
         else {
             logger.warn("Picture message not sended: " + sendMessageResponse.getStatus() + ". Error: " + sendMessageResponse.getStatusMessage());
+        }
+    }
+
+    public void broadcastPictureMessage(SendPictureMessageRequest sendPictureMessageRequest) {
+        if (sendPictureMessageRequest == null) {
+            throw new IllegalArgumentException("Send text message request is null.");
+        }
+        if (sendPictureMessageRequest.getSender() == null || sendPictureMessageRequest.getSender().getName() == null || sendPictureMessageRequest.getSender().getName().isEmpty() || sendPictureMessageRequest.getSender().getName().isBlank()) {
+            throw new IllegalArgumentException("Sender name is null or empty.");
+        }
+        if (sendPictureMessageRequest.getText() == null || sendPictureMessageRequest.getText().isEmpty() || sendPictureMessageRequest.getText().isBlank()) {
+            throw new IllegalArgumentException("Text is null or empty.");
+        }
+        if (sendPictureMessageRequest.getMediaUrl() == null || sendPictureMessageRequest.getMediaUrl().isEmpty() || sendPictureMessageRequest.getMediaUrl().isBlank()) {
+            throw new IllegalArgumentException("Picture url is null of empty.");
+        }
+
+        SendMessageResponse sendMessageResponse = viberProxy.broadcasePictureMessage(authenticationToken, sendPictureMessageRequest);
+
+        if (sendMessageResponse.getStatus() == Status.OK) {
+            logger.info("Broadcast text message sended.");
+        }
+        else {
+            logger.warn("Broadcast text message not sended: " + sendMessageResponse.getStatus() + ". Error: " + sendMessageResponse.getStatusMessage());
         }
     }
 

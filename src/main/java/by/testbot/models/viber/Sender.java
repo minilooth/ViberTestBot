@@ -1,4 +1,4 @@
-package by.testbot.models;
+package by.testbot.models.viber;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,13 +8,22 @@ import lombok.Data;
 
 @Data
 @JsonInclude(Include.NON_NULL)
-public class Contact {
-    @JsonProperty(value = "name", required = true)
-    private String name;
+public class Sender {
+    @JsonProperty("id")
+    private String id;
 
-    @JsonProperty(value = "phone_number", required = true)
-    private String phoneNumber;
+    @JsonProperty("name")
+    private String name;
 
     @JsonProperty("avatar")
     private String avatarUrl;
+
+    @JsonProperty("country")
+    private String country;
+
+    @JsonProperty("language")
+    private String language;
+
+    @JsonProperty("api_version")
+    private Integer apiVersion;
 }

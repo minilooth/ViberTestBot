@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import by.testbot.bot.KeyboardSource;
-import by.testbot.models.Sender;
+import by.testbot.models.viber.Sender;
 import by.testbot.payload.requests.message.SendTextMessageRequest;
 
 @Service
@@ -280,35 +280,7 @@ public class KeyboardService {
         viberService.sendTextMessage(sendTextMessageRequest);
     }
 
-    public void sendAskBrandMessageKeyboard(String viberId) {
-        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
-        Sender sender = new Sender();
-
-        sender.setName(viberService.getSenderName());
-
-        sendTextMessageRequest.setText(localeMessageService.getMessage("message.userDialog.askBrand") + carService.generateBrandString());
-        sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setKeyboard(keyboardSource.getSkipStepKeyboard());
-        sendTextMessageRequest.setUserId(viberId);
-    
-        viberService.sendTextMessage(sendTextMessageRequest); 
-    }
-
-    public void sendAskModelMessageKeyboard(String viberId, String brand) {
-        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
-        Sender sender = new Sender();
-
-        sender.setName(viberService.getSenderName());
-
-        sendTextMessageRequest.setText(localeMessageService.getMessage("message.userDialog.askModel") + carService.generateModelsString(brand));
-        sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setKeyboard(keyboardSource.getSkipStepKeyboard());
-        sendTextMessageRequest.setUserId(viberId);
-    
-        viberService.sendTextMessage(sendTextMessageRequest); 
-    }
-
-    public void sendAskYearOfIssueMessageKeyboard(String viberId) {
+    public void sendAskYearOfIssueMessage(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
@@ -316,7 +288,6 @@ public class KeyboardService {
 
         sendTextMessageRequest.setText(localeMessageService.getMessage("message.userDialog.askYearOfIssue"));
         sendTextMessageRequest.setSender(sender);
-        sendTextMessageRequest.setKeyboard(keyboardSource.getSkipStepKeyboard());
         sendTextMessageRequest.setUserId(viberId);
     
         viberService.sendTextMessage(sendTextMessageRequest); 

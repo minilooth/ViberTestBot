@@ -1,6 +1,7 @@
 package by.testbot.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import by.testbot.models.User;
+import by.testbot.models.enums.Role;
 import by.testbot.repositories.UserRepository;
 
 @Service
@@ -43,5 +45,9 @@ public class UserService {
     @Transactional
     public User getByViberId(String viberId) {
         return userRepository.findAll().stream().filter(u -> u.getViberId().equals(viberId)).findAny().orElse(null);
+    }
+
+    public List<User> getAllClients() {
+        return userRepository.findAll().stream().filter(u -> u.getRole() == Role.USER).collect(Collectors.toList());
     }
 }

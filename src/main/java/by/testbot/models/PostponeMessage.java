@@ -23,8 +23,8 @@ public class PostponeMessage {
     @Column(name = "Text", nullable = false, columnDefinition = "LONGTEXT")
     private String text;
 
-    @Column(name = "PhotoFilename", columnDefinition = "LONGTEXT")
-    private String photoFilename;
+    @Column(name = "PictureUrl", columnDefinition = "LONGTEXT")
+    private String pictureUrl;
 
     @Column(name = "Date")
     private Date date;

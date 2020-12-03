@@ -2,8 +2,8 @@ package by.testbot.payload.callbacks;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import by.testbot.models.Message;
-import by.testbot.models.Sender;
+import by.testbot.models.viber.Message;
+import by.testbot.models.viber.Sender;
 import by.testbot.models.enums.EventType;
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package by.testbot.models;
+package by.testbot.models.viber;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -42,6 +42,9 @@ public class Message {
 
     @JsonProperty("thumbnail")
     private String thumbnailUrl;
+
+    @JsonProperty("size")
+    private Long size;
 
     public Boolean hasContact() {
         return messageType == MessageType.CONTACT;

@@ -1,4 +1,4 @@
-package by.testbot.models;
+package by.testbot.models.viber;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import by.testbot.models.enums.InputFieldState;
 import by.testbot.models.enums.MessageType;
+import by.testbot.models.viber.Button;
 import lombok.Data;
 
 @Data

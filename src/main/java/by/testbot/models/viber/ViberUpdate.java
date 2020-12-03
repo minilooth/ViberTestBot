@@ -1,4 +1,4 @@
-package by.testbot.models;
+package by.testbot.models.viber;
 
 import java.util.Objects;
 

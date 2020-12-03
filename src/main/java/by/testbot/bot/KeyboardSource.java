@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import by.testbot.models.Button;
-import by.testbot.models.Keyboard;
+import by.testbot.models.viber.Button;
+import by.testbot.models.viber.Keyboard;
 import by.testbot.models.enums.button.ActionType;
 import by.testbot.services.LocaleMessageService;
 

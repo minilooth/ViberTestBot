@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -45,25 +46,42 @@ public class BroadcastThread implements Runnable {
         }
     }
 
+    @Transactional
     private void idleMessages() {
         logger.info("Postpone message service started");
         while(true) {
+            TransactionSynchronizationManager.setActualTransactionActive(true);
+
             LocalDateTime localDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
-            List<PostponeMessage> postponeMessages = postponeMessageService.getAll(); 
+            List<PostponeMessage> postponeMessages = null;
+            
+            synchronized(this.postponeMessageService) {
+                postponeMessages = postponeMessageService.getAll(); 
+            }
             
             for(PostponeMessage postponeMessage : postponeMessages) {
                 LocalDateTime messageDateTime = postponeMessage.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-                if (localDateTime.isEqual(messageDateTime)) {
+                if (localDateTime.isEqual(messageDateTime) && postponeMessage.getIsLast() != null) {
                     List<User> users = userService.getAll();
                     List<String> broadcastList = new ArrayList<>();
 
                     for(User user : users) {
                         broadcastList.add(user.getViberId());
+                        if (broadcastList.size() == 300 || broadcastList.size() == users.size()) {
+                            synchronized(this.messageService) {
+                                if (postponeMessage.getPictureUrl() != null) {
+                                    messageService.sendPictureMessageToAll(broadcastList, postponeMessage.getText(), postponeMessage.getPictureUrl());
+                                }
+                                else {
+                                    messageService.sendTextMessageToAll(broadcastList, postponeMessage.getText());
+                                }
+                            }
+                            broadcastList.clear();
+                        }
                     }
 
-                    messageService.sendTextMessageToAll(broadcastList, postponeMessage.getText());
                 }
             }
             try {

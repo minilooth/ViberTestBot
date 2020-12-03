@@ -2,8 +2,8 @@ package by.testbot.payload.requests.message;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import by.testbot.models.RichMediaKeyboard;
-import by.testbot.models.Sender;
+import by.testbot.models.viber.RichMediaKeyboard;
+import by.testbot.models.viber.Sender;
 import by.testbot.models.enums.MessageType;
 import lombok.Data;
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import by.testbot.models.Failed;
+import by.testbot.models.viber.Failed;
 import by.testbot.models.enums.Status;
 import lombok.Data;
 

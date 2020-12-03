@@ -1,6 +1,6 @@
 package by.testbot.bot;
 
-import by.testbot.models.Message;
+import by.testbot.models.viber.Message;
 import by.testbot.models.User;
 import by.testbot.services.ViberService;
 import lombok.Getter;

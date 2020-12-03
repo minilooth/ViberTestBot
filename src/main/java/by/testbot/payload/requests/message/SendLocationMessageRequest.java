@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import by.testbot.models.Keyboard;
-import by.testbot.models.Location;
-import by.testbot.models.Sender;
+import by.testbot.models.viber.Keyboard;
+import by.testbot.models.viber.Location;
+import by.testbot.models.viber.Sender;
 import by.testbot.models.enums.MessageType;
 import lombok.Data;
 

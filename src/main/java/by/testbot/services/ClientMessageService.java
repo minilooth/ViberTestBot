@@ -40,48 +40,53 @@ public class ClientMessageService {
 
     @Transactional
     public List<ClientMessage> getAllByViberId(String viberId) {
-        return clientMessageRepository.getByViberId(viberId);
+        return getAll().stream().filter(m -> m.getViberId().equals(viberId)).collect(Collectors.toList());
     }
 
     @Transactional
-    public ClientMessage getLastByViberId(String viberId) {
-        List<ClientMessage> messages = getAllByViberId(viberId).stream().sorted(Comparator.comparing(ClientMessage::getTimestamp)).collect(Collectors.toList());
-
-        Collections.reverse(messages);
-
-        return messages.get(0);
+    public ClientMessage getCurrentDialogByViberId(String viberId) {
+        return getAllByViberId(viberId).stream().filter(m -> m.getDialogIsOver() == false).findFirst().orElse(null);
     }
 
-    @Transactional
-    public ClientMessage getBrandMessageByViberId(String viberId) {
-        List<ClientMessage> messages = getAllByViberId(viberId).stream().sorted(Comparator.comparing(ClientMessage::getTimestamp)).collect(Collectors.toList());
+    // @Transactional
+    // public ClientMessage getLastByViberId(String viberId) {
+    //     List<ClientMessage> messages = getAllByViberId(viberId).stream().sorted(Comparator.comparing(ClientMessage::getTimestamp)).collect(Collectors.toList());
+
+    //     Collections.reverse(messages);
+
+    //     return messages.get(0);
+    // }
+
+    // @Transactional
+    // public ClientMessage getBrandMessageByViberId(String viberId) {
+    //     List<ClientMessage> messages = getAllByViberId(viberId).stream().sorted(Comparator.comparing(ClientMessage::getTimestamp)).collect(Collectors.toList());
         
-        Collections.reverse(messages);
+    //     Collections.reverse(messages);
 
-        messages = messages.stream().filter(m -> m.getBrand() != null).collect(Collectors.toList());
+    //     messages = messages.stream().filter(m -> m.getBrand() != null).collect(Collectors.toList());
 
-        return messages.get(0);
-    }
+    //     return messages.get(0);
+    // }
 
-    @Transactional
-    public ClientMessage getModelMessageByViberId(String viberId) {
-        List<ClientMessage> messages = getAllByViberId(viberId).stream().sorted(Comparator.comparing(ClientMessage::getTimestamp)).collect(Collectors.toList());
+    // @Transactional
+    // public ClientMessage getModelMessageByViberId(String viberId) {
+    //     List<ClientMessage> messages = getAllByViberId(viberId).stream().sorted(Comparator.comparing(ClientMessage::getTimestamp)).collect(Collectors.toList());
         
-        Collections.reverse(messages);
+    //     Collections.reverse(messages);
 
-        messages = messages.stream().filter(m -> m.getModel() != null).collect(Collectors.toList());
+    //     messages = messages.stream().filter(m -> m.getModel() != null).collect(Collectors.toList());
 
-        return messages.get(0);
-    }
+    //     return messages.get(0);
+    // }
 
-    @Transactional
-    public ClientMessage getYearsMessageByViberId(String viberId) {
-        List<ClientMessage> messages = getAllByViberId(viberId).stream().sorted(Comparator.comparing(ClientMessage::getTimestamp)).collect(Collectors.toList());
+    // @Transactional
+    // public ClientMessage getYearsMessageByViberId(String viberId) {
+    //     List<ClientMessage> messages = getAllByViberId(viberId).stream().sorted(Comparator.comparing(ClientMessage::getTimestamp)).collect(Collectors.toList());
         
-        Collections.reverse(messages);
+    //     Collections.reverse(messages);
 
-        messages = messages.stream().filter(m -> m.getYearOfIssueFrom() != null && m.getYearOfIssueTo() != null).collect(Collectors.toList());
+    //     messages = messages.stream().filter(m -> m.getYearOfIssueFrom() != null && m.getYearOfIssueTo() != null).collect(Collectors.toList());
 
-        return messages.get(0);
-    }
+    //     return messages.get(0);
+    // }
 }
