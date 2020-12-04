@@ -1,4 +1,4 @@
-package by.testbot.services;
+package by.testbot.services.other;
 
 import java.util.Locale;
 

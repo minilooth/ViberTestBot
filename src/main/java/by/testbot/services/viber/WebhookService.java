@@ -1,4 +1,4 @@
-package by.testbot.services;
+package by.testbot.services.viber;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

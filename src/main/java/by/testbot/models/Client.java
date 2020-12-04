@@ -1,29 +1,41 @@
-// package by.testbot.models;
+package by.testbot.models;
 
-// import javax.persistence.Column;
-// import javax.persistence.Entity;
-// import javax.persistence.GeneratedValue;
-// import javax.persistence.GenerationType;
-// import javax.persistence.Id;
-// import javax.persistence.Table;
+import java.util.Set;
 
-// import lombok.Data;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-// @Data
-// @Entity
-// @Table(name = "client")
-// public class Client {
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     @Column(name = "Id", nullable = false)
-//     private Long id;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-//     @Column(name = "UserId", nullable = false)
-//     private Long userId;
+@Data
+@Entity
+@ToString(exclude = {"user", "dialogues"})
+@EqualsAndHashCode(exclude = { "user", "dialogues" })
+@Table(name = "client")
+public class Client {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id", nullable = false)
+    private Long id;
 
-//     @Column(name = "Name")
-//     private String name;
+    @Column(name = "Name")
+    private String name;
 
-//     @Column(name = "PhoneNumber")
-//     private String phoneNumber;
-// }
+    @Column(name = "PhoneNumber")
+    private String phoneNumber;
+
+    @OneToOne(mappedBy = "client", cascade = CascadeType.ALL)
+    private User user;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.REMOVE)
+    private Set<Dialogue> dialogues;
+}

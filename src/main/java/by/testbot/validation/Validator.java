@@ -1,7 +1,6 @@
 package by.testbot.validation;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class Validator {
     public static ValidationResult validateDate(String date) {

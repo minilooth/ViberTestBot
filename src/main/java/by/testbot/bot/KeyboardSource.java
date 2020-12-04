@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import by.testbot.models.viber.Button;
 import by.testbot.models.viber.Keyboard;
 import by.testbot.models.enums.button.ActionType;
-import by.testbot.services.LocaleMessageService;
+import by.testbot.services.other.LocaleMessageService;
 
 public class KeyboardSource {
     @Autowired

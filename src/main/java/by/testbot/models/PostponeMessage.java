@@ -29,7 +29,7 @@ public class PostponeMessage {
     @Column(name = "Date")
     private Date date;
 
-    @Column(name = "viberId", nullable = false)
+    @Column(name = "ViberId", nullable = false)
     private String viberId;
 
     @Column(name = "IsLast", nullable = false, columnDefinition = "TINYINT(1)")

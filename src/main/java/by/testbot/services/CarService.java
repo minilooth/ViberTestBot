@@ -55,37 +55,13 @@ public class CarService {
     }
 
     @Transactional
-    public List<Car> getByBrand(String brand) {
-        return getAll().stream().filter(c -> c.getBrand().equals(brand)).collect(Collectors.toList());
-    }
-
     public List<String> getBrands() {
-        List<Car> cars = getAll();
-        List<String> brands = new ArrayList<>();
-
-        for(Car car : cars) {
-            if (!brands.contains(car.getBrand())) {
-                brands.add(car.getBrand());
-            }
-        }
-        
-        return brands;
+        return carRepository.findDistinctBrand();
     }
 
+    @Transactional
     public List<String> getModelsByBrand(String brand) {
-        List<Car> cars = getByBrand(brand);
-
-        if (cars.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        List<String> models = new ArrayList<>();
-
-        for(Car car : cars) {
-            models.add(car.getModel());
-        }
-
-        return models;
+        return carRepository.findModelByBrand(brand);
     }
 
     public String generateBrandString() {
@@ -103,6 +79,8 @@ public class CarService {
         List<String> models = getModelsByBrand(brand);
         StringBuilder stringBuilder = new StringBuilder();
 
+        System.out.println(models);
+
         for(String model : models) {
             stringBuilder.append("\n").append(model);
         }
@@ -113,8 +91,16 @@ public class CarService {
     public String generateLink(String brand, String model, Integer yearFrom, Integer yearTo) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(CAR_PAGE).append(brand.replace(' ', '-').toLowerCase()).append("/")
-        .append(model.replace(' ', '-').toLowerCase()).append("/f/").append("from-year=" + yearFrom).append("/to-year=" + yearTo).append("/");
+        stringBuilder.append(CAR_PAGE)
+                     .append(brand.replace(' ', '-').toLowerCase())
+                     .append("/")
+                     .append(model.replace(' ', '-').toLowerCase())
+                     .append("/f/")
+                     .append("from-year=")
+                     .append(yearFrom)
+                     .append("/to-year=")
+                     .append(yearTo)
+                     .append("/");
 
         return stringBuilder.toString();
     }

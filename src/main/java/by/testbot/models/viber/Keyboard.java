@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import by.testbot.models.enums.InputFieldState;
 import by.testbot.models.enums.MessageType;
-import by.testbot.models.viber.Button;
 import lombok.Data;
 
 @Data

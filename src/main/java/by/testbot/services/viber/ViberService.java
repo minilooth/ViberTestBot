@@ -1,4 +1,6 @@
-package by.testbot.services;
+package by.testbot.services.viber;
+
+import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Service;
 import by.testbot.bot.BotContext;
 import by.testbot.bot.BotState;
 import by.testbot.models.viber.Message;
+import by.testbot.models.Client;
+import by.testbot.models.Manager;
 import by.testbot.models.User;
 import by.testbot.models.viber.ViberUpdate;
 import by.testbot.models.enums.Role;
@@ -18,6 +22,11 @@ import by.testbot.payload.requests.SetWebhookRequest;
 import by.testbot.payload.responses.SendMessageResponse;
 import by.testbot.payload.responses.SetWebhookResponse;
 import by.testbot.proxy.ViberProxy;
+import by.testbot.services.CarService;
+import by.testbot.services.DialogueService;
+import by.testbot.services.MessageService;
+import by.testbot.services.PostponeMessageService;
+import by.testbot.services.UserService;
 import by.testbot.utils.Utils;
 import lombok.Getter;
 
@@ -36,10 +45,7 @@ public class ViberService {
     private MessageService messageService;
 
     @Autowired
-    private KeyboardService keyboardService;
-
-    @Autowired
-    private ClientMessageService clientMessageService;
+    private DialogueService dialogueService;
 
     @Autowired
     private PostponeMessageService postponeMessageService;
@@ -58,6 +64,13 @@ public class ViberService {
 
     @Value("${testbot.codeWord}")
     private String codeWord;
+
+    private String fileEndpoint;
+
+    @PostConstruct
+    private void postConstruct() {
+        this.fileEndpoint = webhookUrl + "/file/";
+    }
 
     public void setWeebhook() {
         if (authenticationToken == null || authenticationToken.isEmpty() || authenticationToken.isBlank()) {
@@ -410,13 +423,20 @@ public class ViberService {
         if (user == null) {
             user = new User();
 
+            Client client = null;
+            Manager manager = null;
+
             if (message.getText().equals(this.codeWord)) {
                 user.setRole(Role.MANAGER);
                 botState = BotState.getAdminInitialState();
+                manager = new Manager();
+                manager.setUser(user);
             } 
             else {
                 botState = BotState.getUserInitialState();
                 user.setRole(Role.USER);
+                client = new Client();
+                client.setUser(user);
             }
 
             user.setViberId(viberId);
@@ -425,6 +445,14 @@ public class ViberService {
             user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
             user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
             user.setName(viberUpdate.getMessageCallback().getSender().getName());
+            
+            if (client != null) {
+                user.setClient(client);
+            }
+
+            if (manager != null) {
+                user.setManager(manager);
+            }
 
             userService.save(user);
 
@@ -463,13 +491,20 @@ public class ViberService {
         if (user == null) {
             user = new User();
 
+            Client client = null;
+            Manager manager = null;
+
             if (message.getText().equals(this.codeWord)) {
                 user.setRole(Role.MANAGER);
                 botState = BotState.getAdminInitialState();
+                manager = new Manager();
+                manager.setUser(user);
             } 
             else {
                 botState = BotState.getUserInitialState();
                 user.setRole(Role.USER);
+                client = new Client();
+                client.setUser(user);
             }
 
             user.setViberId(viberId);
@@ -478,7 +513,14 @@ public class ViberService {
             user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
             user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
             user.setName(viberUpdate.getMessageCallback().getSender().getName());
+            
+            if (client != null) {
+                user.setClient(client);
+            }
 
+            if (manager != null) {
+                user.setManager(manager);
+            }
             userService.save(user);
 
             botContext = BotContext.of(user, message, this);
@@ -515,14 +557,21 @@ public class ViberService {
 
         if (user == null) {
             user = new User();
+            
+            Manager manager = null;
+            Client client = null;
 
             if (message.getText().equals(this.codeWord)) {
                 user.setRole(Role.MANAGER);
                 botState = BotState.getAdminInitialState();
+                manager = new Manager();
+                manager.setUser(user);
             } 
             else {
                 botState = BotState.getUserInitialState();
                 user.setRole(Role.USER);
+                client = new Client();
+                client.setUser(user);
             }
 
             user.setViberId(viberId);
@@ -531,6 +580,14 @@ public class ViberService {
             user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
             user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
             user.setName(viberUpdate.getMessageCallback().getSender().getName());
+
+            if (client != null) {
+                user.setClient(client);
+            }
+
+            if (manager != null) {
+                user.setManager(manager);
+            }
 
             userService.save(user);
 
@@ -568,13 +625,20 @@ public class ViberService {
         if (user == null) {
             user = new User();
 
+            Manager manager = null;
+            Client client = null;
+
             if (viberId.equals("gbcD9ezHUeQkbrYUwyU3Bw==")) {
                 botState = BotState.getAdminInitialState();
                 user.setRole(Role.ADMIN);
+                manager = new Manager();
+                manager.setUser(user);
             }
             else {
                 botState = BotState.getUserInitialState();
                 user.setRole(Role.USER);
+                client = new Client();
+                client.setUser(user);
             }
 
             user.setViberId(viberId);
@@ -583,6 +647,14 @@ public class ViberService {
             user.setCountry(viberUpdate.getSubscribedCallback().getUser().getCountry());
             user.setLanguage(viberUpdate.getSubscribedCallback().getUser().getLanguage());
             user.setName(viberUpdate.getSubscribedCallback().getUser().getName());
+
+            if (client != null) {
+                user.setClient(client);
+            }
+
+            if (manager != null) {
+                user.setManager(manager);
+            }
 
             userService.save(user);
 

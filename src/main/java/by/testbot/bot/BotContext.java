@@ -2,7 +2,7 @@ package by.testbot.bot;
 
 import by.testbot.models.viber.Message;
 import by.testbot.models.User;
-import by.testbot.services.ViberService;
+import by.testbot.services.viber.ViberService;
 import lombok.Getter;
 
 @Getter

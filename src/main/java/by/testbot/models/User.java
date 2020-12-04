@@ -1,5 +1,6 @@
 package by.testbot.models;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -7,6 +8,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -18,8 +22,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import by.testbot.bot.BotState;
 import by.testbot.models.enums.Role;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
+@ToString(exclude = { "client", "manager" })
+@EqualsAndHashCode(exclude = { "client", "manager" })
 @Entity
 @Table(name = "user")
 @JsonInclude(Include.NON_NULL)
@@ -37,10 +45,6 @@ public class User {
     @JsonProperty("name")
     @Column(name = "Name", nullable = false)
     private String name;
-
-    @JsonIgnore
-    @Column(name = "TreatName")
-    private String treatName;
 
     @JsonProperty("avatar")
     @Column(name = "Avatar")
@@ -80,12 +84,22 @@ public class User {
     private BotState botState;
 
     @JsonIgnore
-    @Column(name = "MobilePhone")
-    private String mobilePhone;
-
-    @JsonIgnore
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "Role", nullable = false)
     private Role role;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable( name = "user_client",
+                joinColumns = {@JoinColumn(name = "UserId", referencedColumnName = "Id")},
+                inverseJoinColumns = {@JoinColumn(name = "ClientId", referencedColumnName = "Id")})
+    @JsonIgnore
+    private Client client;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable( name = "user_manager",
+                joinColumns = {@JoinColumn(name = "UserId", referencedColumnName = "Id")},
+                inverseJoinColumns = {@JoinColumn(name = "ManagerId", referencedColumnName = "Id")})
+    @JsonIgnore
+    private Manager manager;
 }
 

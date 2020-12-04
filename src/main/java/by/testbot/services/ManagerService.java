@@ -20,11 +20,6 @@ public class ManagerService {
     }
 
     @Transactional
-    public void update(Manager manager) {
-        managerRepository.save(manager);
-    }
-
-    @Transactional
     public void delete(Manager manager) {
         managerRepository.delete(manager);
     }
@@ -32,10 +27,5 @@ public class ManagerService {
     @Transactional
     public List<Manager> getAll() {
         return managerRepository.findAll();
-    }
-
-    @Transactional
-    public Manager getByViberId(String viberId) {
-        return managerRepository.findByViberId(viberId);
     }
 }
