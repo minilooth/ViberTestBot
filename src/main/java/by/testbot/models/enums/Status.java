@@ -1,5 +1,6 @@
 package by.testbot.models.enums;
 
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
@@ -25,4 +26,7 @@ public enum Status {
     NO_PUBLIC_CHAT,
     CANNOT_SEND_BROADCAST,
     BROADCAST_NOT_ALLOWED,
+
+    @JsonEnumDefaultValue
+    OTHER;
 }

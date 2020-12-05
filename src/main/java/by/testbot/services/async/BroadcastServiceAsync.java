@@ -57,32 +57,31 @@ public class BroadcastServiceAsync {
         logger.info("Postpone message service started");
         while(true) {
             TransactionSynchronizationManager.setActualTransactionActive(true);
-
+            
             LocalDateTime localDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
             List<PostponeMessage> postponeMessages = postponeMessageService.getAll(); 
-            
+
             for(PostponeMessage postponeMessage : postponeMessages) {
                 LocalDateTime messageDateTime = postponeMessage.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
                 if (localDateTime.isEqual(messageDateTime) && postponeMessage.getIsLast() != null) {
                     List<User> users = userService.getAll();
-                    
+
                     List<String> broadcastList = new ArrayList<>();
 
                     for(User user : users) {
                         broadcastList.add(user.getViberId());
                         if (broadcastList.size() == 300 || broadcastList.size() == users.size()) {
-                                if (postponeMessage.getPictureUrl() != null) {
-                                    messageService.sendPictureMessageToAll(broadcastList, postponeMessage.getText(), postponeMessage.getPictureUrl());
-                                }
-                                else {
-                                    messageService.sendTextMessageToAll(broadcastList, postponeMessage.getText());
-                                }
+                            if (postponeMessage.getPictureUrl() != null) {
+                                messageService.sendPictureMessageToAll(broadcastList, postponeMessage.getText(), postponeMessage.getPictureUrl());
+                            }
+                            else {
+                                messageService.sendTextMessageToAll(broadcastList, postponeMessage.getText());
+                            }
                             broadcastList.clear();
                         }
                     }
-
                 }
             }
             try {

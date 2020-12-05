@@ -15,6 +15,7 @@ public class ThreadConfiguration {
         threadPoolTaskExecutor.setCorePoolSize(4);
         threadPoolTaskExecutor.setMaxPoolSize(4);
         threadPoolTaskExecutor.initialize();
+        threadPoolTaskExecutor.setAwaitTerminationSeconds(5);
         
         return threadPoolTaskExecutor;
     }
