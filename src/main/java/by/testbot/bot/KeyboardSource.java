@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import by.testbot.models.viber.Button;
+import by.testbot.models.viber.Frame;
 import by.testbot.models.viber.Keyboard;
 import by.testbot.models.enums.button.ActionType;
 import by.testbot.services.other.LocaleMessageService;
@@ -20,8 +21,14 @@ public class KeyboardSource {
     public Keyboard getAdminMainMenuKeyboard() {
         Keyboard keyboard = new Keyboard();
         List<Button> buttons = new ArrayList<>();
+        Frame frame = new Frame();
+
+        frame.setCornerRadius(10);
+        frame.setBorderWidth(1);
+        frame.setBorderColor("#2db9b9");
 
         Button postponeMessageButton = new Button();
+        postponeMessageButton.setFrame(frame);
         postponeMessageButton.setText(localeMessageService.getMessage("button.mainMenu.postponeMessage"));
         postponeMessageButton.setActionBody(localeMessageService.getMessage("button.mainMenu.postponeMessage"));
         postponeMessageButton.setColumns(3);
@@ -31,6 +38,7 @@ public class KeyboardSource {
         buttons.add(postponeMessageButton);
 
         Button listOfManagersButton = new Button();
+        listOfManagersButton.setFrame(frame);
         listOfManagersButton.setText(localeMessageService.getMessage("button.mainMenu.managers"));
         listOfManagersButton.setActionBody(localeMessageService.getMessage("button.mainMenu.managers"));
         listOfManagersButton.setColumns(3);
@@ -40,6 +48,7 @@ public class KeyboardSource {
         buttons.add(listOfManagersButton);
 
         Button listOfClientsButton = new Button();
+        listOfClientsButton.setFrame(frame);
         listOfClientsButton.setText(localeMessageService.getMessage("button.mainMenu.clients"));
         listOfClientsButton.setActionBody(localeMessageService.getMessage("button.mainMenu.clients"));
         listOfClientsButton.setColumns(3);
@@ -49,6 +58,7 @@ public class KeyboardSource {
         buttons.add(listOfClientsButton);
 
         Button reportButton = new Button();
+        reportButton.setFrame(frame);
         reportButton.setText(localeMessageService.getMessage("button.mainMenu.report"));
         reportButton.setActionBody(localeMessageService.getMessage("button.mainMenu.report"));
         reportButton.setColumns(3);
@@ -58,6 +68,7 @@ public class KeyboardSource {
         buttons.add(reportButton);
 
         Button integrationButton = new Button();
+        integrationButton.setFrame(frame);
         integrationButton.setText(localeMessageService.getMessage("button.mainMenu.integrations"));
         integrationButton.setActionBody(localeMessageService.getMessage("button.mainMenu.integrations"));
         integrationButton.setColumns(3);
@@ -67,6 +78,7 @@ public class KeyboardSource {
         buttons.add(integrationButton);
 
         Button settingsButton = new Button();
+        settingsButton.setFrame(frame);
         settingsButton.setText(localeMessageService.getMessage("button.mainMenu.settings"));
         settingsButton.setActionBody(localeMessageService.getMessage("button.mainMenu.settings"));
         settingsButton.setColumns(3);

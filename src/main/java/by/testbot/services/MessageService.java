@@ -303,6 +303,7 @@ public class MessageService {
         sendTextMessageRequest.setText(localeMessageService.getMessage("keyboardMessage.mainMenu"));
         sendTextMessageRequest.setKeyboard(keyboardSource.getAdminMainMenuKeyboard());
         sendTextMessageRequest.setUserId(viberId);
+        sendTextMessageRequest.setMinApiVersion(6);
         sendTextMessageRequest.setSender(sender);
 
         viberService.sendTextMessage(sendTextMessageRequest);

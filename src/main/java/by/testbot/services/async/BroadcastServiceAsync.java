@@ -52,12 +52,9 @@ public class BroadcastServiceAsync {
     }
 
     @Async
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void idleMessagesAsync() {
         logger.info("Postpone message service started");
         while(true) {
-            TransactionSynchronizationManager.setActualTransactionActive(true);
-            
             LocalDateTime localDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
             List<PostponeMessage> postponeMessages = postponeMessageService.getAll(); 

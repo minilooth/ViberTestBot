@@ -70,4 +70,7 @@ public class Button {
 
     @JsonProperty("TextSize")
     private TextSize textSize;
+
+    @JsonProperty("Frame")
+    private Frame frame;
 }
