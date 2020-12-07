@@ -1,38 +1,38 @@
 package by.testbot.services;
 
-import java.io.IOException;
-import java.util.ArrayList;
+// import java.io.IOException;
+// import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+// import java.util.stream.Collectors;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.IncorrectnessListener;
-import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.javascript.SilentJavaScriptErrorListener;
+// import com.gargoylesoftware.htmlunit.BrowserVersion;
+// import com.gargoylesoftware.htmlunit.IncorrectnessListener;
+// import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
+// import com.gargoylesoftware.htmlunit.WebClient;
+// import com.gargoylesoftware.htmlunit.html.DomElement;
+// import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+// import com.gargoylesoftware.htmlunit.html.HtmlDivision;
+// import com.gargoylesoftware.htmlunit.html.HtmlPage;
+// import com.gargoylesoftware.htmlunit.javascript.SilentJavaScriptErrorListener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import by.testbot.models.Car;
 import by.testbot.repositories.CarRepository;
-import lombok.SneakyThrows;
+// import lombok.SneakyThrows;
 
 @Service
 public class CarService {
-    private final static Logger logger = LoggerFactory.getLogger(CarService.class);
+    // private final static Logger logger = LoggerFactory.getLogger(CarService.class);
+    final static String CAR_PAGE = "https://bidfax.info/";
 
     @Autowired
     private CarRepository carRepository;
 
-    private String CAR_PAGE = "https://bidfax.info/";
 
     @Transactional
     public void save(Car car) {

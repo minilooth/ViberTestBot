@@ -25,10 +25,22 @@ public class FileController {
     public ResponseEntity<ByteArrayResource> getFile(@PathVariable("filename") String filename) {
         FileSystemResource fileSystemResource = fileService.getFile(filename);        
 
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(new MediaType("application", "force-download"));
-        header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "force-download"));
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
-        return new ResponseEntity<>(new ByteArrayResource(fileSystemResource.getInputStream().readAllBytes()), header, HttpStatus.OK);
+        return new ResponseEntity<>(new ByteArrayResource(fileSystemResource.getInputStream().readAllBytes()), headers, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/picture/{filename}", method = RequestMethod.GET)
+    @SneakyThrows
+    public ResponseEntity<ByteArrayResource> getPicture(@PathVariable("filename") String filename) {
+        FileSystemResource fileSystemResource = fileService.getPicture(filename);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "force-download"));
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+        return new ResponseEntity<>(new ByteArrayResource(fileSystemResource.getInputStream().readAllBytes()), headers, HttpStatus.OK);
+    } 
 }

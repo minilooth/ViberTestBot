@@ -12,9 +12,9 @@ import by.testbot.services.other.InitializationService;
 
 @SpringBootApplication
 @EnableFeignClients
-@EnableJpaRepositories
-@EnableTransactionManagement
 @EnableAsync
+@EnableTransactionManagement
+@EnableJpaRepositories
 public class TestbotApplication {
 
 	public static void main(String[] args) {

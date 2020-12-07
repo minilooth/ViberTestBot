@@ -32,7 +32,12 @@ public class PostponeMessageService {
 
     @Transactional
     public List<PostponeMessage> getAll() {
-        return postponeMessageRepository.findAll().stream().filter(m -> !m.getIsLast()).collect(Collectors.toList());
+        return postponeMessageRepository.findAll();
+    }
+
+    @Transactional
+    public List<PostponeMessage> getAllWithoutLast() {
+        return getAll().stream().filter(m -> !m.getIsLast()).collect(Collectors.toList());
     }
 
     @Transactional

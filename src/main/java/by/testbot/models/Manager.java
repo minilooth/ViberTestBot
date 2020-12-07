@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -16,8 +18,8 @@ import lombok.ToString;
 @Data
 @Entity
 @Table(name = "manager")
-@ToString(exclude = { "user" })
-@EqualsAndHashCode(exclude = { "user" })
+@ToString(exclude = { "user", "botMessage" })
+@EqualsAndHashCode(exclude = { "user", "botMessage" })
 public class Manager {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +32,13 @@ public class Manager {
     @Column(name = "Surname")
     private String surname;
 
+    @Column(name = "BotMessageText", columnDefinition = "LONGTEXT")
+    private String botMessageText;
+
     @OneToOne(mappedBy = "manager", cascade = CascadeType.ALL)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "BotMessageId")
+    private BotMessage botMessage;
 }

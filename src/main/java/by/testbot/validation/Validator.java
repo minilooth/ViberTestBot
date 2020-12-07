@@ -23,6 +23,16 @@ public class Validator {
         return new ValidationResult(null, true);
     }
 
+    public static ValidationResult validateId(String id) {
+        if (id == null || id.isEmpty() || id.isBlank()) {
+            return new ValidationResult("Id не может быть пустым", false);
+        }
+        if (!id.matches("^[0-9]+$")) {
+            return new ValidationResult("Id может состоять только из цифр", false);
+        }
+        return new ValidationResult(null, true);
+    }
+
     public static ValidationResult validateYears(String years) {
         if (years == null || years.isEmpty() || years.isBlank()) {
             return new ValidationResult("Дата не может быть пуста", false);

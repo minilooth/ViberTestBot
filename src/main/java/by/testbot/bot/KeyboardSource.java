@@ -363,6 +363,23 @@ public class KeyboardSource {
         return keyboard;
     }
 
+    public Keyboard getBackKeyboard() {
+        Keyboard keyboard = new Keyboard();
+        List<Button> buttons = new ArrayList<>();
+
+        Button backButton = new Button();
+        backButton.setText("Назад");
+        backButton.setActionBody("Назад");
+        backButton.setColumns(6);
+        backButton.setRows(1);
+        backButton.setBackgroundColor("#2db9b9");
+        backButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(backButton);
+
+        keyboard.setButtons(buttons);
+        return keyboard;
+    }
+
     //endregion
 
     //region UserKeyboards

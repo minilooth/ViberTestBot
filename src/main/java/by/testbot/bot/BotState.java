@@ -3,6 +3,7 @@ package by.testbot.bot;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import by.testbot.models.BotMessage;
 import by.testbot.models.Client;
 import by.testbot.models.Dialogue;
 import by.testbot.models.PostponeMessage;
@@ -11,7 +12,7 @@ import by.testbot.validation.Validator;
 
 public enum BotState {
 
-    // region Main Menu
+    //#region Main Menu
     MainMenu(true) {
         BotState nextState;
 
@@ -234,20 +235,109 @@ public enum BotState {
         }
     },
 
-    // endregion
+    //#endregion
 
-    // region Settings
+    //#region Settings
 
-    EditTextsWhitchBotSend(false) {
+    //#region BotMessages
+
+    EditTextsWhitchBotSend(true) {
         BotState nextState;
 
         @Override
         public void enter(BotContext botContext) {
             botContext.getViberService().getMessageService().sendListOfMessagesWhichBotSendMessage(botContext.getUser().getViberId());
+            botContext.getViberService().getMessageService().sendSelectBotMessageToEdit(botContext.getUser().getViberId());
         }
 
         @Override
         public void handleInput(BotContext botContext) {
+            String text = botContext.getMessage().getText();
+
+            if (text.equals("Назад")) {
+                nextState = Settings;
+            }
+            else {
+                ValidationResult validationResult = Validator.validateId(text);
+                if (!validationResult.getIsValid()) {
+                    botContext.getViberService().getMessageService().sendTextMessage(botContext.getUser().getViberId(), validationResult.getMessage());
+                    nextState = EditTextsWhitchBotSend;
+                }
+                else {
+                    BotMessage botMessage = botContext.getViberService().getBotMessageService().getById(Integer.parseInt(text));
+
+                    if (botMessage != null) {
+                        nextState = EnterBotMessageText;
+                    }
+                    else {
+                        nextState = EditTextsWhitchBotSend;
+                    }
+
+                    botContext.getUser().getManager().setBotMessage(botMessage);
+                }
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return nextState;
+        }
+    },
+
+    EnterBotMessageText(true) {
+        BotState nextState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getViberService().getMessageService().sendBotTextMessage(botContext.getUser().getManager());
+            botContext.getViberService().getMessageService().sendEnterBotMessageTextMessage(botContext.getUser().getViberId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessage().getText();
+
+            botContext.getUser().getManager().setBotMessageText(text);
+
+            nextState = ConfirmEditBotMessage;
+        }
+
+        @Override
+        public BotState nextState() {
+            return nextState;
+        }
+    },
+
+    ConfirmEditBotMessage(true) {
+        BotState nextState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getViberService().getMessageService().sendConfirmEditBotMessageMessage(botContext.getUser().getViberId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessage().getText();
+
+            switch(text) {
+                case "Да": 
+                    BotMessage botMessage = botContext.getUser().getManager().getBotMessage();
+                    botMessage.setMessage(botContext.getUser().getManager().getBotMessageText());
+
+                    botContext.getViberService().getBotMessageService().save(botMessage);
+                    botContext.getViberService().getMessageService().sendBotMessageEditSuccessConfirmationMessage(botContext.getUser().getViberId());
+                    break;
+                case "Нет":
+                    botContext.getUser().getManager().setBotMessage(null);
+                    botContext.getUser().getManager().setBotMessageText(null);
+
+                    botContext.getViberService().getMessageService().sendBotMessageDeclineConfirmationMessage(botContext.getUser().getViberId());
+                    break;
+                default: 
+                    break;
+            }
+
             nextState = Settings;
         }
 
@@ -256,6 +346,8 @@ public enum BotState {
             return nextState;
         }
     },
+
+    //#endregion
 
     BotUsagePeriod(true) {
         BotState nextState;
@@ -329,9 +421,9 @@ public enum BotState {
         }
     },
 
-    // endregion
+    //#endregion
 
-    // region PostponeMessage
+    //#region PostponeMessage
 
     AddText(true) {
         BotState nextState;
@@ -388,7 +480,9 @@ public enum BotState {
             String pictureUrl = botContext.getMessage().getMedia();
             PostponeMessage postponeMessage = botContext.getViberService().getPostponeMessageService().getLastByViberId(botContext.getUser().getViberId());
 
-            postponeMessage.setPictureUrl(pictureUrl);
+            String filename = botContext.getViberService().getFileService().downloadPicture(pictureUrl);
+
+            postponeMessage.setPictureUrl(botContext.getViberService().getPictureEndpoint() + filename);
 
             botContext.getViberService().getPostponeMessageService().update(postponeMessage);
 
@@ -501,9 +595,9 @@ public enum BotState {
             return MainMenu;
         }
     },
-    //endregion
+    //#endregion
 
-    //region Managers
+    //#region Managers
 
     ListOfManagers(false) {
         @Override
@@ -580,9 +674,9 @@ public enum BotState {
     },
 
 
-    //endregion
+    //#endregion
     
-    //region Clients
+    //#region Clients
     
     GetListOfClients(false) {
         @Override
@@ -613,9 +707,9 @@ public enum BotState {
         }
     }, 
 
-    //endregion
+    //#endregion
 
-    //region Report
+    //#region Report
 
     ReportAboutManagersWork(false) {
         @Override
@@ -641,9 +735,9 @@ public enum BotState {
         }
     },
 
-    //endregion
+    //#endregion
 
-    //region Integrations
+    //#region Integrations
 
     AddOrDeleteIntegration(false) {
         @Override
@@ -681,9 +775,9 @@ public enum BotState {
         }
     }, 
 
-    //endregion
+    //#endregion
     
-    //region UserDialog
+    //#region UserDialog
 
     StartUserDialogAndAskClientName(true) {
         BotState nextState;
@@ -829,7 +923,7 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getViberService().getMessageService().sendIsHaveAnyBenefitsMessageAndKeyboard(botContext.getUser().getViberId(), botContext.getUser().getClient().getName());
+            botContext.getViberService().getMessageService().sendIsHaveAnyBenefitsMessageAndKeyboard(botContext.getUser().getClient());
         }
 
         @Override
@@ -865,7 +959,7 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getViberService().getMessageService().sendAreInterestedToKnowAdditionalDataAboutCarsAtAuctionsMessageAndKeyboard(botContext.getUser().getViberId(), botContext.getUser().getClient().getName());
+            botContext.getViberService().getMessageService().sendAreInterestedToKnowAdditionalDataAboutCarsAtAuctionsMessageAndKeyboard(botContext.getUser().getClient());
         }
 
         @Override
@@ -933,11 +1027,7 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogByClient(botContext.getUser().getClient());
-
-            String link = botContext.getViberService().getCarService().generateLink(currentDialogue.getBrand(), currentDialogue.getModel(), currentDialogue.getYearFrom(), currentDialogue.getYearTo());
-
-            botContext.getViberService().getMessageService().sendDontWorryAboutPricesAndIsLinkOpensMessageAndKeyboard(botContext.getUser().getViberId(), botContext.getUser().getClient().getName(), link);
+            botContext.getViberService().getMessageService().sendDontWorryAboutPricesAndIsLinkOpensMessageAndKeyboard(botContext.getUser().getClient());
         }
 
         @Override
@@ -974,7 +1064,7 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getViberService().getMessageService().sendWhenArePlanningToBuyCarMessageAndKeyboard(botContext.getUser().getViberId(), botContext.getUser().getClient().getName());
+            botContext.getViberService().getMessageService().sendWhenArePlanningToBuyCarMessageAndKeyboard(botContext.getUser().getClient());
         }
 
         @Override
@@ -1004,7 +1094,7 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getViberService().getMessageService().sendIsInterestedInSpecificCarVariantsMessageAndKeyboard(botContext.getUser().getViberId(), botContext.getUser().getClient().getName());
+            botContext.getViberService().getMessageService().sendIsInterestedInSpecificCarVariantsMessageAndKeyboard(botContext.getUser().getClient());
         }
 
         @Override
@@ -1041,7 +1131,7 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getViberService().getMessageService().sendWillAskFewQuestionsRegardingYourCriteriaMessageAndKeyboard(botContext.getUser().getViberId(), botContext.getUser().getClient().getName());
+            botContext.getViberService().getMessageService().sendWillAskFewQuestionsRegardingYourCriteriaMessageAndKeyboard(botContext.getUser().getClient());
         }
 
         @Override
@@ -1089,7 +1179,7 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getViberService().getMessageService().sendAskAndEnterPhoneNumberMessageAndKeyboard(botContext.getUser().getViberId());
+            botContext.getViberService().getMessageService().sendAskAndEnterPhoneNumberMessageAndKeyboard(botContext.getUser().getClient());
         }
 
         @Override
@@ -1178,7 +1268,7 @@ public enum BotState {
         }
     };
 
-    //endregion
+    //#endregion
 
     private final Boolean isInputNeeded;
 

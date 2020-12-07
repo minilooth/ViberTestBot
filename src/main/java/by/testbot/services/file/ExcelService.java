@@ -1,6 +1,5 @@
 package by.testbot.services.file;
 
-import java.awt.Color;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,7 +40,7 @@ public class ExcelService {
 
         createHeaderRow(sheet);
 
-        int rowCount = 1;
+        Integer rowCount = 1;
 
         for(Dialogue dialogue : dialogues) {
             Row row = sheet.createRow(rowCount++);
@@ -50,7 +49,7 @@ public class ExcelService {
 
         String filename = new SimpleDateFormat("yyyy-MM-dd HH_mm_ss").format(new Date()) + ".xlsx";
 
-        try(FileOutputStream fileOutputStream = new FileOutputStream("." + FileService.FILE_FOLDER_PATH + filename)) {
+        try(FileOutputStream fileOutputStream = new FileOutputStream(FileService.EXCEL_FOLDER_PATH + filename)) {
             workbook.write(fileOutputStream);
         }
 

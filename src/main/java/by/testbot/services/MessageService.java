@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import by.testbot.bot.KeyboardSource;
+import by.testbot.models.Client;
+import by.testbot.models.Manager;
+import by.testbot.models.viber.Failed;
 import by.testbot.models.viber.Sender;
 import by.testbot.payload.requests.message.SendFileMessageRequest;
 import by.testbot.payload.requests.message.SendPictureMessageRequest;
@@ -61,7 +64,7 @@ public class MessageService {
         viberService.sendTextMessage(sendTextMessageRequest);
     }
 
-    public void sendTextMessageToAll(List<String> broadcastList, String message) {
+    public List<Failed> sendTextMessageToAll(List<String> broadcastList, String message) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
@@ -71,10 +74,10 @@ public class MessageService {
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setBroadcastList(broadcastList);
 
-        viberService.broadcastTextMessage(sendTextMessageRequest);
+        return viberService.broadcastTextMessage(sendTextMessageRequest);
     }
 
-    public void sendPictureMessageToAll(List<String> broadcastList, String message, String pictureUrl) {
+    public List<Failed> sendPictureMessageToAll(List<String> broadcastList, String message, String pictureUrl) {
         SendPictureMessageRequest sendPictureMessageRequest = new SendPictureMessageRequest();
         Sender sender = new Sender();
 
@@ -85,7 +88,7 @@ public class MessageService {
         sendPictureMessageRequest.setSender(sender);
         sendPictureMessageRequest.setBroadcastList(broadcastList);
 
-        viberService.broadcastPictureMessage(sendPictureMessageRequest);
+        return viberService.broadcastPictureMessage(sendPictureMessageRequest);
     }
 
     // Admin messages
@@ -208,15 +211,93 @@ public class MessageService {
         //TODO: get and send list of integrations ?????
     }
 
+    public void sendSelectBotMessageToEdit(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
+        sendTextMessageRequest.setText(localeMessageService.getMessage("message.editTextsWhichBotSend.selectMessage"));
+        sendTextMessageRequest.setKeyboard(keyboardSource.getBackKeyboard());
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
+    }
+
     public void sendListOfMessagesWhichBotSendMessage(String viberId) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        //TODO: get and send list of messages which bot send
+        sendTextMessageRequest.setText(viberService.getBotMessageService().getPrettyFormatedAllBotMessages());
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
 
-        sendTextMessageRequest.setText(localeMessageService.getMessage("button.settings.editTextsWhichBotSend"));
+        viberService.sendTextMessage(sendTextMessageRequest);
+    }
+
+    public void sendBotTextMessage(Manager manager) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
+        sendTextMessageRequest.setText("Сообщение:\n" + manager.getBotMessage().getMessage());
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(manager.getUser().getViberId());
+
+        viberService.sendTextMessage(sendTextMessageRequest);
+    }
+
+    public void sendEnterBotMessageTextMessage(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
+        sendTextMessageRequest.setText(localeMessageService.getMessage("message.editTextsWhichBotSend.enterText"));
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
+    }
+
+    public void sendConfirmEditBotMessageMessage(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
+        sendTextMessageRequest.setText(localeMessageService.getMessage("message.editTextsWhichBotSend.confirmEdit"));
+        sendTextMessageRequest.setKeyboard(keyboardSource.getYesNoKeyboard());
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
+    }
+
+    public void sendBotMessageEditSuccessConfirmationMessage(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
+        sendTextMessageRequest.setText(localeMessageService.getMessage("message.editTextsWhichBotSend.successConfirmation"));
+        sendTextMessageRequest.setSender(sender);
+        sendTextMessageRequest.setUserId(viberId);
+
+        viberService.sendTextMessage(sendTextMessageRequest);
+    }
+
+    public void sendBotMessageDeclineConfirmationMessage(String viberId) {
+        SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
+        sendTextMessageRequest.setText(localeMessageService.getMessage("message.editTextsWhichBotSend.declineConfirmation"));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setUserId(viberId);
 
@@ -425,16 +506,16 @@ public class MessageService {
 
     //region UserMessageKeyboards
 
-    public void sendIsHaveAnyBenefitsMessageAndKeyboard(String viberId, String name) {
+    public void sendIsHaveAnyBenefitsMessageAndKeyboard(Client client) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.isHaveAnyBenefits", name));
+        sendTextMessageRequest.setText(viberService.getBotMessageService().formatBotMessage(1, client));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setKeyboard(keyboardSource.getYesNoKeyboard());
-        sendTextMessageRequest.setUserId(viberId);
+        sendTextMessageRequest.setUserId(client.getUser().getViberId());
     
         viberService.sendTextMessage(sendTextMessageRequest); 
     }
@@ -481,87 +562,87 @@ public class MessageService {
         viberService.sendTextMessage(sendTextMessageRequest); 
     }
 
-    public void sendAreInterestedToKnowAdditionalDataAboutCarsAtAuctionsMessageAndKeyboard(String viberId, String name) {
+    public void sendAreInterestedToKnowAdditionalDataAboutCarsAtAuctionsMessageAndKeyboard(Client client) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.areInterestedToKnowAdditionalDataAboutCarsAtAuctions", "", "", "", name));
+        sendTextMessageRequest.setText(viberService.getBotMessageService().formatBotMessage(2, client));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setKeyboard(keyboardSource.getYesNoKeyboard());
-        sendTextMessageRequest.setUserId(viberId);
+        sendTextMessageRequest.setUserId(client.getUser().getViberId());
     
         viberService.sendTextMessage(sendTextMessageRequest); 
     }
 
-    public void sendDontWorryAboutPricesAndIsLinkOpensMessageAndKeyboard(String viberId, String name, String link) {
+    public void sendDontWorryAboutPricesAndIsLinkOpensMessageAndKeyboard(Client client) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.dontWorryAboutPricesAndIsLinkOpens", name) + "\n" + link);
+        sendTextMessageRequest.setText(viberService.getBotMessageService().formatBotMessage(3, client));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setKeyboard(keyboardSource.getYesNoKeyboard());
-        sendTextMessageRequest.setUserId(viberId);
+        sendTextMessageRequest.setUserId(client.getUser().getViberId());
     
         viberService.sendTextMessage(sendTextMessageRequest); 
     }
 
-    public void sendWhenArePlanningToBuyCarMessageAndKeyboard(String viberId, String name) {
+    public void sendWhenArePlanningToBuyCarMessageAndKeyboard(Client client) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.whenArePlanningToBuyCar", name));
+        sendTextMessageRequest.setText(viberService.getBotMessageService().formatBotMessage(4, client));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setKeyboard(keyboardSource.getWhenWillBuyCarKeyboard());
-        sendTextMessageRequest.setUserId(viberId);
+        sendTextMessageRequest.setUserId(client.getUser().getViberId());
     
         viberService.sendTextMessage(sendTextMessageRequest); 
     }
 
-    public void sendIsInterestedInSpecificCarVariantsMessageAndKeyboard(String viberId, String name) {
+    public void sendIsInterestedInSpecificCarVariantsMessageAndKeyboard(Client client) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.isInterestedInSpecificCarVariants", name));
+        sendTextMessageRequest.setText(viberService.getBotMessageService().formatBotMessage(5, client));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setKeyboard(keyboardSource.getYesNoKeyboard());
-        sendTextMessageRequest.setUserId(viberId);
+        sendTextMessageRequest.setUserId(client.getUser().getViberId());
     
         viberService.sendTextMessage(sendTextMessageRequest); 
     }
 
-    public void sendWillAskFewQuestionsRegardingYourCriteriaMessageAndKeyboard(String viberId, String name) {
+    public void sendWillAskFewQuestionsRegardingYourCriteriaMessageAndKeyboard(Client client) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.willAskFewQuestionsRegardingYourCriteria", name));
+        sendTextMessageRequest.setText(viberService.getBotMessageService().formatBotMessage(6, client));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setKeyboard(keyboardSource.getYesNoKeyboard());
-        sendTextMessageRequest.setUserId(viberId);
+        sendTextMessageRequest.setUserId(client.getUser().getViberId());
     
         viberService.sendTextMessage(sendTextMessageRequest); 
     }
 
-    public void sendAskAndEnterPhoneNumberMessageAndKeyboard(String viberId) {
+    public void sendAskAndEnterPhoneNumberMessageAndKeyboard(Client client) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendTextMessageRequest.setText(localeMessageService.getMessage("reply.askAndEnterPhoneNumber"));
+        sendTextMessageRequest.setText(viberService.getBotMessageService().formatBotMessage(7, client));
         sendTextMessageRequest.setSender(sender);
         sendTextMessageRequest.setKeyboard(keyboardSource.getAskAndEnterPhoneNumberKeyboard());
         sendTextMessageRequest.setMinApiVersion(3);
-        sendTextMessageRequest.setUserId(viberId);
+        sendTextMessageRequest.setUserId(client.getUser().getViberId());
 
         viberService.sendTextMessage(sendTextMessageRequest);
     }

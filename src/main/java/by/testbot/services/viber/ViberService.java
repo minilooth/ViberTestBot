@@ -1,5 +1,7 @@
 package by.testbot.services.viber;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import by.testbot.bot.BotContext;
 import by.testbot.bot.BotState;
+import by.testbot.models.viber.Failed;
 import by.testbot.models.viber.Message;
 import by.testbot.models.Client;
 import by.testbot.models.Manager;
@@ -22,11 +25,13 @@ import by.testbot.payload.requests.SetWebhookRequest;
 import by.testbot.payload.responses.SendMessageResponse;
 import by.testbot.payload.responses.SetWebhookResponse;
 import by.testbot.proxy.ViberProxy;
+import by.testbot.services.BotMessageService;
 import by.testbot.services.CarService;
 import by.testbot.services.DialogueService;
 import by.testbot.services.MessageService;
 import by.testbot.services.PostponeMessageService;
 import by.testbot.services.UserService;
+import by.testbot.services.file.FileService;
 import by.testbot.utils.Utils;
 import lombok.Getter;
 
@@ -53,6 +58,12 @@ public class ViberService {
     @Autowired
     private CarService carService;
 
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private BotMessageService botMessageService;
+
     @Value("${testbot.authenticationToken}")
     private String authenticationToken;
 
@@ -66,10 +77,12 @@ public class ViberService {
     private String codeWord;
 
     private String fileEndpoint;
+    private String pictureEndpoint;
 
     @PostConstruct
     private void postConstruct() {
         this.fileEndpoint = webhookUrl + "/file/";
+        this.pictureEndpoint = webhookUrl + "/picture/";
     }
 
     public void setWeebhook() {
@@ -122,7 +135,7 @@ public class ViberService {
         }
     }
 
-    public void broadcastTextMessage(SendTextMessageRequest sendTextMessageRequest) {
+    public List<Failed> broadcastTextMessage(SendTextMessageRequest sendTextMessageRequest) {
         if (sendTextMessageRequest == null) {
             throw new IllegalArgumentException("Send text message request is null.");
         }
@@ -144,6 +157,8 @@ public class ViberService {
         else {
             logger.warn("Broadcast text message not sended: " + sendMessageResponse.getStatus() + ". Error: " + sendMessageResponse.getStatusMessage());
         }
+
+        return sendMessageResponse.getFailedList();
     }
 
     public void sendPictureMessage(SendPictureMessageRequest sendPictureMessageRequest) {
@@ -173,15 +188,15 @@ public class ViberService {
         }
     }
 
-    public void broadcastPictureMessage(SendPictureMessageRequest sendPictureMessageRequest) {
+    public List<Failed> broadcastPictureMessage(SendPictureMessageRequest sendPictureMessageRequest) {
         if (sendPictureMessageRequest == null) {
             throw new IllegalArgumentException("Send text message request is null.");
         }
         if (sendPictureMessageRequest.getSender() == null || sendPictureMessageRequest.getSender().getName() == null || sendPictureMessageRequest.getSender().getName().isEmpty() || sendPictureMessageRequest.getSender().getName().isBlank()) {
             throw new IllegalArgumentException("Sender name is null or empty.");
         }
-        if (sendPictureMessageRequest.getText() == null || sendPictureMessageRequest.getText().isEmpty() || sendPictureMessageRequest.getText().isBlank()) {
-            throw new IllegalArgumentException("Text is null or empty.");
+        if (sendPictureMessageRequest.getText() == null) {
+            throw new IllegalArgumentException("Text is null.");
         }
         if (sendPictureMessageRequest.getMediaUrl() == null || sendPictureMessageRequest.getMediaUrl().isEmpty() || sendPictureMessageRequest.getMediaUrl().isBlank()) {
             throw new IllegalArgumentException("Picture url is null of empty.");
@@ -190,11 +205,13 @@ public class ViberService {
         SendMessageResponse sendMessageResponse = viberProxy.broadcasePictureMessage(authenticationToken, sendPictureMessageRequest);
 
         if (sendMessageResponse.getStatus() == Status.OK) {
-            logger.info("Broadcast text message sended.");
+            logger.info("Broadcast picture message sended.");
         }
         else {
-            logger.warn("Broadcast text message not sended: " + sendMessageResponse.getStatus() + ". Error: " + sendMessageResponse.getStatusMessage());
+            logger.warn("Broadcast picture message not sended: " + sendMessageResponse.getStatus() + ". Error: " + sendMessageResponse.getStatusMessage());
         }
+
+        return sendMessageResponse.getFailedList();
     }
 
     public void sendVideoMessage(SendVideoMessageRequest sendVideoMessageRequest) {
