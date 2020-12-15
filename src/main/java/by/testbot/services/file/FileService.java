@@ -27,7 +27,7 @@ public class FileService {
     final static Integer FILENAME_LENGTH = 10;
 
     @SneakyThrows
-    public void checkAndCreateFolders() {
+    public void createDirectories() {
         if (Files.notExists(Path.of(FILE_FOLDER_PATH), LinkOption.NOFOLLOW_LINKS)) {
             Files.createDirectory(Path.of(FILE_FOLDER_PATH));
             
@@ -43,7 +43,7 @@ public class FileService {
         if (Files.notExists(Path.of(PICTURE_FOLDER_PATH), LinkOption.NOFOLLOW_LINKS)) {
             Files.createDirectory(Path.of(PICTURE_FOLDER_PATH));
 
-            logger.info("Created picture directory: " + EXCEL_FOLDER_PATH);
+            logger.info("Created pictures directory: " + EXCEL_FOLDER_PATH);
         }
     }
 
@@ -84,6 +84,29 @@ public class FileService {
 
         return filename;
     }
+
+    // @SneakyThrows
+    // public String downloadFile(String url, String viberFilename) {
+    //     if (!viberFilename.contains(".")) {
+    //         throw new IllegalArgumentException("Unable to file from: " + url);
+    //     }
+    
+    //     String extension = viberFilename.substring(viberFilename.lastIndexOf("."));
+    //     String filename = "";
+
+    //     do {
+    //         filename = generateFilename(extension);
+    //     }
+    //     while(new File(PICTURE_FOLDER_PATH + filename).exists());
+
+    //     BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
+
+    //     try(FileOutputStream fileOutputStream = new FileOutputStream(PICTURE_FOLDER_PATH + filename)) {
+    //         fileOutputStream.write(in.readAllBytes());
+    //     }
+
+    //     return filename;
+    // }
 
     private String generateFilename(String extension) {
         return RandomStringUtils.randomAlphanumeric(FILENAME_LENGTH) + extension;

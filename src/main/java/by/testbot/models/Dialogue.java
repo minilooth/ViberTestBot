@@ -1,5 +1,7 @@
 package by.testbot.models;
 
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -21,8 +24,8 @@ import lombok.ToString;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = { "client" })
-@EqualsAndHashCode(exclude = { "client" })
+@ToString(exclude = { "client", "answers" })
+@EqualsAndHashCode(exclude = { "client", "answers" })
 @Entity
 @Table(name = "dialogue")
 public class Dialogue {
@@ -43,28 +46,23 @@ public class Dialogue {
     @Column(name = "YearTo")
     private Integer yearTo;
 
-    @Column(name = "Step1Answer")
-    private String step1Answer;
-
-    @Column(name = "Step2Answer")
-    private String step2Answer;
-
-    @Column(name = "Step3Answer")
-    private String step3Answer;
-    
-    @Column(name = "Step4Answer")
-    private String step4Answer;
-
-    @Column(name = "Step5Answer")
-    private String step5Answer;
-
-    @Column(name = "Step6Answer")
-    private String step6Answer;
-
     @Column(name = "DialogIsOver", nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean dialogIsOver;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @Column(name = "LastUpdate", nullable = false)
+    private Long lastUpdate;
+
+    @Column(name = "BotMessagesLastUpdate", nullable = false)
+    private Long botMessagesLastUpdate;
+
+    @ManyToOne
+    @JoinColumn(name = "BotMessageId")
+    private BotMessage botMessage;
+
+    @ManyToOne
     @JoinColumn(name = "ClientId", nullable = false)
     private Client client;
+
+    @OneToMany(mappedBy = "dialogue", cascade = CascadeType.REMOVE)
+    private Set<Answer> answers;
 }

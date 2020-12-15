@@ -22,7 +22,7 @@ public class InitializationService {
 
     @SneakyThrows
     public void initalize() {
-        fileService.checkAndCreateFolders();
+        fileService.createDirectories();
         viberService.setWeebhook();
         broadcastService.runAsync();
     }

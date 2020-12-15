@@ -33,6 +33,9 @@ public class Client {
     @Column(name = "PhoneNumber")
     private String phoneNumber;
 
+    @Column(name = "KeyboardPage", columnDefinition = "INT DEFAULT 1")
+    private Integer keyboardPage;
+
     @OneToOne(mappedBy = "client", cascade = CascadeType.ALL)
     private User user;
 

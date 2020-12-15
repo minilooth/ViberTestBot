@@ -20,6 +20,11 @@ public class ManagerService {
     }
 
     @Transactional
+    public void saveAll(Iterable<Manager> managers) {
+        managerRepository.saveAll(managers);
+    }
+
+    @Transactional
     public void delete(Manager manager) {
         managerRepository.delete(manager);
     }

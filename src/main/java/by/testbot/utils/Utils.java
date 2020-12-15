@@ -1,5 +1,6 @@
 package by.testbot.utils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,5 +18,16 @@ public class Utils {
         eventTypes.add(EventType.CONVERSATION_STARTED);
 
         return eventTypes;
+    }
+
+    public static List<String> generateYears(Integer startYear) {
+        List<String> years = new ArrayList<>();
+        Integer currentYear = LocalDate.now().getYear();
+
+        for (Integer i = startYear; i <= currentYear; i++) {
+            years.add(i.toString());
+        }
+
+        return years;
     }
 }

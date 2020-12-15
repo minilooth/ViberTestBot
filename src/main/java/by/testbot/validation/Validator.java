@@ -1,6 +1,10 @@
 package by.testbot.validation;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+
+import by.testbot.models.BotMessage;
 
 public class Validator {
     public static ValidationResult validateDate(String date) {
@@ -57,6 +61,26 @@ public class Validator {
             return new ValidationResult("Год не может быть меньше 1975", false);
         }
 
+        return new ValidationResult(null, true);
+    }
+
+    public static ValidationResult validateBotMessageSequence(String botMessageSequence) {
+        if (botMessageSequence == null || botMessageSequence.isEmpty() || botMessageSequence.isBlank()) {
+            return new ValidationResult("Последовательность сообщений бота не может быть пуста", false);
+        }
+        if (!botMessageSequence.matches("^([0-9]{0,},){0,}[0-9]{0,}$")) {
+            return new ValidationResult("Последовательность сообщений бота введена в неверном формате", false);
+        }
+        return new ValidationResult(null, true);
+    }
+
+    public static ValidationResult validateBotMessageSequence(List<Integer> order, List<BotMessage> oldBotMessageOrder) {
+        if (order.size() != oldBotMessageOrder.size() || order.stream().distinct().count() != oldBotMessageOrder.size()) {
+            return new ValidationResult("Количество номеров в последовательности не равно количеству сообщений!", false);
+        }
+        if (Collections.max(order) != oldBotMessageOrder.size() || Collections.min(order) != 1) {
+            return new ValidationResult("Последовательность введена в неверном формате!", false);
+        }
         return new ValidationResult(null, true);
     }
 }

@@ -4,6 +4,7 @@ package by.testbot.services;
 // import java.util.ArrayList;
 import java.util.List;
 // import java.util.stream.Collectors;
+import java.util.stream.Collectors;
 
 // import com.gargoylesoftware.htmlunit.BrowserVersion;
 // import com.gargoylesoftware.htmlunit.IncorrectnessListener;
@@ -56,7 +57,7 @@ public class CarService {
 
     @Transactional
     public List<String> getBrands() {
-        return carRepository.findDistinctBrand();
+        return carRepository.findDistinctBrand().stream().sorted().collect(Collectors.toList());
     }
 
     @Transactional

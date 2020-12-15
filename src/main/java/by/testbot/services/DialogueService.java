@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import by.testbot.models.BotMessage;
 import by.testbot.models.Client;
 import by.testbot.models.Dialogue;
 import by.testbot.repositories.DialogueRepository;
@@ -22,8 +23,18 @@ public class DialogueService {
     }
 
     @Transactional
+    public void saveAll(Iterable<Dialogue> dialogues) {
+        dialogueRepository.saveAll(dialogues);
+    }
+
+    @Transactional
     public void delete(Dialogue dialogue) {
         dialogueRepository.delete(dialogue);
+    }
+
+    @Transactional
+    public void deleteAll(Iterable<Dialogue> dialogues) {
+        dialogueRepository.deleteAll(dialogues);
     }
 
     @Transactional
@@ -34,6 +45,16 @@ public class DialogueService {
     @Transactional
     public List<Dialogue> getAllByClient(Client client) {
         return dialogueRepository.findByClient(client);
+    }
+
+    @Transactional
+    public List<Dialogue> getAllByBotMessage(BotMessage botMessage) {
+        return dialogueRepository.findAllByBotMessage(botMessage);
+    }
+
+    @Transactional
+    public List<Dialogue> getAllNotEndedAndBotMessageNotNullDialogues() {
+        return dialogueRepository.findAllByDialogIsOverAndBotMessageNotNull(false);
     }
 
     public Dialogue getCurrentDialogByClient(Client client) {

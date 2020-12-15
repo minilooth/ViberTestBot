@@ -25,9 +25,12 @@ import by.testbot.payload.requests.SetWebhookRequest;
 import by.testbot.payload.responses.SendMessageResponse;
 import by.testbot.payload.responses.SetWebhookResponse;
 import by.testbot.proxy.ViberProxy;
+import by.testbot.services.AnswerService;
 import by.testbot.services.BotMessageService;
+import by.testbot.services.ButtonService;
 import by.testbot.services.CarService;
 import by.testbot.services.DialogueService;
+import by.testbot.services.ManagerService;
 import by.testbot.services.MessageService;
 import by.testbot.services.PostponeMessageService;
 import by.testbot.services.UserService;
@@ -63,6 +66,15 @@ public class ViberService {
 
     @Autowired
     private BotMessageService botMessageService;
+
+    @Autowired
+    private ButtonService buttonService;
+
+    @Autowired
+    private AnswerService answerService;
+
+    @Autowired
+    private ManagerService managerService;
 
     @Value("${testbot.authenticationToken}")
     private String authenticationToken;
@@ -452,8 +464,11 @@ public class ViberService {
             else {
                 botState = BotState.getUserInitialState();
                 user.setRole(Role.USER);
+                
                 client = new Client();
+
                 client.setUser(user);
+                client.setKeyboardPage(1);
             }
 
             user.setViberId(viberId);
@@ -520,8 +535,11 @@ public class ViberService {
             else {
                 botState = BotState.getUserInitialState();
                 user.setRole(Role.USER);
+                
                 client = new Client();
+
                 client.setUser(user);
+                client.setKeyboardPage(1);
             }
 
             user.setViberId(viberId);
@@ -587,8 +605,11 @@ public class ViberService {
             else {
                 botState = BotState.getUserInitialState();
                 user.setRole(Role.USER);
+                
                 client = new Client();
+                
                 client.setUser(user);
+                client.setKeyboardPage(1);
             }
 
             user.setViberId(viberId);
@@ -654,8 +675,11 @@ public class ViberService {
             else {
                 botState = BotState.getUserInitialState();
                 user.setRole(Role.USER);
+                
                 client = new Client();
+                
                 client.setUser(user);
+                client.setKeyboardPage(1);
             }
 
             user.setViberId(viberId);

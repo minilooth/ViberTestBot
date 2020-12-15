@@ -82,59 +82,59 @@ public class ExcelService {
         cell = row.createCell(4);
         cell.setCellValue(dialogue.getYearTo() != null ? dialogue.getYearTo().toString() : "Еще не указал");
 
-        cell = row.createCell(5);
-        cell.setCellValue(dialogue.getStep1Answer() != null ? dialogue.getStep1Answer() : "");
-        if (dialogue.getStep1Answer() != null && dialogue.getStep1Answer().equals("Да")) {
-            cell.setCellStyle(positiveCellStyle);
-        }
-        else {
-            cell.setCellStyle(negativeCellStyle);
-        }
+        // cell = row.createCell(5);
+        // cell.setCellValue(dialogue.getStep1Answer() != null ? dialogue.getStep1Answer() : "");
+        // if (dialogue.getStep1Answer() != null && dialogue.getStep1Answer().equals("Да")) {
+        //     cell.setCellStyle(positiveCellStyle);
+        // }
+        // else {
+        //     cell.setCellStyle(negativeCellStyle);
+        // }
 
-        cell = row.createCell(6);
-        cell.setCellValue(dialogue.getStep2Answer() != null ? dialogue.getStep2Answer() : "");
-        if (dialogue.getStep2Answer() != null && dialogue.getStep2Answer().equals("Да")) {
-            cell.setCellStyle(positiveCellStyle);
-        }
-        else {
-            cell.setCellStyle(negativeCellStyle);
-        }
+        // cell = row.createCell(6);
+        // cell.setCellValue(dialogue.getStep2Answer() != null ? dialogue.getStep2Answer() : "");
+        // if (dialogue.getStep2Answer() != null && dialogue.getStep2Answer().equals("Да")) {
+        //     cell.setCellStyle(positiveCellStyle);
+        // }
+        // else {
+        //     cell.setCellStyle(negativeCellStyle);
+        // }
 
-        cell = row.createCell(7);
-        cell.setCellValue(dialogue.getStep3Answer() != null ? dialogue.getStep3Answer() : "");
-        if (dialogue.getStep3Answer() != null && dialogue.getStep3Answer().equals("Да")) {
-            cell.setCellStyle(positiveCellStyle);
-        }
-        else {
-            cell.setCellStyle(negativeCellStyle);
-        }
+        // cell = row.createCell(7);
+        // cell.setCellValue(dialogue.getStep3Answer() != null ? dialogue.getStep3Answer() : "");
+        // if (dialogue.getStep3Answer() != null && dialogue.getStep3Answer().equals("Да")) {
+        //     cell.setCellStyle(positiveCellStyle);
+        // }
+        // else {
+        //     cell.setCellStyle(negativeCellStyle);
+        // }
 
-        cell = row.createCell(8);
-        cell.setCellValue(dialogue.getStep4Answer() != null ? dialogue.getStep4Answer() : "");
-        if (dialogue.getStep4Answer() != null) {
-            cell.setCellStyle(positiveCellStyle);
-        }
-        else {
-            cell.setCellStyle(negativeCellStyle);
-        }
+        // cell = row.createCell(8);
+        // cell.setCellValue(dialogue.getStep4Answer() != null ? dialogue.getStep4Answer() : "");
+        // if (dialogue.getStep4Answer() != null) {
+        //     cell.setCellStyle(positiveCellStyle);
+        // }
+        // else {
+        //     cell.setCellStyle(negativeCellStyle);
+        // }
 
-        cell = row.createCell(9);
-        cell.setCellValue(dialogue.getStep5Answer() != null ? dialogue.getStep5Answer() : "");
-        if (dialogue.getStep5Answer() != null && dialogue.getStep5Answer().equals("Да")) {
-            cell.setCellStyle(positiveCellStyle);
-        }
-        else {
-            cell.setCellStyle(negativeCellStyle);
-        }
+        // cell = row.createCell(9);
+        // cell.setCellValue(dialogue.getStep5Answer() != null ? dialogue.getStep5Answer() : "");
+        // if (dialogue.getStep5Answer() != null && dialogue.getStep5Answer().equals("Да")) {
+        //     cell.setCellStyle(positiveCellStyle);
+        // }
+        // else {
+        //     cell.setCellStyle(negativeCellStyle);
+        // }
 
-        cell = row.createCell(10);
-        cell.setCellValue(dialogue.getStep6Answer() != null ? dialogue.getStep6Answer() : "");
-        if (dialogue.getStep6Answer() != null && dialogue.getStep6Answer().equals("Да")) {
-            cell.setCellStyle(positiveCellStyle);
-        }
-        else {
-            cell.setCellStyle(negativeCellStyle);
-        }
+        // cell = row.createCell(10);
+        // cell.setCellValue(dialogue.getStep6Answer() != null ? dialogue.getStep6Answer() : "");
+        // if (dialogue.getStep6Answer() != null && dialogue.getStep6Answer().equals("Да")) {
+        //     cell.setCellStyle(positiveCellStyle);
+        // }
+        // else {
+        //     cell.setCellStyle(negativeCellStyle);
+        // }
 
         cell = row.createCell(11);
         cell.setCellValue(dialogue.getClient().getPhoneNumber() != null ? dialogue.getClient().getPhoneNumber() : "Еще не указал");
