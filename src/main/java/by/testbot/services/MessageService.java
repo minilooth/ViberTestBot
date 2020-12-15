@@ -1,7 +1,6 @@
 package by.testbot.services;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -135,12 +134,16 @@ public class MessageService {
         this.sendTextMessage(viberId, "Меню сообщений бота", keyboardSource.getBotMessageMenuKeyabord(), null);
     }
 
-    public void sendDeleteBotMessageButtonMessage(String viberId, Set<Button> buttons) {
+    public void sendUnableToEditBotMessageMessage(String viberId) {
+        this.sendTextMessage(viberId, "Не удалось изменить сообщение бота, так как оно не найдено или удалено", null, null);
+    }
+
+    public void sendDeleteBotMessageButtonMessage(String viberId, List<Button> buttons) {
         this.sendTextMessage(viberId, "Список кнопок:\n" + buttonService.formatButtons(buttons), null, null);
         this.sendTextMessage(viberId, "Введите номер кнопки для удаления", keyboardSource.getBackKeyboard(), null);
     }
 
-    public void sendListOfBotMessageButtons(String viberId, Set<Button> buttons) {
+    public void sendListOfBotMessageButtons(String viberId, List<Button> buttons) {
         this.sendTextMessage(viberId, "Список кнопок:\n" + buttonService.formatButtons(buttons), null, null);
     }
 
@@ -152,8 +155,32 @@ public class MessageService {
         this.sendTextMessage(viberId, "Кнопка успешно добавлена", null, null);
     }
 
+    public void sendConfirmAddNewBotMessageButtonMessage(String viberId) {
+        this.sendTextMessage(viberId, "Подтвердите добавление кнопки", keyboardSource.getConfirmBotMessageButtonKeyboard(), null);
+    }
+    
+    public void sendUnableToAddNewButtonMessage(String viberId) {
+        this.sendTextMessage(viberId, "Не удалось добавить новую кнопку, так как сообщение бота не найдено или удалено", null, null);
+    }
+
+    public void sendConfirmDeleteBotMessageButtonMessage(String viberId) {
+        this.sendTextMessage(viberId, "Подтвердите удаление кнопки", keyboardSource.getConfirmBotMessageButtonKeyboard(), null);
+    }
+
+    public void sendUnableToDeleteButtonMessage(String viberId) {
+        this.sendTextMessage(viberId, "Не удалось удалить кнопку, так как она не найдена удалена", null, null);
+    }
+
     public void sendSuccessfullyDeletedButtonMessage(String viberId) {
         this.sendTextMessage(viberId, "Кнопка успешно удалена", null, null);
+    }
+
+    public void sendCancellerationDeleteButtonMessage(String viberId) {
+        this.sendTextMessage(viberId, "Вы отменили удаление кнопки", null, null);
+    }
+
+    public void sendCancellerationAddNewButtonMessage(String viberId) {
+        this.sendTextMessage(viberId, "Вы отменили добавление новой кнопки", null, null);
     }
 
     public void sendChangesSuccessfullySavedMessage(String viberId) {
@@ -188,6 +215,18 @@ public class MessageService {
         this.sendTextMessage(viberId, localeMessageService.getMessage("message.editTextsWhichBotSend.enterText"), null, null);
     }
 
+    public void sendUnableToChangeBotMessageTextMessage(String viberId) {
+        this.sendTextMessage(viberId, "Не удалось изменить текст сообщения бота, так как оно не найдено или удалено", null, null);
+    }
+
+    public void sendCancellerationChangeBotMessageTextMessage(String viberId) {
+        this.sendTextMessage(viberId, "Вы отменили изменение текста сообщения бота", null, null);
+    }
+
+    public void sendConfirmChangeBotMessageTextMessage(String viberId) {
+        this.sendTextMessage(viberId, "Подтвердите изменение текста сообщения бота", keyboardSource.getConfirmBotMessageKeyboard(), null);
+    }
+
     public void sendSuccessEditBotMessageTextMessage(String viberId) {
         this.sendTextMessage(viberId, "Текст успешно изменен", null, null);
     }
@@ -213,7 +252,7 @@ public class MessageService {
     }
 
     public void sendConfirmAddNewBotMessageMessage(String viberId) {
-        this.sendTextMessage(viberId, "Подтвердите добавление нового сообщения", keyboardSource.getConfirmAddNewBotMessageKeyboard(), null);
+        this.sendTextMessage(viberId, "Подтвердите добавление нового сообщения", keyboardSource.getConfirmBotMessageKeyboard(), null);
     }
 
     public void sendSuccessfullyAddedNewBotMessageMessage(String viberId) {
@@ -229,7 +268,7 @@ public class MessageService {
     }
 
     public void sendConfirmDeleteBotMessageMessage(String viberId) {
-        this.sendTextMessage(viberId, "Подтвердите удаление сообщения", keyboardSource.getConfirmDeleteBotMessageKeyboard(), null);
+        this.sendTextMessage(viberId, "Подтвердите удаление сообщения", keyboardSource.getConfirmBotMessageKeyboard(), null);
     }
 
     public void sendSuccessfullyDeleteBotMessageMessage(String viberId) {
@@ -237,11 +276,11 @@ public class MessageService {
     }
 
     public void sendCancellerationDeleteBotMessageMessage(String viberId) {
-        this.sendTextMessage(viberId, "Вы отменили удаение сообщения.\nСообщение не удалено", null, null);
+        this.sendTextMessage(viberId, "Вы отменили удаление сообщения.\nСообщение не удалено", null, null);
     }
 
     public void sendEnterNewBotMessageSequence(String viberId) {
-        this.sendTextMessage(viberId, "Введите новую последовательность сообщений бота.\n(Через запятую в формате 1,2,3)", null, null);
+        this.sendTextMessage(viberId, "Введите новую последовательность сообщений бота.\n(Через запятую в формате 1,2,3)", keyboardSource.getBackKeyboard(), null);
     }
 
     public void sendSuccessfullyChangedBotMessageSequenceMessage(String viberId) {

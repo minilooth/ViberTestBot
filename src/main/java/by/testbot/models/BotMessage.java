@@ -2,15 +2,12 @@ package by.testbot.models;
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -22,8 +19,6 @@ import lombok.ToString;
 @Data
 @Table
 @Entity(name = "bot_message")
-@ToString(exclude = { "managers", "buttons", "dialogues", "nextMessage", "nextMessages", "previousMessage", "previousMessages" })
-@EqualsAndHashCode(exclude = { "managers", "buttons", "dialogues", "nextMessage", "nextMessages", "previousMessage", "previousMessages" })
 public class BotMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,29 +34,40 @@ public class BotMessage {
     @Column(name = "LastUpdate", nullable = false)
     private Long lastUpdate;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "NextMessageId")
     private BotMessage nextMessage;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToMany(mappedBy = "nextMessage")
     private Set<BotMessage> nextMessages;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "PreviousMessageId")
     private BotMessage previousMessage;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToMany(mappedBy = "previousMessage")
     private Set<BotMessage> previousMessages;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToMany(mappedBy = "botMessage")
     private Set<Manager> managers;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToMany(mappedBy = "botMessage")
     private Set<Dialogue> dialogues;
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
-    @JoinTable(name = "bot_message_button", 
-               joinColumns = @JoinColumn(name = "BotMessageId"), 
-               inverseJoinColumns = @JoinColumn(name = "ButtonId"))
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @OneToMany(mappedBy = "botMessage")
     private Set<Button> buttons;
 }

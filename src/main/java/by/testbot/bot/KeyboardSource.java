@@ -337,21 +337,13 @@ public class KeyboardSource {
         addButton.setBackgroundColor("#2db9b9");
         buttons.add(addButton);
 
-        Button saveButton = new Button();
-        saveButton.setText("Сохранить изменения");
-        saveButton.setActionBody("callback.botMessageButtonsMenu.saveButton");
-        saveButton.setColumns(6);
-        saveButton.setRows(1);
-        saveButton.setBackgroundColor("#2db9b9");
-        buttons.add(saveButton);
-
-        Button cancelButton = new Button();
-        cancelButton.setText("Отменить изменения");
-        cancelButton.setActionBody("callback.botMessageButtonsMenu.cancelButton");
-        cancelButton.setColumns(6);
-        cancelButton.setRows(1);
-        cancelButton.setBackgroundColor("#2db9b9");
-        buttons.add(cancelButton);
+        Button backButton = new Button();
+        backButton.setText("Назад");
+        backButton.setActionBody("callback.botMessageButtonsMenu.back");
+        backButton.setColumns(6);
+        backButton.setRows(1);
+        backButton.setBackgroundColor("#2db9b9");
+        buttons.add(backButton);
 
         keyboard.setButtons(buttons);
         return keyboard;
@@ -461,13 +453,61 @@ public class KeyboardSource {
         return keyboard;
     }
 
-    public Keyboard getConfirmAddNewBotMessageKeyboard() {
+    // public Keyboard getConfirmAddNewBotMessageKeyboard() {
+    //     Keyboard keyboard = new Keyboard();
+    //     List<Button> buttons = new ArrayList<>();
+
+    //     Button yesButton = new Button();
+    //     yesButton.setText("Да");
+    //     yesButton.setActionBody("callback.botMessageMenu.addNewBotMessage.confirmYes");
+    //     yesButton.setColumns(6);
+    //     yesButton.setRows(1);
+    //     yesButton.setBackgroundColor("#2db9b9");
+    //     buttons.add(yesButton);
+
+    //     Button noButton = new Button();
+    //     noButton.setText("Нет");
+    //     noButton.setActionBody("callback.botMessageMenu.addNewBotMessage.confirmNo");
+    //     noButton.setColumns(6);
+    //     noButton.setRows(1);
+    //     noButton.setBackgroundColor("#2db9b9");
+    //     buttons.add(noButton);
+
+    //     keyboard.setButtons(buttons);
+    //     return keyboard;
+    // }
+
+    // public Keyboard getConfirmDeleteBotMessageKeyboard() {
+    //     Keyboard keyboard = new Keyboard();
+    //     List<Button> buttons = new ArrayList<>();
+
+    //     Button yesButton = new Button();
+    //     yesButton.setText("Да");
+    //     yesButton.setActionBody("callback.botMessageMenu.deleteBotMessage.confirmYes");
+    //     yesButton.setColumns(6);
+    //     yesButton.setRows(1);
+    //     yesButton.setBackgroundColor("#2db9b9");
+    //     buttons.add(yesButton);
+
+    //     Button noButton = new Button();
+    //     noButton.setText("Нет");
+    //     noButton.setActionBody("callback.botMessageMenu.deleteBotMessage.confirmNo");
+    //     noButton.setColumns(6);
+    //     noButton.setRows(1);
+    //     noButton.setBackgroundColor("#2db9b9");
+    //     buttons.add(noButton);
+
+    //     keyboard.setButtons(buttons);
+    //     return keyboard;
+    // }
+
+    public Keyboard getConfirmBotMessageKeyboard() {
         Keyboard keyboard = new Keyboard();
         List<Button> buttons = new ArrayList<>();
 
         Button yesButton = new Button();
         yesButton.setText("Да");
-        yesButton.setActionBody("callback.botMessageMenu.addNewBotMessage.confirmYes");
+        yesButton.setActionBody("callback.botMessageMenu.confirmYes");
         yesButton.setColumns(6);
         yesButton.setRows(1);
         yesButton.setBackgroundColor("#2db9b9");
@@ -475,31 +515,7 @@ public class KeyboardSource {
 
         Button noButton = new Button();
         noButton.setText("Нет");
-        noButton.setActionBody("callback.botMessageMenu.addNewBotMessage.confirmNo");
-        noButton.setColumns(6);
-        noButton.setRows(1);
-        noButton.setBackgroundColor("#2db9b9");
-        buttons.add(noButton);
-
-        keyboard.setButtons(buttons);
-        return keyboard;
-    }
-
-    public Keyboard getConfirmDeleteBotMessageKeyboard() {
-        Keyboard keyboard = new Keyboard();
-        List<Button> buttons = new ArrayList<>();
-
-        Button yesButton = new Button();
-        yesButton.setText("Да");
-        yesButton.setActionBody("callback.botMessageMenu.deleteBotMessage.confirmYes");
-        yesButton.setColumns(6);
-        yesButton.setRows(1);
-        yesButton.setBackgroundColor("#2db9b9");
-        buttons.add(yesButton);
-
-        Button noButton = new Button();
-        noButton.setText("Нет");
-        noButton.setActionBody("callback.botMessageMenu.deleteBotMessage.confirmNo");
+        noButton.setActionBody("callback.botMessageMenu.confirmNo");
         noButton.setColumns(6);
         noButton.setRows(1);
         noButton.setBackgroundColor("#2db9b9");
@@ -560,6 +576,32 @@ public class KeyboardSource {
         Button noButton = new Button();
         noButton.setText("Нет");
         noButton.setActionBody("Нет");
+        noButton.setColumns(6);
+        noButton.setRows(1);
+        noButton.setBackgroundColor("#2db9b9");
+        noButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(noButton);
+
+        keyboard.setButtons(buttons);
+        return keyboard;
+    }
+
+    public Keyboard getConfirmBotMessageButtonKeyboard() {
+        Keyboard keyboard = new Keyboard();
+        List<Button> buttons = new ArrayList<>();
+
+        Button yesButton = new Button();
+        yesButton.setText("Да");
+        yesButton.setActionBody("callback.botMessageMenu.botMessageButtonsMenu.confirmYes");
+        yesButton.setColumns(6);
+        yesButton.setRows(1);
+        yesButton.setBackgroundColor("#2db9b9");
+        yesButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(yesButton);
+
+        Button noButton = new Button();
+        noButton.setText("Нет");
+        noButton.setActionBody("callback.botMessageMenu.botMessageButtonsMenu.confirmNo");
         noButton.setColumns(6);
         noButton.setRows(1);
         noButton.setBackgroundColor("#2db9b9");

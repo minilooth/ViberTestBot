@@ -19,8 +19,6 @@ import lombok.ToString;
 @Data
 @Entity
 @Table(name = "answer")
-@ToString(exclude = { "dialogue" })
-@EqualsAndHashCode(exclude = { "dialogue" })
 public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +41,8 @@ public class Answer {
     @Column(name = "IsLast", nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean isLast;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "DialogueId", nullable = false)
     private Dialogue dialogue;

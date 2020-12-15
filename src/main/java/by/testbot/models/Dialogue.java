@@ -24,8 +24,6 @@ import lombok.ToString;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = { "client", "answers" })
-@EqualsAndHashCode(exclude = { "client", "answers" })
 @Entity
 @Table(name = "dialogue")
 public class Dialogue {
@@ -55,14 +53,20 @@ public class Dialogue {
     @Column(name = "BotMessagesLastUpdate", nullable = false)
     private Long botMessagesLastUpdate;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "BotMessageId")
     private BotMessage botMessage;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "ClientId", nullable = false)
     private Client client;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToMany(mappedBy = "dialogue", cascade = CascadeType.REMOVE)
     private Set<Answer> answers;
 }

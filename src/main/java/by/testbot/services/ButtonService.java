@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import by.testbot.models.BotMessage;
 import by.testbot.models.Button;
 import by.testbot.models.Manager;
 import by.testbot.models.enums.AnswerType;
@@ -43,6 +44,11 @@ public class ButtonService {
         return buttonRepository.findFirstByCallbackData(callbackData);
     }
 
+    @Transactional
+    public List<Button> getAllByBotMessage(BotMessage botMessage) {
+        return buttonRepository.findAllByBotMessage(botMessage);
+    }
+
     public void deleteAll(Set<Button> buttons) {
         for (Button button : buttons) {
             delete(button);
@@ -55,7 +61,14 @@ public class ButtonService {
     }
 
     public String generateCallbackData() {
-        return CALLBACK_PREFIX + RandomStringUtils.randomAlphanumeric(CALLBACK_LENGTH);
+        String callbackData;
+
+        do {
+            callbackData = CALLBACK_PREFIX + RandomStringUtils.randomAlphanumeric(CALLBACK_LENGTH); 
+        }
+        while(getByCallbackData(callbackData) != null);
+
+        return callbackData;
     }
 
     public Set<Button> copyButtons(Set<Button> buttons) {
@@ -66,7 +79,6 @@ public class ButtonService {
             buttonCopy.setText(button.getText());
             buttonCopy.setAnswerType(button.getAnswerType());
             buttonCopy.setDialogueEnds(button.getDialogueEnds());
-            buttonCopy.setIsLast(button.getIsLast());
             buttonCopy.setCallbackData(button.getCallbackData());
 
             buttonsCopy.add(buttonCopy);
@@ -83,7 +95,6 @@ public class ButtonService {
             buttonCopy.setText(button.getText());
             buttonCopy.setAnswerType(button.getAnswerType());
             buttonCopy.setDialogueEnds(button.getDialogueEnds());
-            buttonCopy.setIsLast(button.getIsLast());
             buttonCopy.setCallbackData(button.getCallbackData());
 
             if (buttonCopy.getManagers() == null) {
@@ -104,20 +115,19 @@ public class ButtonService {
         return buttonsCopy;
     }
 
-    public String formatButtons(Set<Button> buttons) {
+    public String formatButtons(List<Button> buttons) {
         if (buttons.isEmpty()) {
             return "Список кнопок пуст";
         }
 
-        List<Button> buttonsCopy = List.copyOf(buttons);
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (Button button : buttonsCopy) {
-            if (buttonsCopy.indexOf(button) != buttonsCopy.size() - 1) {
-                stringBuilder.append(String.format("%d - %s(%s, %s)\n", buttonsCopy.indexOf(button) + 1, button.getText(), "Тип ответа: " + (button.getAnswerType() == AnswerType.NEGATIVE ? "Отрицательный" : "Положительный"), "Заканчивает диалог: " + (button.getDialogueEnds() ? "Да" : "Нет" )));
+        for (Button button : buttons) {
+            if (buttons.indexOf(button) != buttons.size() - 1) {
+                stringBuilder.append(String.format("%d - %s(%s, %s)\n", buttons.indexOf(button) + 1, button.getText(), "Тип ответа: " + (button.getAnswerType() == AnswerType.NEGATIVE ? "Отрицательный" : "Положительный"), "Заканчивает диалог: " + (button.getDialogueEnds() ? "Да" : "Нет" )));
             }
             else {
-                stringBuilder.append(String.format("%d - %s(%s, %s)", buttonsCopy.indexOf(button) + 1, button.getText(), "Тип ответа: " + (button.getAnswerType() == AnswerType.NEGATIVE ? "Отрицательный" : "Положительный"), "Заканчивает диалог: " + (button.getDialogueEnds() ? "Да" : "Нет" )));
+                stringBuilder.append(String.format("%d - %s(%s, %s)", buttons.indexOf(button) + 1, button.getText(), "Тип ответа: " + (button.getAnswerType() == AnswerType.NEGATIVE ? "Отрицательный" : "Положительный"), "Заканчивает диалог: " + (button.getDialogueEnds() ? "Да" : "Нет" )));
             }
         }
 

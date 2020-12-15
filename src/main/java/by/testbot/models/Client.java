@@ -18,8 +18,6 @@ import lombok.ToString;
 
 @Data
 @Entity
-@ToString(exclude = {"user", "dialogues"})
-@EqualsAndHashCode(exclude = { "user", "dialogues" })
 @Table(name = "client")
 public class Client {
     @Id
@@ -36,9 +34,13 @@ public class Client {
     @Column(name = "KeyboardPage", columnDefinition = "INT DEFAULT 1")
     private Integer keyboardPage;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToOne(mappedBy = "client", cascade = CascadeType.ALL)
     private User user;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToMany(mappedBy = "client", cascade = CascadeType.REMOVE)
     private Set<Dialogue> dialogues;
 }

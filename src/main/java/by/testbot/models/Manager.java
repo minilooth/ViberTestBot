@@ -1,7 +1,5 @@
 package by.testbot.models;
 
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,8 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -22,8 +18,6 @@ import lombok.ToString;
 @Data
 @Entity
 @Table(name = "manager")
-@ToString(exclude = { "user", "botMessage", "buttons" })
-@EqualsAndHashCode(exclude = { "user", "botMessage", "buttons" })
 public class Manager {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,16 +33,20 @@ public class Manager {
     @Column(name = "BotMessageText", columnDefinition = "LONGTEXT")
     private String botMessageText;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToOne(mappedBy = "manager", cascade = CascadeType.ALL)
     private User user;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "BotMessageId")
     private BotMessage botMessage;
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
-    @JoinTable(name = "manager_button", 
-               joinColumns = @JoinColumn(name = "ManagerId"), 
-               inverseJoinColumns = @JoinColumn(name = "ButtonId"))
-    private Set<Button> buttons;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @ManyToOne
+    @JoinColumn(name = "ButtonId")
+    private Button button;
 }

@@ -26,8 +26,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@ToString(exclude = { "client", "manager" })
-@EqualsAndHashCode(exclude = { "client", "manager" })
 @Entity
 @Table(name = "user")
 @JsonInclude(Include.NON_NULL)
@@ -88,6 +86,8 @@ public class User {
     @Column(name = "Role", nullable = false)
     private Role role;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToOne(cascade = CascadeType.ALL)
     @JoinTable( name = "user_client",
                 joinColumns = {@JoinColumn(name = "UserId", referencedColumnName = "Id")},
@@ -95,6 +95,8 @@ public class User {
     @JsonIgnore
     private Client client;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToOne(cascade = CascadeType.ALL)
     @JoinTable( name = "user_manager",
                 joinColumns = {@JoinColumn(name = "UserId", referencedColumnName = "Id")},

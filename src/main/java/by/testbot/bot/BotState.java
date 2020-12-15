@@ -3,12 +3,9 @@ package by.testbot.bot;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
 
 import by.testbot.models.Answer;
 import by.testbot.models.BotMessage;
@@ -421,7 +418,7 @@ public enum BotState {
             String text = botContext.getMessage().getText();
 
             switch (text) {
-                case "callback.botMessageMenu.addNewBotMessage.confirmYes":
+                case "callback.botMessageMenu.confirmYes":
                     List<BotMessage> botMessages = botContext.getViberService().getBotMessageService().getAllAdded();
                     BotMessage newBotMessage = botContext.getUser().getManager().getBotMessage();
                     BotMessage lastMessage = botContext.getViberService().getBotMessageService().getLastMessage();
@@ -446,7 +443,7 @@ public enum BotState {
 
                     nextState = BotMessageMenu;
                     break;
-                case "callback.botMessageMenu.addNewBotMessage.confirmNo":
+                case "callback.botMessageMenu.confirmNo":
                     botContext.getViberService().getBotMessageService().delete(botContext.getUser().getManager().getBotMessage());
                     botContext.getViberService().getMessageService().sendCancellerationAddNewBotMessageMessage(botContext.getUser().getViberId());
 
@@ -511,7 +508,6 @@ public enum BotState {
 
                         if (botMessage != null) {
                             botContext.getUser().getManager().setBotMessage(botMessage);
-                            botContext.getUser().getManager().setButtons(botContext.getViberService().getButtonService().copyButtons(botMessage.getButtons(), botContext.getUser().getManager()));
 
                             nextState = ConfirmDeleteBotMessage;
                         }
@@ -548,7 +544,7 @@ public enum BotState {
             String text = botContext.getMessage().getText();
 
             switch (text) {
-                case "callback.botMessageMenu.deleteBotMessage.confirmYes":
+                case "callback.botMessageMenu.confirmYes":
                     BotMessage deleteMessage = botContext.getUser().getManager().getBotMessage();
                     BotMessage previousMessage = deleteMessage.getPreviousMessage();
                     BotMessage nextMessage = deleteMessage.getNextMessage();
@@ -579,7 +575,7 @@ public enum BotState {
                     botContext.getViberService().getMessageService().sendSuccessfullyDeleteBotMessageMessage(botContext.getUser().getViberId());
                     nextState = BotMessageMenu;
                     break;
-                case "callback.botMessageMenu.deleteBotMessage.confirmNo":
+                case "callback.botMessageMenu.confirmNo":
                     botContext.getUser().getManager().setBotMessage(null);
 
                     botContext.getViberService().getMessageService().sendCancellerationDeleteBotMessageMessage(botContext.getUser().getViberId());
@@ -618,9 +614,58 @@ public enum BotState {
 
             botContext.getUser().getManager().setBotMessageText(text);
 
-            botContext.getViberService().getMessageService().sendSuccessEditBotMessageTextMessage(botContext.getUser().getViberId());
+            nextState = ConfirmChangeBotMessageText;
+        }
 
-            nextState = EditBotMessageMenu;
+        @Override
+        public BotState nextState() {
+            return nextState;
+        }
+    },
+
+    ConfirmChangeBotMessageText(true) {
+        BotState nextState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getViberService().getMessageService().sendConfirmChangeBotMessageTextMessage(botContext.getUser().getViberId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessage().getText();
+
+            switch(text) {
+                case "callback.botMessageMenu.confirmYes":
+                    BotMessage botMessage = botContext.getUser().getManager().getBotMessage();
+
+
+                    if (botMessage != null) {
+                        botMessage.setMessage(botContext.getUser().getManager().getBotMessageText());
+
+                        botContext.getUser().getManager().setBotMessageText(null);
+
+                        botContext.getViberService().getBotMessageService().save(botMessage);
+                        botContext.getViberService().getMessageService().sendSuccessEditBotMessageTextMessage(botContext.getUser().getViberId());
+                    }
+                    else {
+                        botContext.getUser().getManager().setBotMessageText(null);
+
+                        botContext.getViberService().getMessageService().sendUnableToChangeBotMessageTextMessage(botContext.getUser().getViberId());
+                    }
+
+                    nextState = EditBotMessageMenu;
+                    break;
+                case "callback.botMessageMenu.confirmNo":
+                    botContext.getUser().getManager().setBotMessageText(null);
+
+                    botContext.getViberService().getMessageService().sendCancellerationChangeBotMessageTextMessage(botContext.getUser().getViberId());
+                    nextState = EditBotMessageMenu;
+                    break;
+                default:
+                    nextState = ConfirmChangeBotMessageText;
+                    break;
+            }
         }
 
         @Override
@@ -647,7 +692,7 @@ public enum BotState {
             String text = botContext.getMessage().getText();
 
             if (text.equals("callback.back")) {
-
+                nextState = BotMessageMenu;
             }
             else {
                 List<Integer> order = botContext.getViberService().getBotMessageService().parseBotMessageSequence(text);
@@ -723,8 +768,6 @@ public enum BotState {
 
                         if (botMessage != null) {
                             botContext.getUser().getManager().setBotMessage(botMessage);
-                            botContext.getUser().getManager().setButtons(botContext.getViberService().getButtonService().copyButtons(botMessage.getButtons(), botContext.getUser().getManager()));
-
                             nextState = EditBotMessageMenu;
                         }
                         else {
@@ -757,6 +800,12 @@ public enum BotState {
             Objects.requireNonNull(botContext.getMessage(), "Message is null");
             Objects.requireNonNull(botContext.getUser().getManager(), "Manager is null");
 
+            if (botContext.getUser().getManager().getBotMessage() == null) {
+                botContext.getViberService().getMessageService().sendUnableToEditBotMessageMessage(botContext.getUser().getViberId());
+                nextState = BotMessageMenu;
+                return;
+            }
+
             String text = botContext.getMessage().getText();
 
             switch(text) {
@@ -767,7 +816,7 @@ public enum BotState {
                     nextState = ListOfBotMessageButtons;
                     break;
                 case "callback.botMessageButtonsMenu.deleteButton":
-                    if (botContext.getUser().getManager().getButtons().size() < 1) {
+                    if (botContext.getUser().getManager().getBotMessage().getButtons().size() < 1) {
                         botContext.getViberService().getMessageService().sendMinButtonsCountReachedMessage(botContext.getUser().getViberId());
                         nextState = EditBotMessageMenu;
                     }
@@ -776,7 +825,7 @@ public enum BotState {
                     }
                     break;
                 case "callback.botMessageButtonsMenu.addButton": 
-                    if (botContext.getUser().getManager().getButtons().size() > ButtonService.MAX_BUTTONS_COUNT) {
+                    if (botContext.getUser().getManager().getBotMessage().getButtons().size() > ButtonService.MAX_BUTTONS_COUNT) {
                         botContext.getViberService().getMessageService().sendMaxButtonsCountReachedMessage(botContext.getUser().getViberId());
                         nextState = EditBotMessageMenu;
                     }
@@ -784,55 +833,8 @@ public enum BotState {
                         nextState = AddBotMessageButton;
                     }
                     break;
-                case "callback.botMessageButtonsMenu.saveButton":
-                    if (botContext.getUser().getManager().getBotMessage() != null) {
-                        Set<Button> oldButtons = botContext.getUser().getManager().getBotMessage().getButtons();
-                        Set<Button> newButtons = botContext.getUser().getManager().getButtons();
-
-                        String newText = botContext.getUser().getManager().getBotMessageText();
-
-                        if (newText != null) {
-                            botContext.getUser().getManager().getBotMessage().setMessage(newText);
-                        }
-
-                        oldButtons.forEach(b -> {
-                            if (!newButtons.contains(b)) {
-                                botContext.getViberService().getButtonService().delete(b);
-                            }
-                        });
-
-                        BotMessage botMessage = botContext.getUser().getManager().getBotMessage();
-                        botMessage.setButtons(newButtons);
-
-                        botContext.getUser().getManager().setButtons(null);
-                        botContext.getUser().getManager().setBotMessageText(null);
-                        botContext.getUser().getManager().setBotMessage(null);
-
-                        botContext.getViberService().getUserService().save(botContext.getUser());
-                        botContext.getViberService().getBotMessageService().save(botMessage);
-
-                        botContext.getViberService().getButtonService().deleteAll(oldButtons);
-                        botContext.getViberService().getMessageService().sendChangesSuccessfullySavedMessage(botContext.getUser().getViberId());
-                    }
-                    else {
-                        Set<Button> buttons = botContext.getUser().getManager().getButtons();
-
-                        botContext.getViberService().getButtonService().deleteAll(buttons);
-                        botContext.getViberService().getMessageService().sendUnableSaveBotMessage(botContext.getUser().getViberId());
-                    }
-
-                    nextState = BotMessageMenu; 
-                    break;
-                case "callback.botMessageButtonsMenu.cancelButton":
-                    Set<Button> buttons = botContext.getUser().getManager().getButtons();
-
+                case "callback.botMessageButtonsMenu.back":
                     botContext.getUser().getManager().setBotMessage(null);
-                    botContext.getUser().getManager().setButtons(null);
-                    botContext.getUser().getManager().setBotMessageText(null);
-
-                    botContext.getViberService().getButtonService().deleteAll(buttons);
-                    botContext.getViberService().getMessageService().sendChangesIsCancelledMessage(botContext.getUser().getViberId());
-
                     nextState = BotMessageMenu;
                     break;
                 default: 
@@ -853,8 +855,11 @@ public enum BotState {
             Objects.requireNonNull(botContext.getUser(), "User is null");
             Objects.requireNonNull(botContext.getUser().getManager(), "Manager is null");
 
+            BotMessage botMessage = botContext.getUser().getManager().getBotMessage();
+            List<Button> buttons = botContext.getViberService().getButtonService().getAllByBotMessage(botMessage);
+
             botContext.getViberService().getMessageService().sendTextMessage(botContext.getUser().getViberId(), 
-                                                                             botContext.getViberService().getButtonService().formatButtons(botContext.getUser().getManager().getButtons()), null, null);
+                                                                             botContext.getViberService().getButtonService().formatButtons(buttons), null, null);
         }
 
         @Override
@@ -868,7 +873,10 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            botContext.getViberService().getMessageService().sendDeleteBotMessageButtonMessage(botContext.getUser().getViberId(), botContext.getUser().getManager().getButtons());
+            BotMessage botMessage = botContext.getUser().getManager().getBotMessage();
+            List<Button> buttons = botContext.getViberService().getButtonService().getAllByBotMessage(botMessage);
+
+            botContext.getViberService().getMessageService().sendDeleteBotMessageButtonMessage(botContext.getUser().getViberId(), buttons);
         }
 
         @Override
@@ -889,7 +897,7 @@ public enum BotState {
                     nextState = DeleteBotMessageButton;
                 }
                 else {
-                    Set<Button> buttons = botContext.getUser().getManager().getButtons();
+                    List<Button> buttons = botContext.getViberService().getButtonService().getAllByBotMessage(botContext.getUser().getManager().getBotMessage());
                     Integer buttonPosition = Integer.parseInt(text);
 
                     if (buttonPosition < 1 || buttonPosition > buttons.size()) {
@@ -897,23 +905,58 @@ public enum BotState {
                         nextState = DeleteBotMessageButton;
                     }
                     else {
-                        List<Button> buttonsCopy = List.copyOf(buttons);
-
-                        Button button = buttonsCopy.get(buttonPosition - 1);
-
-                        if (button != null) {
-                            buttons.remove(button);
-
-                            botContext.getViberService().getButtonService().delete(button);
-                            botContext.getUser().getManager().setButtons(buttons);
-                        }
-
-                        botContext.getViberService().getMessageService().sendSuccessfullyDeletedButtonMessage(botContext.getUser().getViberId());
-
-                        nextState = EditBotMessageMenu;
+                        botContext.getUser().getManager().setButton(buttons.get(buttonPosition - 1));
+                        nextState = ConfirmDeleteBotMessageButton;
                     }
                 }
             }
+        }
+
+        @Override
+        public BotState nextState() {
+            return nextState;
+        }
+    },
+
+    ConfirmDeleteBotMessageButton(true) {
+        BotState nextState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getViberService().getMessageService().sendConfirmDeleteBotMessageButtonMessage(botContext.getUser().getViberId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessage().getText();
+
+            switch(text) {
+                case "callback.botMessageMenu.botMessageButtonsMenu.confirmYes":
+                    Button button = botContext.getUser().getManager().getButton();
+
+                    if (button != null) {
+                        botContext.getUser().getManager().setButton(null);
+
+                        botContext.getViberService().getButtonService().delete(button);
+                        botContext.getViberService().getMessageService().sendSuccessfullyDeletedButtonMessage(botContext.getUser().getViberId());
+                    }
+                    else {
+                        botContext.getViberService().getMessageService().sendUnableToDeleteButtonMessage(botContext.getUser().getViberId());
+                    }
+                    
+                    nextState = EditBotMessageMenu;
+                    break;
+                case "callback.botMessageMenu.botMessageButtonsMenu.confirmNo":
+                    botContext.getUser().getManager().setButton(null);
+
+                    botContext.getViberService().getMessageService().sendCancellerationDeleteButtonMessage(botContext.getUser().getViberId());
+                    nextState = EditBotMessageMenu;
+                    break;
+                default:
+                    nextState = ConfirmDeleteBotMessageButton;
+                    break;
+            }   
+            
         }
 
         @Override
@@ -933,30 +976,14 @@ public enum BotState {
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
-            String callbackData = StringUtils.EMPTY;
 
             Button newButton = new Button();
+            
             newButton.setText(text);
-            newButton.setIsLast(true);
-
-            do {
-                callbackData = botContext.getViberService().getButtonService().generateCallbackData();
-            }
-            while(botContext.getViberService().getButtonService().getByCallbackData(callbackData) != null);
-
-            newButton.setCallbackData(callbackData);
-
-            if (newButton.getManagers() != null) {
-                newButton.getManagers().add(botContext.getUser().getManager());
-            }
-            else {
-                Set<Manager> managers = new HashSet<>();
-                managers.add(botContext.getUser().getManager());
-                newButton.setManagers(managers);
-            }
+            newButton.setCallbackData(botContext.getViberService().getButtonService().generateCallbackData());
 
             botContext.getViberService().getButtonService().save(newButton);
-            botContext.getUser().getManager().getButtons().add(newButton);
+            botContext.getUser().getManager().setButton(newButton);
 
             nextState = SetAnswerTypeToNewButton;
         }
@@ -979,21 +1006,19 @@ public enum BotState {
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
 
-            Button lastButton = botContext.getUser().getManager().getButtons().stream().filter(b -> b.getIsLast() == true).findAny().orElse(null);
-
-            if (lastButton == null) {
-                throw new NullPointerException("Unable to find manager last button");
-            }
+            Button button = botContext.getUser().getManager().getButton();
 
             switch(text) {
                 case "callback.botMessageMenu.selectAnswerType.negative": 
-                    lastButton.setAnswerType(AnswerType.POSITIVE);
-                    botContext.getViberService().getButtonService().save(lastButton);
+                    button.setAnswerType(AnswerType.POSITIVE);
+
+                    botContext.getViberService().getButtonService().save(button);
                     nextState = SelectIsButtonEndsDialogue;
                     break;
                 case "callback.botMessageMenu.selectAnswerType.positive":
-                    lastButton.setAnswerType(AnswerType.NEGATIVE);
-                    botContext.getViberService().getButtonService().save(lastButton);
+                    button.setAnswerType(AnswerType.NEGATIVE);
+
+                    botContext.getViberService().getButtonService().save(button);
                     nextState = SelectIsButtonEndsDialogue;
                     break;
                 default: 
@@ -1020,33 +1045,75 @@ public enum BotState {
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
 
-            Button lastButton = botContext.getUser().getManager().getButtons().stream().filter(b -> b.getIsLast() == true).findAny().orElse(null);
-
-            if (lastButton == null) {
-                throw new NullPointerException("Unable to find manager last button");
-            }
+            Button button = botContext.getUser().getManager().getButton();
 
             switch (text) {
                 case "Да": 
-                    lastButton.setDialogueEnds(false);
-                    lastButton.setIsLast(false);
+                    button.setDialogueEnds(false);
 
-                    botContext.getViberService().getButtonService().save(lastButton);
-                    botContext.getViberService().getMessageService().sendSuccessfullyAddedButtonMessage(botContext.getUser().getViberId());
-
-                    nextState = EditBotMessageMenu;
+                    botContext.getViberService().getButtonService().save(button);
+                    nextState = ConfirmAddNewBotMessageButton;
                     break;
                 case "Нет": 
-                    lastButton.setDialogueEnds(true);
-                    lastButton.setIsLast(false);
+                    button.setDialogueEnds(true);
 
-                    botContext.getViberService().getButtonService().save(lastButton);
-                    botContext.getViberService().getMessageService().sendSuccessfullyAddedButtonMessage(botContext.getUser().getViberId());
-
-                    nextState = EditBotMessageMenu;
+                    botContext.getViberService().getButtonService().save(button);
+                    nextState = ConfirmAddNewBotMessageButton;
                     break;
                 default:
                     nextState = SelectIsButtonEndsDialogue;
+                    break;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return nextState;
+        }
+    },
+
+    ConfirmAddNewBotMessageButton(true) {
+        BotState nextState;
+
+        @Override
+        public void enter(BotContext botContext) {
+            botContext.getViberService().getMessageService().sendConfirmAddNewBotMessageButtonMessage(botContext.getUser().getViberId());
+        }
+
+        @Override
+        public void handleInput(BotContext botContext) {
+            String text = botContext.getMessage().getText();
+
+            Button button = botContext.getUser().getManager().getButton();
+
+            switch (text) {
+                case "callback.botMessageMenu.botMessageButtonsMenu.confirmYes":
+                    BotMessage botMessage = botContext.getUser().getManager().getBotMessage();
+
+                    botContext.getUser().getManager().setButton(null);
+
+                    if (botMessage != null) {
+                        button.setBotMessage(botMessage);
+
+                        botContext.getViberService().getBotMessageService().save(botMessage);
+                        botContext.getViberService().getMessageService().sendSuccessfullyAddedButtonMessage(botContext.getUser().getViberId());
+                    }
+                    else {
+                        botContext.getViberService().getButtonService().delete(button);
+                        botContext.getViberService().getMessageService().sendUnableToAddNewButtonMessage(botContext.getUser().getViberId());
+                    }
+
+                    nextState = EditBotMessageMenu;
+                    break;
+                case "callback.botMessageMenu.botMessageButtonsMenu.confirmNo":
+                    botContext.getUser().getManager().setButton(null);
+
+                    botContext.getViberService().getButtonService().delete(button);
+                    botContext.getViberService().getMessageService().sendCancellerationAddNewButtonMessage(botContext.getUser().getViberId());
+                    nextState = EditBotMessageMenu;
+                    break;
+                default:
+                    nextState = ConfirmAddNewBotMessageButton;
                     break;
             }
         }
