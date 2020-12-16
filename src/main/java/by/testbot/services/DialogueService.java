@@ -54,10 +54,10 @@ public class DialogueService {
 
     @Transactional
     public List<Dialogue> getAllNotEndedAndBotMessageNotNullDialogues() {
-        return dialogueRepository.findAllByDialogIsOverAndBotMessageNotNull(false);
+        return dialogueRepository.findAllByDialogueIsOverAndBotMessageNotNull(false);
     }
 
-    public Dialogue getCurrentDialogByClient(Client client) {
-        return getAllByClient(client).stream().filter(m -> m.getDialogIsOver() == false).findFirst().orElse(null);
+    public Dialogue getCurrentDialogueByClient(Client client) {
+        return getAllByClient(client).stream().filter(m -> m.getDialogueIsOver() == false).findFirst().orElse(null);
     }
 }

@@ -62,6 +62,19 @@ public class BotMessageService {
     }
 
     @Transactional
+    public Integer getAddedBotMessagesCount() {
+        Integer count = 0;
+        BotMessage botMessage = getFirstMessage();
+
+        while(botMessage != null) {
+            count++;
+            botMessage = botMessage.getNextMessage();
+        }
+
+        return count;
+    }
+
+    @Transactional
     public BotMessage getFirstMessage() {
         return botMessageRepository.findFirstByPreviousMessageAndIsAdded(null, false);
     }
@@ -168,7 +181,7 @@ public class BotMessageService {
             name = client.getName();
         }
         if (hasLink(botMessage.getMessage())) {
-            Dialogue currentDialogue = client.getDialogues().stream().filter(d -> !d.getDialogIsOver()).findAny().orElse(null);
+            Dialogue currentDialogue = client.getDialogues().stream().filter(d -> !d.getDialogueIsOver()).findAny().orElse(null);
             
             if (currentDialogue != null) {
                 link = carService.generateLink(currentDialogue.getBrand(), currentDialogue.getModel(), currentDialogue.getYearFrom(), currentDialogue.getYearTo());
@@ -186,7 +199,7 @@ public class BotMessageService {
             name = client.getName();
         }
         if (hasLink(botMessage.getMessage())) {
-            Dialogue currentDialogue = client.getDialogues().stream().filter(d -> !d.getDialogIsOver()).findAny().orElse(null);
+            Dialogue currentDialogue = client.getDialogues().stream().filter(d -> !d.getDialogueIsOver()).findAny().orElse(null);
             
             if (currentDialogue != null) {
                 link = carService.generateLink(currentDialogue.getBrand(), currentDialogue.getModel(), currentDialogue.getYearFrom(), currentDialogue.getYearTo());

@@ -44,14 +44,17 @@ public class Dialogue {
     @Column(name = "YearTo")
     private Integer yearTo;
 
-    @Column(name = "DialogIsOver", nullable = false, columnDefinition = "TINYINT(1)")
-    private Boolean dialogIsOver;
+    @Column(name = "DialogueIsOver", nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean dialogueIsOver;
 
     @Column(name = "LastUpdate", nullable = false)
     private Long lastUpdate;
 
     @Column(name = "BotMessagesLastUpdate", nullable = false)
     private Long botMessagesLastUpdate;
+
+    @Column(name = "MustBeAnswers", nullable = false)
+    private Integer mustBeAnswers;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

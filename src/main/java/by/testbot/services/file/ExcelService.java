@@ -4,6 +4,9 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -15,11 +18,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import by.testbot.models.Answer;
 import by.testbot.models.Dialogue;
+import by.testbot.models.enums.AnswerType;
+import by.testbot.services.AnswerService;
 import by.testbot.services.DialogueService;
 import lombok.SneakyThrows;
 
@@ -27,6 +34,9 @@ import lombok.SneakyThrows;
 public class ExcelService {
     @Autowired
     private DialogueService dialogueService;
+
+    @Autowired
+    private AnswerService answerService;
 
     public String generateExcelAndWriteActualData() {
         return generateExcel(dialogueService.getAll());
@@ -38,13 +48,28 @@ public class ExcelService {
         Sheet sheet = workbook.createSheet();
         sheet.setDefaultColumnWidth(10);
 
-        createHeaderRow(sheet);
+        Map<Long, List<Dialogue>> dialoguesGrouped = new TreeMap<>(dialogues.stream().collect(Collectors.groupingBy(d -> d.getBotMessagesLastUpdate()))); 
 
-        Integer rowCount = 1;
+        Integer rowCount = 0;
 
-        for(Dialogue dialogue : dialogues) {
-            Row row = sheet.createRow(rowCount++);
-            writeDialogue(dialogue, row, sheet);
+        for (Long botMessageUpdate : dialoguesGrouped.keySet()) {
+            List<Dialogue> dialoguesList = dialoguesGrouped.get(botMessageUpdate);
+            Dialogue tmpDialogue = dialoguesList.stream().findAny().orElse(null);
+            Integer answersCount = 0;
+
+            if (tmpDialogue != null) {
+                answersCount = tmpDialogue.getMustBeAnswers();
+            }
+
+            createBotMessagesUpdateRow(sheet, rowCount++, botMessageUpdate);
+            createHeaderRow(sheet, answersCount, rowCount++);
+
+            for (Dialogue dialogue : dialoguesList) {
+                Row row = sheet.createRow(rowCount++);
+                writeDialogue(dialogue, row, sheet, answersCount);
+            }
+
+            rowCount++;
         }
 
         String filename = new SimpleDateFormat("yyyy-MM-dd HH_mm_ss").format(new Date()) + ".xlsx";
@@ -58,7 +83,7 @@ public class ExcelService {
         return filename;
     }
 
-    private void writeDialogue(Dialogue dialogue, Row row, Sheet sheet) {
+    private void writeDialogue(Dialogue dialogue, Row row, Sheet sheet, Integer answersCount) {
         CellStyle positiveCellStyle = sheet.getWorkbook().createCellStyle();
         positiveCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         positiveCellStyle.setFillForegroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
@@ -82,68 +107,41 @@ public class ExcelService {
         cell = row.createCell(4);
         cell.setCellValue(dialogue.getYearTo() != null ? dialogue.getYearTo().toString() : "Еще не указал");
 
-        // cell = row.createCell(5);
-        // cell.setCellValue(dialogue.getStep1Answer() != null ? dialogue.getStep1Answer() : "");
-        // if (dialogue.getStep1Answer() != null && dialogue.getStep1Answer().equals("Да")) {
-        //     cell.setCellStyle(positiveCellStyle);
-        // }
-        // else {
-        //     cell.setCellStyle(negativeCellStyle);
-        // }
-
-        // cell = row.createCell(6);
-        // cell.setCellValue(dialogue.getStep2Answer() != null ? dialogue.getStep2Answer() : "");
-        // if (dialogue.getStep2Answer() != null && dialogue.getStep2Answer().equals("Да")) {
-        //     cell.setCellStyle(positiveCellStyle);
-        // }
-        // else {
-        //     cell.setCellStyle(negativeCellStyle);
-        // }
-
-        // cell = row.createCell(7);
-        // cell.setCellValue(dialogue.getStep3Answer() != null ? dialogue.getStep3Answer() : "");
-        // if (dialogue.getStep3Answer() != null && dialogue.getStep3Answer().equals("Да")) {
-        //     cell.setCellStyle(positiveCellStyle);
-        // }
-        // else {
-        //     cell.setCellStyle(negativeCellStyle);
-        // }
-
-        // cell = row.createCell(8);
-        // cell.setCellValue(dialogue.getStep4Answer() != null ? dialogue.getStep4Answer() : "");
-        // if (dialogue.getStep4Answer() != null) {
-        //     cell.setCellStyle(positiveCellStyle);
-        // }
-        // else {
-        //     cell.setCellStyle(negativeCellStyle);
-        // }
-
-        // cell = row.createCell(9);
-        // cell.setCellValue(dialogue.getStep5Answer() != null ? dialogue.getStep5Answer() : "");
-        // if (dialogue.getStep5Answer() != null && dialogue.getStep5Answer().equals("Да")) {
-        //     cell.setCellStyle(positiveCellStyle);
-        // }
-        // else {
-        //     cell.setCellStyle(negativeCellStyle);
-        // }
-
-        // cell = row.createCell(10);
-        // cell.setCellValue(dialogue.getStep6Answer() != null ? dialogue.getStep6Answer() : "");
-        // if (dialogue.getStep6Answer() != null && dialogue.getStep6Answer().equals("Да")) {
-        //     cell.setCellStyle(positiveCellStyle);
-        // }
-        // else {
-        //     cell.setCellStyle(negativeCellStyle);
-        // }
-
-        cell = row.createCell(11);
+        cell = row.createCell(5);
         cell.setCellValue(dialogue.getClient().getPhoneNumber() != null ? dialogue.getClient().getPhoneNumber() : "Еще не указал");
 
-        cell = row.createCell(12);
-        cell.setCellValue(dialogue.getDialogIsOver() ? "Да" : "Нет");
+        cell = row.createCell(6);
+        cell.setCellValue(dialogue.getDialogueIsOver() ? "Да" : "Нет");
+
+        Integer columnCounter = 7;
+
+        List<Answer> answers = answerService.getAllByDialogue(dialogue);
+
+        for (Integer i = 0; i < answers.size() && i < answersCount; i++) {
+            cell = row.createCell(columnCounter);
+            cell.setCellValue(answers.get(i).getAnswer());
+            cell.setCellStyle(answers.get(i).getAnswerType() == AnswerType.POSITIVE ? positiveCellStyle : negativeCellStyle);
+            columnCounter++;
+        }
+
+        for (Integer i = 0; i < answersCount - answers.size(); i++) {
+            cell = row.createCell(columnCounter);
+            cell.setCellValue("Еще не указал");
+            cell.setCellStyle(negativeCellStyle);
+            columnCounter++;
+        }
     }
 
-    private void createHeaderRow(Sheet sheet) {
+    private void createBotMessagesUpdateRow(Sheet sheet, Integer rowCount, Long botMessageUpdate) {
+        Row row = sheet.createRow(rowCount);
+
+        sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, 0, 6));
+
+        Cell cell = row.createCell(0);
+        cell.setCellValue("Обновление сообщений бота от: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(botMessageUpdate)));
+    }
+
+    private void createHeaderRow(Sheet sheet, Integer answersCount, Integer rowCount) {
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         Font font = sheet.getWorkbook().createFont();
         font.setBold(true);
@@ -152,7 +150,7 @@ public class ExcelService {
         cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         cellStyle.setWrapText(true);
 
-        Row row = sheet.createRow(0);
+        Row row = sheet.createRow(rowCount);
 
         Cell cell = row.createCell(0);
         cell.setCellValue("Имя");
@@ -175,35 +173,20 @@ public class ExcelService {
         cell.setCellStyle(cellStyle);
 
         cell = row.createCell(5);
-        cell.setCellValue("Шаг 1");
-        cell.setCellStyle(cellStyle);
-
-        cell = row.createCell(6);
-        cell.setCellValue("Шаг 2");
-        cell.setCellStyle(cellStyle);
-
-        cell = row.createCell(7);
-        cell.setCellValue("Шаг 3");
-        cell.setCellStyle(cellStyle);
-        
-        cell = row.createCell(8);
-        cell.setCellValue("Шаг 4");
-        cell.setCellStyle(cellStyle);
-
-        cell = row.createCell(9);
-        cell.setCellValue("Шаг 5");
-        cell.setCellStyle(cellStyle);
-
-        cell = row.createCell(10);
-        cell.setCellValue("Шаг 6");
-        cell.setCellStyle(cellStyle);
-
-        cell = row.createCell(11);
         cell.setCellValue("Мобильный телефон");
         cell.setCellStyle(cellStyle);
 
-        cell = row.createCell(12);
+        cell = row.createCell(6);
         cell.setCellValue("Диалог окончен");
         cell.setCellStyle(cellStyle);
+
+        Integer columnCounter = 7;
+
+        for (Integer i = 0; i < answersCount; i++) {
+            cell = row.createCell(columnCounter);
+            cell.setCellValue("Шаг " + (i + 1));
+            cell.setCellStyle(cellStyle);
+            columnCounter++;
+        }
     }
 }

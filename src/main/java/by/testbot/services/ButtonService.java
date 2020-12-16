@@ -1,8 +1,6 @@
 package by.testbot.services;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import by.testbot.models.BotMessage;
 import by.testbot.models.Button;
-import by.testbot.models.Manager;
 import by.testbot.models.enums.AnswerType;
 import by.testbot.repositories.ButtonRepository;
 
@@ -30,7 +27,7 @@ public class ButtonService {
     }
 
     @Transactional
-    public void saveAll(Set<Button> buttons) {
+    public void saveAll(Iterable<Button> buttons) {
         buttonRepository.saveAll(buttons);
     }
 
@@ -49,10 +46,9 @@ public class ButtonService {
         return buttonRepository.findAllByBotMessage(botMessage);
     }
 
-    public void deleteAll(Set<Button> buttons) {
-        for (Button button : buttons) {
-            delete(button);
-        }
+    @Transactional
+    public void deleteAll(Iterable<Button> buttons) {
+        buttonRepository.deleteAll(buttons);
     }
 
     @Transactional
@@ -69,50 +65,6 @@ public class ButtonService {
         while(getByCallbackData(callbackData) != null);
 
         return callbackData;
-    }
-
-    public Set<Button> copyButtons(Set<Button> buttons) {
-        Set<Button> buttonsCopy = new HashSet<>();
-
-        for (Button button : buttons) {
-            Button buttonCopy = new Button();
-            buttonCopy.setText(button.getText());
-            buttonCopy.setAnswerType(button.getAnswerType());
-            buttonCopy.setDialogueEnds(button.getDialogueEnds());
-            buttonCopy.setCallbackData(button.getCallbackData());
-
-            buttonsCopy.add(buttonCopy);
-        }
-
-        return buttonsCopy;
-    }
-
-    public Set<Button> copyButtons(Set<Button> buttons, Manager manager) {
-        Set<Button> buttonsCopy = new HashSet<>();
-
-        for (Button button : buttons) {
-            Button buttonCopy = new Button();
-            buttonCopy.setText(button.getText());
-            buttonCopy.setAnswerType(button.getAnswerType());
-            buttonCopy.setDialogueEnds(button.getDialogueEnds());
-            buttonCopy.setCallbackData(button.getCallbackData());
-
-            if (buttonCopy.getManagers() == null) {
-                Set<Manager> managers = new HashSet<>();
-                managers.add(manager);
-
-                buttonCopy.setManagers(managers);
-            }
-            else {
-                buttonCopy.getManagers().add(manager);
-            }
-
-            save(buttonCopy);
-
-            buttonsCopy.add(buttonCopy);
-        }
-
-        return buttonsCopy;
     }
 
     public String formatButtons(List<Button> buttons) {

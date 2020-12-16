@@ -453,54 +453,6 @@ public class KeyboardSource {
         return keyboard;
     }
 
-    // public Keyboard getConfirmAddNewBotMessageKeyboard() {
-    //     Keyboard keyboard = new Keyboard();
-    //     List<Button> buttons = new ArrayList<>();
-
-    //     Button yesButton = new Button();
-    //     yesButton.setText("Да");
-    //     yesButton.setActionBody("callback.botMessageMenu.addNewBotMessage.confirmYes");
-    //     yesButton.setColumns(6);
-    //     yesButton.setRows(1);
-    //     yesButton.setBackgroundColor("#2db9b9");
-    //     buttons.add(yesButton);
-
-    //     Button noButton = new Button();
-    //     noButton.setText("Нет");
-    //     noButton.setActionBody("callback.botMessageMenu.addNewBotMessage.confirmNo");
-    //     noButton.setColumns(6);
-    //     noButton.setRows(1);
-    //     noButton.setBackgroundColor("#2db9b9");
-    //     buttons.add(noButton);
-
-    //     keyboard.setButtons(buttons);
-    //     return keyboard;
-    // }
-
-    // public Keyboard getConfirmDeleteBotMessageKeyboard() {
-    //     Keyboard keyboard = new Keyboard();
-    //     List<Button> buttons = new ArrayList<>();
-
-    //     Button yesButton = new Button();
-    //     yesButton.setText("Да");
-    //     yesButton.setActionBody("callback.botMessageMenu.deleteBotMessage.confirmYes");
-    //     yesButton.setColumns(6);
-    //     yesButton.setRows(1);
-    //     yesButton.setBackgroundColor("#2db9b9");
-    //     buttons.add(yesButton);
-
-    //     Button noButton = new Button();
-    //     noButton.setText("Нет");
-    //     noButton.setActionBody("callback.botMessageMenu.deleteBotMessage.confirmNo");
-    //     noButton.setColumns(6);
-    //     noButton.setRows(1);
-    //     noButton.setBackgroundColor("#2db9b9");
-    //     buttons.add(noButton);
-
-    //     keyboard.setButtons(buttons);
-    //     return keyboard;
-    // }
-
     public Keyboard getConfirmBotMessageKeyboard() {
         Keyboard keyboard = new Keyboard();
         List<Button> buttons = new ArrayList<>();

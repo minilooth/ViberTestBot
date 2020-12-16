@@ -1010,13 +1010,13 @@ public enum BotState {
 
             switch(text) {
                 case "callback.botMessageMenu.selectAnswerType.negative": 
-                    button.setAnswerType(AnswerType.POSITIVE);
+                    button.setAnswerType(AnswerType.NEGATIVE);
 
                     botContext.getViberService().getButtonService().save(button);
                     nextState = SelectIsButtonEndsDialogue;
                     break;
                 case "callback.botMessageMenu.selectAnswerType.positive":
-                    button.setAnswerType(AnswerType.NEGATIVE);
+                    button.setAnswerType(AnswerType.POSITIVE);
 
                     botContext.getViberService().getButtonService().save(button);
                     nextState = SelectIsButtonEndsDialogue;
@@ -1579,9 +1579,10 @@ public enum BotState {
 
             Dialogue currentDialogue = Dialogue.builder()
                                     .client(botContext.getUser().getClient())
-                                    .dialogIsOver(false)
+                                    .dialogueIsOver(false)
                                     .botMessagesLastUpdate(botContext.getViberService().getBotMessageService().getLastUpdate())
                                     .lastUpdate(new Date().getTime())
+                                    .mustBeAnswers(botContext.getViberService().getBotMessageService().getAddedBotMessagesCount())
                                     .build();
 
             botContext.getViberService().getDialogueService().save(currentDialogue);
@@ -1638,14 +1639,15 @@ public enum BotState {
                 nextState = AskBrand;
             }
             else if (botContext.getViberService().getCarService().getBrands().contains(text)) {
-                Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogByClient(botContext.getUser().getClient());;
+                Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogueByClient(botContext.getUser().getClient());;
 
                 if (currentDialogue == null && botContext.getUser().getClient() != null && botContext.getUser().getClient().getName() != null) {
                     currentDialogue = Dialogue.builder()
                                         .client(botContext.getUser().getClient())
-                                        .dialogIsOver(false)
+                                        .dialogueIsOver(false)
                                         .botMessagesLastUpdate(botContext.getViberService().getBotMessageService().getLastUpdate())
                                         .lastUpdate(new Date().getTime())
+                                        .mustBeAnswers(botContext.getViberService().getBotMessageService().getAddedBotMessagesCount())
                                         .build();
                 }
 
@@ -1672,7 +1674,7 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogByClient(botContext.getUser().getClient());
+            Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogueByClient(botContext.getUser().getClient());
 
             botContext.getViberService().getMessageService().sendAskModelMessage(botContext.getUser().getViberId(),
                                                                                  botContext.getViberService().getCarService().getModelsByBrand(currentDialogue.getBrand()),
@@ -1683,7 +1685,7 @@ public enum BotState {
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
 
-            Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogByClient(botContext.getUser().getClient());;
+            Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogueByClient(botContext.getUser().getClient());;
 
             if (text.equals("Назад")) {
                 Integer page = botContext.getUser().getClient().getKeyboardPage();
@@ -1775,7 +1777,7 @@ public enum BotState {
                 nextState = AskYearOfIssueFrom;
             }
             else if (Utils.generateYears(1975).contains(text)) {
-                Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogByClient(botContext.getUser().getClient());;
+                Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogueByClient(botContext.getUser().getClient());;
 
                 currentDialogue.setYearFrom(Integer.parseInt(text));
 
@@ -1840,7 +1842,7 @@ public enum BotState {
                 nextState = AskYearOfIssueTo;
             }
             else if (Utils.generateYears(1975).contains(text)) {
-                Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogByClient(botContext.getUser().getClient());
+                Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogueByClient(botContext.getUser().getClient());
                 
                 currentDialogue.setBotMessage(botContext.getViberService().getBotMessageService().getFirstMessage());
                 currentDialogue.setYearTo(Integer.parseInt(text));
@@ -1916,9 +1918,9 @@ public enum BotState {
                 Client client = botContext.getUser().getClient();
                 client.setPhoneNumber(text);
 
-                Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogByClient(botContext.getUser().getClient());
+                Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogueByClient(botContext.getUser().getClient());
 
-                currentDialogue.setDialogIsOver(true);
+                currentDialogue.setDialogueIsOver(true);
 
                 nextState = PositiveDialogEnd;
 
@@ -1934,9 +1936,9 @@ public enum BotState {
 
             botContext.getUser().getClient().setPhoneNumber(phoneNumber);
             
-            Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogByClient(botContext.getUser().getClient());
+            Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogueByClient(botContext.getUser().getClient());
 
-            currentDialogue.setDialogIsOver(true);
+            currentDialogue.setDialogueIsOver(true);
 
             nextState = PositiveDialogEnd;
 
@@ -1985,7 +1987,7 @@ public enum BotState {
 
         @Override
         public void enter(BotContext botContext) {
-            Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogByClient(botContext.getUser().getClient());
+            Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogueByClient(botContext.getUser().getClient());
             
             if (currentDialogue == null) {
                 nextState = AskBrand;
@@ -1998,7 +2000,7 @@ public enum BotState {
         @Override
         public void handleInput(BotContext botContext) {
             String text = botContext.getMessage().getText();
-            Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogByClient(botContext.getUser().getClient());
+            Dialogue currentDialogue = botContext.getViberService().getDialogueService().getCurrentDialogueByClient(botContext.getUser().getClient());
 
             if (currentDialogue == null) {
                 nextState = AskBrand;
@@ -2053,7 +2055,7 @@ public enum BotState {
                         else {
                             newAnswer.setIsLast(false);
 
-                            currentDialogue.setDialogIsOver(true);
+                            currentDialogue.setDialogueIsOver(true);
                             botContext.getViberService().getMessageService().sendPositiveDialogEndAndPhoneEnteredMessageAndKeyboard(botContext.getUser().getViberId());   
                             nextState = PositiveDialogEnd;
                         }
