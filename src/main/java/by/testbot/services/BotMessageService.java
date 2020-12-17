@@ -27,6 +27,7 @@ public class BotMessageService {
 
     final static String NAME_PLACEHOLDER = "&{name}";
     final static String LINK_PLACEHOLDER = "&{link}";
+    final static String PRICE_PLACEHOLDER = "&{price}";
 
     @Transactional
     public void save(BotMessage botMessage) {
@@ -194,6 +195,7 @@ public class BotMessageService {
     public String formateBotMessage(BotMessage botMessage, Client client) {
         String name = StringUtils.EMPTY;
         String link = StringUtils.EMPTY;
+        String price = StringUtils.EMPTY;
 
         if (hasName(botMessage.getMessage())) {
             name = client.getName();
@@ -205,8 +207,20 @@ public class BotMessageService {
                 link = carService.generateLink(currentDialogue.getBrand(), currentDialogue.getModel(), currentDialogue.getYearFrom(), currentDialogue.getYearTo());
             }
         }
+        if (hasPrice(botMessage.getMessage())) {
+            Dialogue currentDialogue = client.getDialogues().stream().filter(d -> !d.getDialogueIsOver()).findAny().orElse(null);
 
-        return botMessage.getMessage().replace(NAME_PLACEHOLDER, name).replace(LINK_PLACEHOLDER, link);
+            if (currentDialogue != null) {
+                if (currentDialogue.getYearFrom() >= 2016 && currentDialogue.getYearTo() <= 2018) {
+                    price = carService.getSixteenEighteenPrice(currentDialogue.getBrand(), currentDialogue.getModel());
+                }
+                if (currentDialogue.getYearFrom() >= 2018 && currentDialogue.getYearTo() <= 2021) {
+                    price = carService.getEighteenTwentyOnePrice(currentDialogue.getBrand(), currentDialogue.getModel());
+                }
+            }
+        }
+
+        return botMessage.getMessage().replace(NAME_PLACEHOLDER, name).replace(LINK_PLACEHOLDER, link).replace(PRICE_PLACEHOLDER, price);
     }
 
     private Boolean hasName(String message) {
@@ -215,5 +229,9 @@ public class BotMessageService {
 
     private Boolean hasLink(String message) {
         return message.contains(LINK_PLACEHOLDER);
+    }
+
+    private Boolean hasPrice(String message) {
+        return message.contains(PRICE_PLACEHOLDER);
     }
 }

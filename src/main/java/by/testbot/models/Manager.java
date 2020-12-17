@@ -30,8 +30,14 @@ public class Manager {
     @Column(name = "Surname")
     private String surname;
 
+    @Column(name = "PhoneNumber")
+    private String phoneNumber;
+
     @Column(name = "BotMessageText", columnDefinition = "LONGTEXT")
     private String botMessageText;
+
+    @Column(name = "SearchPhoneNumber")
+    private String searchPhoneNumber;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

@@ -29,6 +29,7 @@ import by.testbot.services.AnswerService;
 import by.testbot.services.BotMessageService;
 import by.testbot.services.ButtonService;
 import by.testbot.services.CarService;
+import by.testbot.services.ClientService;
 import by.testbot.services.DialogueService;
 import by.testbot.services.ManagerService;
 import by.testbot.services.MessageService;
@@ -75,6 +76,9 @@ public class ViberService {
 
     @Autowired
     private ManagerService managerService;
+
+    @Autowired
+    private ClientService clientService;
 
     @Value("${testbot.authenticationToken}")
     private String authenticationToken;
@@ -497,6 +501,11 @@ public class ViberService {
             botState = user.getBotState();
             botContext = BotContext.of(user, message, this);
 
+            user.setAvatar(viberUpdate.getMessageCallback().getSender().getAvatarUrl());
+            user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
+            user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
+            user.setName(viberUpdate.getMessageCallback().getSender().getName());
+
             botState.handleContact(botContext);
 
             do {
@@ -566,6 +575,11 @@ public class ViberService {
         else {
             botState = user.getBotState();
             botContext = BotContext.of(user, message, this);
+
+            user.setAvatar(viberUpdate.getMessageCallback().getSender().getAvatarUrl());
+            user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
+            user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
+            user.setName(viberUpdate.getMessageCallback().getSender().getName());
 
             botState.handlePicture(botContext);
 
@@ -637,6 +651,11 @@ public class ViberService {
         else {
             botState = user.getBotState();
             botContext = BotContext.of(user, message, this);
+
+            user.setAvatar(viberUpdate.getMessageCallback().getSender().getAvatarUrl());
+            user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
+            user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
+            user.setName(viberUpdate.getMessageCallback().getSender().getName());
 
             botState.handleInput(botContext);
 

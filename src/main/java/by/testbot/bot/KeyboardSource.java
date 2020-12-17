@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import by.testbot.models.viber.Button;
@@ -20,9 +22,17 @@ public class KeyboardSource {
     private LocaleMessageService localeMessageService;
 
     final static Integer MAX_ITEMS_AT_PAGE = 9;
-    final static Integer PAGABLE_BUTTON_WIDTH = 2;
-    final static Integer PAGABLE_BUTTON_NOT_FIT_WIDTH = 6;
+    final static Integer PAGABLE_BUTTON_SMALL_WIDTH = 2;
+    final static Integer PAGABLE_BUTTON_MEDIUM_WIDTH = 3;
+    final static Integer PAGABLE_BUTTON_LARGE_WIDTH = 6;
     final static Integer PAGABLE_BUTTON_HEIGHT = 1;
+
+    @PostConstruct
+    public void postConstruct() {
+        if (MAX_ITEMS_AT_PAGE % 3 != 0) {
+            throw new IllegalArgumentException("Max items at page is incorrect");
+        }
+    }
 
     //region AdminKeyboards
 
@@ -564,6 +574,32 @@ public class KeyboardSource {
         return keyboard;
     }
 
+    public Keyboard getConfirmManagerKeyboard() {
+        Keyboard keyboard = new Keyboard();
+        List<Button> buttons = new ArrayList<>();
+
+        Button yesButton = new Button();
+        yesButton.setText("Да");
+        yesButton.setActionBody("callback.managers.confirmYes");
+        yesButton.setColumns(6);
+        yesButton.setRows(1);
+        yesButton.setBackgroundColor("#2db9b9");
+        yesButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(yesButton);
+
+        Button noButton = new Button();
+        noButton.setText("Нет");
+        noButton.setActionBody("callback.managers.confirmNo");
+        noButton.setColumns(6);
+        noButton.setRows(1);
+        noButton.setBackgroundColor("#2db9b9");
+        noButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(noButton);
+
+        keyboard.setButtons(buttons);
+        return keyboard;
+    }
+
     public Keyboard getBackKeyboard() {
         Keyboard keyboard = new Keyboard();
         List<Button> buttons = new ArrayList<>();
@@ -691,6 +727,24 @@ public class KeyboardSource {
         return keyboard;
     }
 
+    public Keyboard getAskManagerPhoneNumberKeyboard() {
+        Keyboard keyboard = new Keyboard();
+        List<Button> buttons = new ArrayList<>();
+
+        Button sharePhone = new Button();
+        sharePhone.setText("Поделиться номером телефона");
+        sharePhone.setActionBody("button.manager.sharePhone");
+        sharePhone.setActionType(ActionType.SHARE_PHONE);
+        sharePhone.setColumns(6);
+        sharePhone.setRows(1);
+        sharePhone.setBackgroundColor("#2db9b9");
+
+        buttons.add(sharePhone);
+
+        keyboard.setButtons(buttons);
+        return keyboard;
+    }
+
     public Keyboard getSkipStepKeyboard() {
         Keyboard keyboard = new Keyboard();
         List<Button> buttons = new ArrayList<>();
@@ -739,35 +793,47 @@ public class KeyboardSource {
             button.setText(items.get(i));
             button.setActionBody(items.get(i));
 
-            if (items.size() % MAX_ITEMS_AT_PAGE != 0 && i == items.size() - 1) {
-                button.setColumns(PAGABLE_BUTTON_NOT_FIT_WIDTH);
+            if ((i == items.size() - 1 || i == items.size() - 2)  && ((items.size() % MAX_ITEMS_AT_PAGE) / 2 == 1)) {
+                button.setColumns(PAGABLE_BUTTON_MEDIUM_WIDTH);
+                button.setRows(PAGABLE_BUTTON_HEIGHT);
+            }
+            else if (i == items.size() - 1 && (items.size() % MAX_ITEMS_AT_PAGE) % 4 == 0 && (items.size() % MAX_ITEMS_AT_PAGE) % 8 != 0) {
+                button.setColumns(PAGABLE_BUTTON_LARGE_WIDTH);
+                button.setRows(PAGABLE_BUTTON_HEIGHT);
+            }
+            else if ((i == items.size() - 1 || i == items.size() - 2)  && ((items.size() % MAX_ITEMS_AT_PAGE) % 5 == 0 || (items.size() % MAX_ITEMS_AT_PAGE) % 8 == 0)) {
+                button.setColumns(PAGABLE_BUTTON_MEDIUM_WIDTH);
                 button.setRows(PAGABLE_BUTTON_HEIGHT);
             }
             else {
-                button.setColumns(PAGABLE_BUTTON_WIDTH);
+                button.setColumns(PAGABLE_BUTTON_SMALL_WIDTH);
                 button.setRows(PAGABLE_BUTTON_HEIGHT);
             }
+            
+
             
             button.setBackgroundColor("#2db9b9");
 
             buttons.add(button);
         }
 
-        Button previousPageButton = new Button();
-        previousPageButton.setText("<<<");
-        previousPageButton.setActionBody("Назад");
-        previousPageButton.setColumns(3);
-        previousPageButton.setRows(1);
-        previousPageButton.setBackgroundColor("#2db9b9");
-        buttons.add(previousPageButton);
+        if (items.size() > MAX_ITEMS_AT_PAGE) {
+            Button previousPageButton = new Button();
+            previousPageButton.setText("<<<");
+            previousPageButton.setActionBody("Назад");
+            previousPageButton.setColumns(3);
+            previousPageButton.setRows(1);
+            previousPageButton.setBackgroundColor("#2db9b9");
+            buttons.add(previousPageButton);
 
-        Button nextPageButton = new Button();
-        nextPageButton.setText(">>>");
-        nextPageButton.setActionBody("Далее");
-        nextPageButton.setColumns(3);
-        nextPageButton.setRows(1);
-        nextPageButton.setBackgroundColor("#2db9b9");
-        buttons.add(nextPageButton);
+            Button nextPageButton = new Button();
+            nextPageButton.setText(">>>");
+            nextPageButton.setActionBody("Далее");
+            nextPageButton.setColumns(3);
+            nextPageButton.setRows(1);
+            nextPageButton.setBackgroundColor("#2db9b9");
+            buttons.add(nextPageButton);
+        }
 
         keyboard.setButtons(buttons);
         return keyboard;

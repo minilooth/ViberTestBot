@@ -21,10 +21,11 @@ import lombok.SneakyThrows;
 public class FileService {
     private final static Logger logger = Logger.getLogger(FileService.class);
 
-    final static String FILE_FOLDER_PATH = "./files/";
-    final static String EXCEL_FOLDER_PATH = FILE_FOLDER_PATH + "excel/";
-    final static String PICTURE_FOLDER_PATH = FILE_FOLDER_PATH + "pictures/";
-    final static Integer FILENAME_LENGTH = 10;
+    public final static String FILE_FOLDER_PATH = "./files/";
+    public final static String EXCEL_FOLDER_PATH = FILE_FOLDER_PATH + "excel/";
+    public final static String PICTURE_FOLDER_PATH = FILE_FOLDER_PATH + "pictures/";
+    public final static String PICTURE_EMPTY_NAME = "empty.jpg";
+    public final static Integer FILENAME_LENGTH = 10;
 
     @SneakyThrows
     public void createDirectories() {

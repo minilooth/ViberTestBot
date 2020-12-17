@@ -6,6 +6,8 @@ import java.util.List;
 // import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 // import com.gargoylesoftware.htmlunit.BrowserVersion;
 // import com.gargoylesoftware.htmlunit.IncorrectnessListener;
 // import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
@@ -65,28 +67,9 @@ public class CarService {
         return carRepository.findModelByBrand(brand);
     }
 
-    public String generateBrandString() {
-        List<String> brands = getBrands();
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for(String brand : brands) {
-            stringBuilder.append("\n").append(brand);
-        }
-
-        return stringBuilder.toString();
-    }
-
-    public String generateModelsString(String brand) {
-        List<String> models = getModelsByBrand(brand);
-        StringBuilder stringBuilder = new StringBuilder();
-
-        System.out.println(models);
-
-        for(String model : models) {
-            stringBuilder.append("\n").append(model);
-        }
-
-        return stringBuilder.toString();
+    @Transactional
+    public Car getByBrandAndModel(String brand, String model) {
+        return carRepository.findFirstByBrandAndModel(brand, model);
     }
 
     public String generateLink(String brand, String model, Integer yearFrom, Integer yearTo) {
@@ -105,6 +88,29 @@ public class CarService {
 
         return stringBuilder.toString();
     }
+
+    public String getSixteenEighteenPrice(String brand, String model) {
+        Car car = getByBrandAndModel(brand, model);
+
+        if (car != null) {
+            return car.getSixteenEighteenPrice() != null ? car.getSixteenEighteenPrice() : StringUtils.EMPTY;
+        }
+        else {
+            return StringUtils.EMPTY;
+        }
+    }
+
+    public String getEighteenTwentyOnePrice(String brand, String model) {
+        Car car = getByBrandAndModel(brand, model);
+
+        if (car != null) {
+            return car.getEighteenTwentyOnePrice() != null ? car.getEighteenTwentyOnePrice() : StringUtils.EMPTY;
+        }
+        else {
+            return StringUtils.EMPTY;
+        }
+    }
+
 
     // @SneakyThrows
     // public void parseCars() {

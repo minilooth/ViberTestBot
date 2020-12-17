@@ -1,7 +1,9 @@
 package by.testbot.services;
 
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,5 +34,47 @@ public class ManagerService {
     @Transactional
     public List<Manager> getAll() {
         return managerRepository.findAll();
+    }
+
+    @Transactional
+    public Manager getByPhoneNumber(String phoneNumber) {
+        return managerRepository.findFirstByPhoneNumber(phoneNumber);
+    }
+
+    public String getManagerInformation(Manager manager) {
+        Objects.requireNonNull(manager, "Manager is null");
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append("Имя: ")
+                     .append(manager.getFirstname() != null ? manager.getFirstname() : "Не указал")
+                     .append("\n")
+                     .append("Фамилия: ")
+                     .append(manager.getSurname() != null ? manager.getSurname() : "Не указал")
+                     .append("\n")
+                     .append("Номер телефона: ")
+                     .append(manager.getPhoneNumber() != null ? manager.getPhoneNumber() : "Не указал");
+
+        return stringBuilder.toString();
+    }
+
+    public String formatManagers(List<Manager> managers) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append("Список менеджеров:\n");
+
+        for (Manager manager : managers) {
+            stringBuilder.append(managers.indexOf(manager) + 1)
+                         .append(" - ")
+                         .append("Имя: ")
+                         .append(manager.getFirstname() == null ? "Еще не указал" : manager.getFirstname())
+                         .append("\nФамилия: ")
+                         .append(manager.getSurname() == null ? "Еще не указал" : manager.getSurname())
+                         .append("\nНомер телефона: ")
+                         .append(manager.getPhoneNumber() == null ? "Еще не указал" : manager.getPhoneNumber())
+                         .append(managers.indexOf(manager) != managers.size() - 1 ? "\n\n" : StringUtils.EMPTY);
+        }
+
+        return stringBuilder.toString();
     }
 }

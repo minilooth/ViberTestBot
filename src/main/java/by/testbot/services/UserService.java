@@ -39,15 +39,17 @@ public class UserService {
 
     @Transactional
     public User getById(Long id) {
-        return userRepository.findAll().stream().filter(u -> u.getId() == id).findAny().orElse(null);
+        return userRepository.findById(id).orElse(null);
     }
 
     @Transactional
     public User getByViberId(String viberId) {
-        return userRepository.findAll().stream().filter(u -> u.getViberId().equals(viberId)).findAny().orElse(null);
+        return userRepository.findFirstByViberId(viberId);
     }
 
     public List<User> getAllClients() {
         return userRepository.findAll().stream().filter(u -> u.getRole() == Role.USER).collect(Collectors.toList());
     }
+
+    
 }

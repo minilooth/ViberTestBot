@@ -42,6 +42,12 @@ public class MessageService {
     private BotMessageService botMessageService;
 
     @Autowired
+    private ManagerService managerService;
+
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
     private LocaleMessageService localeMessageService;
 
     public SendTextMessageRequest getConversationStartedMessage(String viberId) {
@@ -57,6 +63,23 @@ public class MessageService {
     }
 
     // Admin messages
+
+    public void sendAskManagerFirstnameMessage(String viberId) {
+        this.sendTextMessage(viberId, "Поздравляем, вы стали менеджером!\nЧтобы продолжить нужно заполнить информацию", null, null);
+        this.sendTextMessage(viberId, "Введите имя", null, null);
+    }
+
+    public void sendAskManagerSurnameMessage(String viberId) {
+        this.sendTextMessage(viberId, "Введите фамилию", null, null);
+    } 
+
+    public void sendAskManagerPhoneNumberMessage(String viberId) {
+        this.sendTextMessage(viberId, "Введите номер телефона(в формате 375291234567) или нажмите кнопку снизу", keyboardSource.getAskManagerPhoneNumberKeyboard(), 3);
+    }
+
+    public void sendSuccessfullyFilledManagerProfileMessage(String viberId) {
+        this.sendTextMessage(viberId, "Профиль менеджера успешно заполнен", null, null);
+    }
 
     public void sendAddTextMessage(String viberId) {
         this.sendTextMessage(viberId, localeMessageService.getMessage("message.postponeMessage.enterText"), null, null);
@@ -74,16 +97,64 @@ public class MessageService {
         this.sendTextMessage(viberId, localeMessageService.getMessage("message.postponeMessage.declinePostponeMessageConfirmation"), null, null);
     }
 
-    public void sendListOfManagersMessage(String viberId) {
-        //TODO: get and send list of managers
+    public void sendListOfManagersIsEmptyMessage(String viberId) {
+        this.sendTextMessage(viberId, "Список менеджеров пуст", null, null);
     }
 
-    public void sendAddManagerMessage(String viberId) {
-        //TODO: send add manager details messages
+    public void sendListOfManagersMessage(String viberId, List<Manager> managers) {
+        this.sendTextMessage(viberId, managerService.formatManagers(managers), null, null);
     }
 
-    public void sendDeleteManagerMessage(String viberId) {
-        //TODO: send delete manager details messages
+    public void sendShareManagerContactMessage(String viberId) {
+        this.sendTextMessage(viberId, "Отправьте контакт клиента, которого хотите сделать менеджером\n(Клиент должен пройти диалог до конца и поделиться номером телефона)", keyboardSource.getBackKeyboard(), null);
+    }
+
+    public void sendClientNotFoundMessage(String viberId) {
+        this.sendTextMessage(viberId, "Клиент не найден или не поделился номером телефона", null, null);
+    }
+
+    public void sendClientInformationMessage(String viberId, Client client, String clientAvatar) {
+        this.sendPictureMessage(viberId, clientService.getClientInformation(client), clientAvatar, null ,null);
+    }
+
+    public void sendManagerInformationMessage(String viberId, Manager manager, String managerAvatar) {
+        this.sendPictureMessage(viberId, managerService.getManagerInformation(manager), managerAvatar, null, null);
+    }
+
+    public void sendConfrimAddNewManagerMessage(String viberId) {
+        this.sendTextMessage(viberId, "Подтвердите добавление менеджера", keyboardSource.getConfirmManagerKeyboard(), null);
+    }
+
+    public void sendSuccessfullyAddedNewManagerMessage(String viberId) {
+        this.sendTextMessage(viberId, "Менеджер успешно добавлен", null, null);
+    }
+
+    public void sendCancellerationAddManagerMessage(String viberId) {
+        this.sendTextMessage(viberId, "Вы отменили добавление менеджера", null, null);
+    }
+
+    public void sendSelectManagerToDelete(String viberId) {
+        this.sendTextMessage(viberId, "Отправьте контакт менеджера для удаления", keyboardSource.getBackKeyboard(), null);
+    }
+
+    public void sendUnableToDeleteSelfMessage(String viberId) {
+        this.sendTextMessage(viberId, "Невозможно удалить самого себя", null, null);
+    }
+
+    public void sendConfrimDeleteManagerMessage(String viberId) {
+        this.sendTextMessage(viberId, "Подтвердите удаление менеджера", keyboardSource.getConfirmManagerKeyboard(), null);
+    }
+
+    public void sendSuccessfullyDeleteManagerMessage(String viberId) {
+        this.sendTextMessage(viberId, "Менеджер успешно удален", null, null);
+    }
+
+    public void sendUnableToDeleteManagerMessage(String viberId) {
+        this.sendTextMessage(viberId, "Не удалось удалить менеджера так как он не найден или уже удален", null, null);
+    }
+
+    public void sendCancellerationDeleteManagerMessage(String viberId) {
+        this.sendTextMessage(viberId, "Удаление менеджера успешно отменено", null, null);
     }
 
     public void changeManagerPrivilegiesMessage(String viberId) {
@@ -459,6 +530,22 @@ public class MessageService {
 
         viberService.sendTextMessage(sendTextMessageRequest);
     }
+
+    public void sendPictureMessage(String viberId, String text, String pictureUrl, Keyboard keyboard, Integer minApiVersion) {
+        SendPictureMessageRequest sendPictureMessageRequest = new SendPictureMessageRequest();
+        Sender sender = new Sender();
+
+        sender.setName(viberService.getSenderName());
+
+        sendPictureMessageRequest.setUserId(viberId);
+        sendPictureMessageRequest.setText(text);
+        sendPictureMessageRequest.setMediaUrl(pictureUrl);
+        sendPictureMessageRequest.setSender(sender);
+        sendPictureMessageRequest.setKeyboard(keyboard);
+        sendPictureMessageRequest.setMinApiVersion(minApiVersion);
+
+        viberService.sendPictureMessage(sendPictureMessageRequest);
+    }
     
     public List<Failed> sendTextMessageToAll(List<String> broadcastList, String text, Keyboard keyboard, Integer minApiVersion) {
         SendTextMessageRequest sendTextMessageRequest = new SendTextMessageRequest();
@@ -475,13 +562,13 @@ public class MessageService {
         return viberService.broadcastTextMessage(sendTextMessageRequest);
     }
 
-    public List<Failed> sendPictureMessageToAll(List<String> broadcastList, String message, String pictureUrl, Keyboard keyboard, Integer minApiVersion) {
+    public List<Failed> sendPictureMessageToAll(List<String> broadcastList, String text, String pictureUrl, Keyboard keyboard, Integer minApiVersion) {
         SendPictureMessageRequest sendPictureMessageRequest = new SendPictureMessageRequest();
         Sender sender = new Sender();
 
         sender.setName(viberService.getSenderName());
 
-        sendPictureMessageRequest.setText(message);
+        sendPictureMessageRequest.setText(text);
         sendPictureMessageRequest.setMediaUrl(pictureUrl);
         sendPictureMessageRequest.setSender(sender);
         sendPictureMessageRequest.setBroadcastList(broadcastList);

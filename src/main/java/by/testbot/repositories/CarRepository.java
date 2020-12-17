@@ -13,4 +13,6 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
 
     @Query("SELECT c.model FROM Car c WHERE c.brand = ?1")
     public List<String> findModelByBrand(String brand);
+
+    public Car findFirstByBrandAndModel(String brand, String model);
 }

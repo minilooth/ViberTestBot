@@ -29,4 +29,10 @@ public class Car {
 
     @Column(name = "Model", nullable = false)
     private String model;
+
+    @Column(name = "SixteenEighteenPrice")
+    private String sixteenEighteenPrice;
+
+    @Column(name = "EighteenTwentyOnePrice")
+    private String eighteenTwentyOnePrice;
 }
