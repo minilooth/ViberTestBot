@@ -1,13 +1,17 @@
 package by.testbot.services.file;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -21,12 +25,16 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.expression.ParseException;
 import org.springframework.stereotype.Service;
 
 import by.testbot.models.Answer;
+import by.testbot.models.Car;
 import by.testbot.models.Dialogue;
 import by.testbot.models.enums.AnswerType;
 import by.testbot.services.AnswerService;
+import by.testbot.services.CarService;
 import by.testbot.services.DialogueService;
 import lombok.SneakyThrows;
 
@@ -37,9 +45,128 @@ public class ExcelService {
 
     @Autowired
     private AnswerService answerService;
+    
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private CarService carService;
+
+    final static String XLS_EXTENSION = ".xls";
+    final static String XLSX_EXTENSION = ".xlsx";
 
     public String generateExcelAndWriteActualData() {
         return generateExcel(dialogueService.getAll());
+    }
+
+    public Integer updateCarInformation(String filename) {
+        String extension = filename.substring(filename.lastIndexOf("."));
+
+        if (extension.equals(XLSX_EXTENSION)) {
+            return parseXlsxWithCars(fileService.getFile(filename));
+        }
+        else if (extension.equals(XLS_EXTENSION)) {
+            return parseXlsWithCars(fileService.getFile(filename));
+        }
+        else {
+            return 0;
+        }
+    }
+
+    @SneakyThrows
+    private Integer parseXlsxWithCars(FileSystemResource fileSystemResource) {
+        FileInputStream fileInputStream = new FileInputStream(fileSystemResource.getFile());
+
+        fileSystemResource.getFilename();
+
+        List<Car> cars = new ArrayList<>();
+        XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
+        Sheet sheet = workbook.getSheetAt(0);
+        Iterator<Row> rowIterator = sheet.iterator();
+
+        if (sheet.getPhysicalNumberOfRows() < 1) {
+            workbook.close();
+            throw new ParseException(0, "Unable parse excel file: file is empty");
+        }
+
+        while(rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+
+            if (row.getRowNum() != 0) {
+                Car car = new Car();
+
+                car.setBrand(row.getCell(0) != null ? row.getCell(0).getStringCellValue() : null);
+                car.setModel(row.getCell(1) != null ? row.getCell(1).getStringCellValue() : null);
+                car.setSixteenEighteenPrice(row.getCell(2) != null ? row.getCell(2).getStringCellValue() : null);
+                car.setEighteenTwentyOnePrice(row.getCell(3) != null ? row.getCell(3).getStringCellValue() : null);
+
+                cars.add(car);
+            }
+        }
+
+        Integer countOfCarsUpdated = 0;
+
+        for (Car car : cars) {
+            Car newCar = carService.getByBrandAndModel(car.getBrand(), car.getModel());
+            
+            if (newCar != null) {
+                newCar.setSixteenEighteenPrice(car.getSixteenEighteenPrice());
+                newCar.setEighteenTwentyOnePrice(car.getEighteenTwentyOnePrice());
+                countOfCarsUpdated++;
+            }
+        }
+
+        workbook.close();
+
+        return countOfCarsUpdated;
+    }
+
+    @SneakyThrows
+    private Integer parseXlsWithCars(FileSystemResource fileSystemResource) {
+        FileInputStream fileInputStream = new FileInputStream(fileSystemResource.getFile());
+
+        fileSystemResource.getFilename();
+
+        List<Car> cars = new ArrayList<>();
+        HSSFWorkbook workbook = new HSSFWorkbook(fileInputStream);
+        Sheet sheet = workbook.getSheetAt(0);
+        Iterator<Row> rowIterator = sheet.iterator();
+
+        if (sheet.getPhysicalNumberOfRows() < 1) {
+            workbook.close();
+            throw new ParseException(0, "Unable parse excel file: file is empty");
+        }
+
+        while(rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+
+            if (row.getRowNum() != 0) {
+                Car car = new Car();
+
+                car.setBrand(row.getCell(0) != null ? row.getCell(0).getStringCellValue() : null);
+                car.setModel(row.getCell(1) != null ? row.getCell(1).getStringCellValue() : null);
+                car.setSixteenEighteenPrice(row.getCell(2) != null ? row.getCell(2).getStringCellValue() : null);
+                car.setEighteenTwentyOnePrice(row.getCell(3) != null ? row.getCell(3).getStringCellValue() : null);
+
+                cars.add(car);
+            }
+        }
+
+        Integer countOfCarsUpdated = 0;
+
+        for (Car car : cars) {
+            Car newCar = carService.getByBrandAndModel(car.getBrand(), car.getModel());
+            
+            if (newCar != null) {
+                newCar.setSixteenEighteenPrice(car.getSixteenEighteenPrice());
+                newCar.setEighteenTwentyOnePrice(car.getEighteenTwentyOnePrice());
+                countOfCarsUpdated++;
+            }
+        }
+
+        workbook.close();
+
+        return countOfCarsUpdated;
     }
     
     @SneakyThrows

@@ -8,10 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import by.testbot.bot.BotContext;
 import by.testbot.bot.BotState;
+import by.testbot.config.EnvironmentConfig;
+import by.testbot.config.ReloadablePropertySourceFactory;
 import by.testbot.models.viber.Failed;
 import by.testbot.models.viber.Message;
 import by.testbot.models.Client;
@@ -35,12 +39,16 @@ import by.testbot.services.ManagerService;
 import by.testbot.services.MessageService;
 import by.testbot.services.PostponeMessageService;
 import by.testbot.services.UserService;
+import by.testbot.services.file.ExcelService;
 import by.testbot.services.file.FileService;
+import by.testbot.services.other.ConfigService;
 import by.testbot.utils.Utils;
 import lombok.Getter;
 
 @Getter
 @Service
+@PropertySource(value = "file:" + ConfigService.BOT_CONFIG_PATH, factory = ReloadablePropertySourceFactory.class, ignoreResourceNotFound = true)
+@RefreshScope
 public class ViberService {
     private static final Logger logger = LoggerFactory.getLogger(ViberService.class);
     
@@ -80,6 +88,15 @@ public class ViberService {
     @Autowired
     private ClientService clientService;
 
+    @Autowired
+    private EnvironmentConfig environmentConfig;
+
+    @Autowired
+    private ConfigService configService;
+
+    @Autowired
+    private ExcelService excelService;
+
     @Value("${testbot.authenticationToken}")
     private String authenticationToken;
 
@@ -89,16 +106,15 @@ public class ViberService {
     @Value("${testbot.sender.name}")
     private String senderName;
 
-    @Value("${testbot.codeWord}")
-    private String codeWord;
-
     private String fileEndpoint;
     private String pictureEndpoint;
+    private String iconEndpoint;
 
     @PostConstruct
     private void postConstruct() {
         this.fileEndpoint = webhookUrl + "/file/";
         this.pictureEndpoint = webhookUrl + "/picture/";
+        this.iconEndpoint = webhookUrl + "/keyboard_icons/";
     }
 
     public void setWeebhook() {
@@ -434,6 +450,10 @@ public class ViberService {
     private void handleMessageCallback(ViberUpdate viberUpdate) {
         Message message = viberUpdate.getMessageCallback().getMessage();
 
+        if (!environmentConfig.getEnabled()) {
+            logger.info("BOT IS DISABLED!");
+        }
+
         if (message.hasText()) {
             handleTextMessage(viberUpdate);
         }
@@ -442,6 +462,91 @@ public class ViberService {
         }
         else if (message.hasContact()) {
             handleContactMessage(viberUpdate);
+        }
+        else if (message.hasFile()) {
+            handleFileMessage(viberUpdate);
+        }
+    }
+
+    private void handleFileMessage(ViberUpdate viberUpdate) {
+        final String viberId = viberUpdate.getMessageCallback().getSender().getId();
+        final Message message = viberUpdate.getMessageCallback().getMessage();
+        BotContext botContext = null;
+        BotState botState = null;
+
+        User user = userService.getByViberId(viberId);
+
+        if (!environmentConfig.getEnabled() && (user == null || (user != null && user.getRole() == Role.USER))) {
+            messageService.sendTextMessage(viberId, "В данный момент бот не работает, возвращайтесь позже!", null, null);
+            return;
+        }
+
+        if (user == null) {
+            user = new User();
+
+            Client client = null;
+            Manager manager = null;
+
+            if (message.getText().equals(environmentConfig.getCodeWord())) {
+                user.setRole(Role.MANAGER);
+                botState = BotState.getAdminInitialState();
+                manager = new Manager();
+                manager.setUser(user);
+                manager.setCountOfPostponeMessages(0L);
+            } 
+            else {
+                botState = BotState.getUserInitialState();
+                user.setRole(Role.USER);
+                
+                client = new Client();
+
+                client.setUser(user);
+                client.setKeyboardPage(1);
+            }
+
+            user.setViberId(viberId);
+            user.setBotState(botState);
+            user.setAvatar(viberUpdate.getMessageCallback().getSender().getAvatarUrl());
+            user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
+            user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
+            user.setName(viberUpdate.getMessageCallback().getSender().getName());
+            
+            if (client != null) {
+                user.setClient(client);
+            }
+
+            if (manager != null) {
+                user.setManager(manager);
+            }
+
+            userService.save(user);
+
+            botContext = BotContext.of(user, message, this);
+            botState.enter(botContext);
+
+            logger.info("New user registered: " + viberId);
+        }
+        else {
+            botState = user.getBotState();
+            botContext = BotContext.of(user, message, this);
+
+            user.setAvatar(viberUpdate.getMessageCallback().getSender().getAvatarUrl());
+            user.setCountry(viberUpdate.getMessageCallback().getSender().getCountry());
+            user.setLanguage(viberUpdate.getMessageCallback().getSender().getLanguage());
+            user.setName(viberUpdate.getMessageCallback().getSender().getName());
+
+            botState.handleFile(botContext);
+
+            do {
+                if (botState.nextState() != null) {
+                    botState = botState.nextState();
+                    botState.enter(botContext);
+                }
+            } while (!botState.getIsInputNeeded());
+
+            user.setBotState(botState);
+
+            userService.update(user);
         }
     }
 
@@ -453,17 +558,23 @@ public class ViberService {
 
         User user = userService.getByViberId(viberId);
 
+        if (!environmentConfig.getEnabled() && (user == null || (user != null && user.getRole() == Role.USER))) {
+            messageService.sendTextMessage(viberId, "В данный момент бот не работает, возвращайтесь позже!", null, null);
+            return;
+        }
+
         if (user == null) {
             user = new User();
 
             Client client = null;
             Manager manager = null;
 
-            if (message.getText().equals(this.codeWord)) {
+            if (message.getText().equals(environmentConfig.getCodeWord())) {
                 user.setRole(Role.MANAGER);
                 botState = BotState.getAdminInitialState();
                 manager = new Manager();
                 manager.setUser(user);
+                manager.setCountOfPostponeMessages(0L);
             } 
             else {
                 botState = BotState.getUserInitialState();
@@ -529,17 +640,23 @@ public class ViberService {
 
         User user = userService.getByViberId(viberId);
 
+        if (!environmentConfig.getEnabled() && (user == null || (user != null && user.getRole() == Role.USER))) {
+            messageService.sendTextMessage(viberId, "В данный момент бот не работает, возвращайтесь позже!", null, null);
+            return;
+        }
+
         if (user == null) {
             user = new User();
 
             Client client = null;
             Manager manager = null;
 
-            if (message.getText().equals(this.codeWord)) {
+            if (message.getText().equals(environmentConfig.getCodeWord())) {
                 user.setRole(Role.MANAGER);
                 botState = BotState.getAdminInitialState();
                 manager = new Manager();
                 manager.setUser(user);
+                manager.setCountOfPostponeMessages(0L);
             } 
             else {
                 botState = BotState.getUserInitialState();
@@ -604,17 +721,23 @@ public class ViberService {
 
         User user = userService.getByViberId(viberId);
 
+        if (!environmentConfig.getEnabled() && ((user == null && !message.getText().equals(environmentConfig.getCodeWord())) || (user != null && user.getRole() == Role.USER))) {
+            messageService.sendTextMessage(viberId, "В данный момент бот не работает, возвращайтесь позже!", null, null);
+            return;
+        }
+
         if (user == null) {
             user = new User();
             
             Manager manager = null;
             Client client = null;
 
-            if (message.getText().equals(this.codeWord)) {
+            if (message.getText().equals(environmentConfig.getCodeWord())) {
                 user.setRole(Role.MANAGER);
                 botState = BotState.getAdminInitialState();
                 manager = new Manager();
                 manager.setUser(user);
+                manager.setCountOfPostponeMessages(0L);
             } 
             else {
                 botState = BotState.getUserInitialState();
@@ -679,6 +802,11 @@ public class ViberService {
 
         User user = userService.getByViberId(viberId);
 
+        if (!environmentConfig.getEnabled() && (user == null || (user != null && user.getRole() == Role.USER))) {
+            messageService.sendTextMessage(viberId, "В данный момент бот не работает, возвращайтесь позже!", null, null);
+            return;
+        }
+
         if (user == null) {
             user = new User();
 
@@ -690,6 +818,7 @@ public class ViberService {
                 user.setRole(Role.ADMIN);
                 manager = new Manager();
                 manager.setUser(user);
+                manager.setCountOfPostponeMessages(0L);
             }
             else {
                 botState = BotState.getUserInitialState();

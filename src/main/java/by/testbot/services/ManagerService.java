@@ -41,6 +41,29 @@ public class ManagerService {
         return managerRepository.findFirstByPhoneNumber(phoneNumber);
     }
 
+    public Boolean checkPhoneNumber(String phoneNumber) {
+        return getByPhoneNumber(phoneNumber) != null;
+    }
+
+    public String getManagersStatistics() {
+        List<Manager> managers = getAll();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Manager manager : managers) {
+            stringBuilder.append(managers.indexOf(manager) + 1)
+                         .append(" - ")
+                         .append(manager.getFirstname() == null ? StringUtils.EMPTY : manager.getFirstname())
+                         .append(" ")
+                         .append(manager.getSurname() == null ? StringUtils.EMPTY : manager.getSurname())
+                         .append(", ")
+                         .append(manager.getPhoneNumber() == null ? StringUtils.EMPTY : manager.getPhoneNumber())
+                         .append("\nКоличество отправленных отложенных сообщений: ")
+                         .append(manager.getCountOfPostponeMessages())
+                         .append(managers.indexOf(manager) != managers.size() - 1 ? "\n\n" : StringUtils.EMPTY);
+        }
+        return stringBuilder.toString();
+    }
+
     public String getManagerInformation(Manager manager) {
         Objects.requireNonNull(manager, "Manager is null");
 

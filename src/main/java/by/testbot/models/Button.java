@@ -15,11 +15,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import by.testbot.models.enums.AnswerType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "button")
 public class Button {

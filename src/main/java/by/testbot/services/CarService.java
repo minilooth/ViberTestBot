@@ -31,7 +31,8 @@ import by.testbot.repositories.CarRepository;
 @Service
 public class CarService {
     // private final static Logger logger = LoggerFactory.getLogger(CarService.class);
-    final static String CAR_PAGE = "https://bidfax.info/";
+    public final static String CAR_PAGE = "https://bidfax.info/";
+    public final static Integer START_YEAR = 2016;
 
     @Autowired
     private CarRepository carRepository;

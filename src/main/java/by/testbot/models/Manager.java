@@ -39,6 +39,9 @@ public class Manager {
     @Column(name = "SearchPhoneNumber")
     private String searchPhoneNumber;
 
+    @Column(name = "CountOfPostponeMessages", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    private Long countOfPostponeMessages;
+
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @OneToOne(mappedBy = "manager", cascade = CascadeType.ALL)

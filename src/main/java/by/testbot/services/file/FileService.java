@@ -24,7 +24,8 @@ public class FileService {
     public final static String FILE_FOLDER_PATH = "./files/";
     public final static String EXCEL_FOLDER_PATH = FILE_FOLDER_PATH + "excel/";
     public final static String PICTURE_FOLDER_PATH = FILE_FOLDER_PATH + "pictures/";
-    public final static String PICTURE_EMPTY_NAME = "empty.jpg";
+    public final static String ICON_FORDER_PATH = FILE_FOLDER_PATH + "keyboard_icons/";
+    public final static String PICTURE_PLACEHOLDER = "//ssl.gstatic.com/accounts/ui/avatar_2x.png";
     public final static Integer FILENAME_LENGTH = 10;
 
     @SneakyThrows
@@ -54,6 +55,10 @@ public class FileService {
 
     public FileSystemResource getPicture(String filename) {
         return new FileSystemResource(new File(PICTURE_FOLDER_PATH + filename));
+    }
+
+    public FileSystemResource getIcon(String filename) {
+        return new FileSystemResource(new File(ICON_FORDER_PATH + filename));
     }
 
     @SneakyThrows
@@ -86,28 +91,28 @@ public class FileService {
         return filename;
     }
 
-    // @SneakyThrows
-    // public String downloadFile(String url, String viberFilename) {
-    //     if (!viberFilename.contains(".")) {
-    //         throw new IllegalArgumentException("Unable to file from: " + url);
-    //     }
+    @SneakyThrows
+    public String downloadFile(String url, String viberFilename) {
+        if (!viberFilename.contains(".")) {
+            throw new IllegalArgumentException("Unable to file from: " + url);
+        }
     
-    //     String extension = viberFilename.substring(viberFilename.lastIndexOf("."));
-    //     String filename = "";
+        String extension = viberFilename.substring(viberFilename.lastIndexOf("."));
+        String filename = "";
 
-    //     do {
-    //         filename = generateFilename(extension);
-    //     }
-    //     while(new File(PICTURE_FOLDER_PATH + filename).exists());
+        do {
+            filename = generateFilename(extension);
+        }
+        while(new File(PICTURE_FOLDER_PATH + filename).exists());
 
-    //     BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
+        BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
 
-    //     try(FileOutputStream fileOutputStream = new FileOutputStream(PICTURE_FOLDER_PATH + filename)) {
-    //         fileOutputStream.write(in.readAllBytes());
-    //     }
+        try(FileOutputStream fileOutputStream = new FileOutputStream(EXCEL_FOLDER_PATH + filename)) {
+            fileOutputStream.write(in.readAllBytes());
+        }
 
-    //     return filename;
-    // }
+        return filename;
+    }
 
     private String generateFilename(String extension) {
         return RandomStringUtils.randomAlphanumeric(FILENAME_LENGTH) + extension;

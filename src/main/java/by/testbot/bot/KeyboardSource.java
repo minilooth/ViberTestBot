@@ -11,8 +11,8 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import by.testbot.models.viber.Button;
-import by.testbot.models.viber.Frame;
 import by.testbot.models.viber.Keyboard;
+import by.testbot.config.EnvironmentConfig;
 import by.testbot.models.BotMessage;
 import by.testbot.models.enums.button.ActionType;
 import by.testbot.services.other.LocaleMessageService;
@@ -20,6 +20,9 @@ import by.testbot.services.other.LocaleMessageService;
 public class KeyboardSource {
     @Autowired
     private LocaleMessageService localeMessageService;
+
+    @Autowired
+    private EnvironmentConfig environmentConfig;
 
     final static Integer MAX_ITEMS_AT_PAGE = 9;
     final static Integer PAGABLE_BUTTON_SMALL_WIDTH = 2;
@@ -39,24 +42,20 @@ public class KeyboardSource {
     public Keyboard getAdminMainMenuKeyboard() {
         Keyboard keyboard = new Keyboard();
         List<Button> buttons = new ArrayList<>();
-        Frame frame = new Frame();
-
-        frame.setCornerRadius(10);
-        frame.setBorderWidth(1);
-        frame.setBorderColor("#2db9b9");
 
         Button postponeMessageButton = new Button();
-        postponeMessageButton.setFrame(frame);
+        // postponeMessageButton.setImageUrl(viberService.getIconEndpoint() + "postpone_message.png");
+        // postponeMessageButton.setImageUrl("https://img.icons8.com/material-outlined/24/000000/smoking.png");
+        // postponeMessageButton.setImageScaleType(ImageScaleType.FIT);
         postponeMessageButton.setText(localeMessageService.getMessage("button.mainMenu.postponeMessage"));
+        // postponeMessageButton.setText("<font color=\"#494E67\">Smoking</font><br><br>");
         postponeMessageButton.setActionBody("callback.adminMainMenu.postponeMessage");
         postponeMessageButton.setColumns(3);
         postponeMessageButton.setRows(1);
         postponeMessageButton.setBackgroundColor("#2db9b9");
-        postponeMessageButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(postponeMessageButton);
 
         Button listOfManagersButton = new Button();
-        listOfManagersButton.setFrame(frame);
         listOfManagersButton.setText(localeMessageService.getMessage("button.mainMenu.managers"));
         listOfManagersButton.setActionBody("callback.adminMainMenu.managers");
         listOfManagersButton.setColumns(3);
@@ -66,7 +65,6 @@ public class KeyboardSource {
         buttons.add(listOfManagersButton);
 
         Button listOfClientsButton = new Button();
-        listOfClientsButton.setFrame(frame);
         listOfClientsButton.setText(localeMessageService.getMessage("button.mainMenu.clients"));
         listOfClientsButton.setActionBody("callback.adminMainMenu.clients");
         listOfClientsButton.setColumns(3);
@@ -76,7 +74,6 @@ public class KeyboardSource {
         buttons.add(listOfClientsButton);
 
         Button reportButton = new Button();
-        reportButton.setFrame(frame);
         reportButton.setText(localeMessageService.getMessage("button.mainMenu.report"));
         reportButton.setActionBody("callback.adminMainMenu.report");
         reportButton.setColumns(3);
@@ -86,7 +83,6 @@ public class KeyboardSource {
         buttons.add(reportButton);
 
         Button integrationButton = new Button();
-        integrationButton.setFrame(frame);
         integrationButton.setText(localeMessageService.getMessage("button.mainMenu.integrations"));
         integrationButton.setActionBody("callback.adminMainMenu.integrations");
         integrationButton.setColumns(3);
@@ -96,7 +92,6 @@ public class KeyboardSource {
         buttons.add(integrationButton);
 
         Button settingsButton = new Button();
-        settingsButton.setFrame(frame);
         settingsButton.setText(localeMessageService.getMessage("button.mainMenu.settings"));
         settingsButton.setActionBody("callback.adminMainMenu.settings");
         settingsButton.setColumns(3);
@@ -290,13 +285,22 @@ public class KeyboardSource {
         buttons.add(editTextButton);
 
         Button setBotUsingPeriodButton = new Button();
-        setBotUsingPeriodButton.setText(localeMessageService.getMessage("button.settings.botUsagePeriod"));
-        setBotUsingPeriodButton.setActionBody("callback.settings.botUsagePeriod");
+        setBotUsingPeriodButton.setText(localeMessageService.getMessage("button.settings.botWork"));
+        setBotUsingPeriodButton.setActionBody("callback.settings.botWork");
         setBotUsingPeriodButton.setColumns(6);
         setBotUsingPeriodButton.setRows(1);
         setBotUsingPeriodButton.setBackgroundColor("#2db9b9");
         setBotUsingPeriodButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(setBotUsingPeriodButton);
+
+        Button updateCarsButton = new Button();
+        updateCarsButton.setText(localeMessageService.getMessage("button.settings.updateCars"));
+        updateCarsButton.setActionBody("callback.settings.updateCars");
+        updateCarsButton.setColumns(6);
+        updateCarsButton.setRows(1);
+        updateCarsButton.setBackgroundColor("#2db9b9");
+        updateCarsButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
+        buttons.add(updateCarsButton);
 
         Button backButton = new Button();
         backButton.setText(localeMessageService.getMessage("button.settings.back"));
@@ -314,6 +318,14 @@ public class KeyboardSource {
     public Keyboard getBotMessageButtonsMenuKeyabord() {
         Keyboard keyboard = new Keyboard();
         List<Button> buttons = new ArrayList<>();
+
+        Button showMessageButton = new Button();
+        showMessageButton.setText("Показать текст сообщения");
+        showMessageButton.setActionBody("callback.botMessageButtonsMenu.showMessageButton");
+        showMessageButton.setColumns(6);
+        showMessageButton.setRows(1);
+        showMessageButton.setBackgroundColor("#2db9b9");
+        buttons.add(showMessageButton);
 
         Button editTextButton = new Button();
         editTextButton.setText("Изменить текст сообщения");
@@ -439,30 +451,6 @@ public class KeyboardSource {
         return keyboard;
     }
 
-    public Keyboard getButtonTypeKeyboard() {
-        Keyboard keyboard = new Keyboard();
-        List<Button> buttons = new ArrayList<>();
-
-        Button replyButton = new Button();
-        replyButton.setText("Сохранять ответ");
-        replyButton.setActionBody("callback.botMessageMenu.selectButtonType.reply");
-        replyButton.setColumns(6);
-        replyButton.setRows(1);
-        replyButton.setBackgroundColor("#2db9b9");
-        buttons.add(replyButton);
-
-        Button contactButton = new Button();
-        contactButton.setText("Сохранять номер телефона");
-        contactButton.setActionBody("callback.botMessageMenu.selectButtonType.contact");
-        contactButton.setColumns(6);
-        contactButton.setRows(1);
-        contactButton.setBackgroundColor("#2db9b9");
-        buttons.add(contactButton);
-
-        keyboard.setButtons(buttons);
-        return keyboard;
-    }
-
     public Keyboard getConfirmBotMessageKeyboard() {
         Keyboard keyboard = new Keyboard();
         List<Button> buttons = new ArrayList<>();
@@ -492,22 +480,13 @@ public class KeyboardSource {
         List<Button> buttons = new ArrayList<>();
 
         Button inChatButton = new Button();
-        inChatButton.setText(localeMessageService.getMessage("button.botUsagePeriodMenu.inChat"));
-        inChatButton.setActionBody(localeMessageService.getMessage("button.botUsagePeriodMenu.inChat"));
+        inChatButton.setText((environmentConfig.getEnabled() == true ? "Выключить" : "Включить") + " бота");
+        inChatButton.setActionBody("Включить/выключить бота");
         inChatButton.setColumns(6);
         inChatButton.setRows(1);
         inChatButton.setBackgroundColor("#2db9b9");
         inChatButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
         buttons.add(inChatButton);
-
-        Button atNightButton = new Button();
-        atNightButton.setText(localeMessageService.getMessage("button.botUsagePeriodMenu.atNight"));
-        atNightButton.setActionBody(localeMessageService.getMessage("button.botUsagePeriodMenu.atNight"));
-        atNightButton.setColumns(6);
-        atNightButton.setRows(1);
-        atNightButton.setBackgroundColor("#2db9b9");
-        atNightButton.setTextPaddings(Arrays.asList(12, 12, 12, 12));
-        buttons.add(atNightButton);
 
         Button backButton = new Button();
         backButton.setText(localeMessageService.getMessage("button.botUsagePeriodMenu.back"));
@@ -766,6 +745,7 @@ public class KeyboardSource {
 
     public Keyboard generateKeyboard(BotMessage botMessage) {
         Keyboard keyboard = new Keyboard();
+
         List<by.testbot.models.Button> messageButtons = List.copyOf(botMessage.getButtons()).stream().sorted(Comparator.comparing(by.testbot.models.Button::getId)).collect(Collectors.toList());
         List<Button> buttons = new ArrayList<>();
 

@@ -43,4 +43,16 @@ public class FileController {
 
         return new ResponseEntity<>(new ByteArrayResource(fileSystemResource.getInputStream().readAllBytes()), headers, HttpStatus.OK);
     } 
+
+    @RequestMapping(value = "/keyboard_icons/{filename}", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @SneakyThrows
+    public ResponseEntity<ByteArrayResource> getIcon(@PathVariable("filename") String filename) {
+        FileSystemResource fileSystemResource = fileService.getPicture(filename);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "force-download"));
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+        return new ResponseEntity<>(new ByteArrayResource(fileSystemResource.getInputStream().readAllBytes()), headers, HttpStatus.OK);
+    } 
 }

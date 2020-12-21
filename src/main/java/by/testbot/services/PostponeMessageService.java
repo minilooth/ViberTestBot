@@ -21,11 +21,6 @@ public class PostponeMessageService {
     }
 
     @Transactional
-    public void update(PostponeMessage postponeMessage) {
-        postponeMessageRepository.save(postponeMessage);
-    }
-
-    @Transactional
     public void delete(PostponeMessage postponeMessage) {
         postponeMessageRepository.delete(postponeMessage);
     }

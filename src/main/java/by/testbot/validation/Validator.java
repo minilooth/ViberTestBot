@@ -27,12 +27,22 @@ public class Validator {
         return new ValidationResult(null, true);
     }
 
-    public static ValidationResult validateId(String id) {
-        if (id == null || id.isEmpty() || id.isBlank()) {
-            return new ValidationResult("Id не может быть пустым", false);
+    public static ValidationResult validateNumberOfMessage(String number) {
+        if (number == null || number.isEmpty() || number.isBlank()) {
+            return new ValidationResult("Номер сообщения не может быть пустым", false);
         }
-        if (!id.matches("^[0-9]+$")) {
-            return new ValidationResult("Id может состоять только из цифр", false);
+        if (!number.matches("^[0-9]+$")) {
+            return new ValidationResult("Номер сообщения может состоять только из цифр", false);
+        }
+        return new ValidationResult(null, true);
+    }
+
+    public static ValidationResult validateNumberOfButton(String number) {
+        if (number == null || number.isEmpty() || number.isBlank()) {
+            return new ValidationResult("Номер кнопки не может быть пустым", false);
+        }
+        if (!number.matches("^[0-9]+$")) {
+            return new ValidationResult("Номер кнопки может состоять только из цифр", false);
         }
         return new ValidationResult(null, true);
     }

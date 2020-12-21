@@ -51,4 +51,8 @@ public class ClientService {
 
         return stringBuilder.toString();
     }
+
+    public Boolean checkPhoneNumber(String phoneNumber) {
+        return getByPhoneNumber(phoneNumber) != null;
+    }
 }

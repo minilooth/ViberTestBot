@@ -20,8 +20,12 @@ public class InitializationService {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private ConfigService configService;
+
     @SneakyThrows
     public void initalize() {
+        configService.checkConfig();
         fileService.createDirectories();
         viberService.setWeebhook();
         broadcastService.runAsync();

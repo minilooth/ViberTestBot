@@ -90,11 +90,15 @@ public class BotMessageService {
         return botMessageRepository.findById(id).orElse(null);
     }
 
+    public Boolean isListOfBotMessagesEmpty() {
+        return getFirstMessage() == null;
+    }
+
     public Long getLastUpdate() {
         BotMessage firstMessage = getFirstMessage();
 
         if (firstMessage == null) {
-            return null;
+            return 0L;
         }
         else {
             return firstMessage.getLastUpdate();
@@ -149,8 +153,6 @@ public class BotMessageService {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append("Список сообщений, которые бот отправляет:\n");
-
         while(botMessage != null) {
             String message = botMessage.getMessage().length() > 50 ? botMessage.getMessage().substring(0, 50) + "..." : botMessage.getMessage();
             
@@ -168,28 +170,14 @@ public class BotMessageService {
         return stringBuilder.toString();
     }
 
-    public String formatBotMessage(Integer id, Client client) {
-        BotMessage botMessage = getById(id);
-
-        if (botMessage == null) {
-            return StringUtils.EMPTY;
-        }
-
+    public String formateBotMessage(String message, Client client) {
         String name = StringUtils.EMPTY;
-        String link = StringUtils.EMPTY;
 
-        if (hasName(botMessage.getMessage())) {
+        if (hasName(message)) {
             name = client.getName();
         }
-        if (hasLink(botMessage.getMessage())) {
-            Dialogue currentDialogue = client.getDialogues().stream().filter(d -> !d.getDialogueIsOver()).findAny().orElse(null);
-            
-            if (currentDialogue != null) {
-                link = carService.generateLink(currentDialogue.getBrand(), currentDialogue.getModel(), currentDialogue.getYearFrom(), currentDialogue.getYearTo());
-            }
-        }
 
-        return botMessage.getMessage().replace(NAME_PLACEHOLDER, name).replace(LINK_PLACEHOLDER, link);
+        return message.replace(NAME_PLACEHOLDER, name);
     }
 
     public String formateBotMessage(BotMessage botMessage, Client client) {

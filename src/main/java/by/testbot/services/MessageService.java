@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import by.testbot.bot.KeyboardSource;
 import by.testbot.models.BotMessage;
-import by.testbot.models.Button;
 import by.testbot.models.Client;
 import by.testbot.models.Manager;
 import by.testbot.models.viber.Failed;
@@ -50,6 +49,8 @@ public class MessageService {
     @Autowired
     private LocaleMessageService localeMessageService;
 
+    // Other
+
     public SendTextMessageRequest getConversationStartedMessage(String viberId) {
         return this.getConversationStartedMessage(viberId, localeMessageService.getMessage("message.welcome"), null, null);
     }
@@ -62,124 +63,154 @@ public class MessageService {
         return this.sendPictureMessageToAll(broadcastList, message, pictureUrl, null, null);
     }
 
+    public void sendClientInformationMessage(Manager manager, Client client, String clientAvatar) {
+        this.sendPictureMessage(manager.getUser().getViberId(), clientService.getClientInformation(client), clientAvatar, null ,null);
+    }
+
+    public void sendManagerInformationMessage(Manager manager, Manager managerForInformation, String managerAvatar) {
+        this.sendPictureMessage(manager.getUser().getViberId(), managerService.getManagerInformation(managerForInformation), managerAvatar, null, null);
+    }
+
     // Admin messages
 
-    public void sendAskManagerFirstnameMessage(String viberId) {
-        this.sendTextMessage(viberId, "Поздравляем, вы стали менеджером!\nЧтобы продолжить нужно заполнить информацию", null, null);
-        this.sendTextMessage(viberId, "Введите имя", null, null);
-    }
+    // Manager start messages
 
-    public void sendAskManagerSurnameMessage(String viberId) {
-        this.sendTextMessage(viberId, "Введите фамилию", null, null);
+    public void sendYouAreBecomeManagerMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.youAreBecomeManager"), null, null);
     } 
 
-    public void sendAskManagerPhoneNumberMessage(String viberId) {
-        this.sendTextMessage(viberId, "Введите номер телефона(в формате 375291234567) или нажмите кнопку снизу", keyboardSource.getAskManagerPhoneNumberKeyboard(), 3);
+    public void sendAskManagerFirstnameMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.askManagerFirstname"), null, null);
     }
 
-    public void sendSuccessfullyFilledManagerProfileMessage(String viberId) {
-        this.sendTextMessage(viberId, "Профиль менеджера успешно заполнен", null, null);
+    public void sendAskManagerSurnameMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.askManagerSurname"), null, null);
+    } 
+
+    public void sendAskManagerPhoneNumberMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.askManagerPhoneNumber"), keyboardSource.getAskManagerPhoneNumberKeyboard(), 3);
     }
 
-    public void sendAddTextMessage(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("message.postponeMessage.enterText"), null, null);
+    public void sendManagerWithThisPhoneNumberAlreadyExistsMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managerWithThisPhoneNumberAlreadyExists"), null, null);
     }
 
-    public void sendSelectDateAndTimeMessage(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("message.postponeMessage.setDateAndTime"), null, null);
+    public void sendSuccessfullyFilledManagerProfileMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.successfullyFilledManagerProfile"), null, null);
     }
 
-    public void sendSuccessPostponeMessageConfirmationMessage(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("message.postponeMessage.successPostponeMessageConfirmation"), null, null);
+    // Postpone message messages
+
+    public void sendAddTextMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.enterText"), null, null);
     }
 
-    public void sendDeclinePostponeMessageConfirmationMessage(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("message.postponeMessage.declinePostponeMessageConfirmation"), null, null);
+    public void sendSelectDateAndTimeMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.setDateAndTime"), null, null);
     }
 
-    public void sendListOfManagersIsEmptyMessage(String viberId) {
-        this.sendTextMessage(viberId, "Список менеджеров пуст", null, null);
+    public void sendSuccessPostponeMessageConfirmationMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.successPostponeMessageConfirmation"), null, null);
     }
 
-    public void sendListOfManagersMessage(String viberId, List<Manager> managers) {
-        this.sendTextMessage(viberId, managerService.formatManagers(managers), null, null);
+    public void sendDeclinePostponeMessageConfirmationMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.declinePostponeMessageConfirmation"), null, null);
     }
 
-    public void sendShareManagerContactMessage(String viberId) {
-        this.sendTextMessage(viberId, "Отправьте контакт клиента, которого хотите сделать менеджером\n(Клиент должен пройти диалог до конца и поделиться номером телефона)", keyboardSource.getBackKeyboard(), null);
+    // List of managers
+
+    public void sendListOfManagersIsEmptyMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.listOfManagersIsEmpty"), null, null);
     }
 
-    public void sendClientNotFoundMessage(String viberId) {
-        this.sendTextMessage(viberId, "Клиент не найден или не поделился номером телефона", null, null);
+    public void sendListOfManagersMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.listOfManagers"), null, null);
     }
 
-    public void sendClientInformationMessage(String viberId, Client client, String clientAvatar) {
-        this.sendPictureMessage(viberId, clientService.getClientInformation(client), clientAvatar, null ,null);
+    public void sendListOfManagers(Manager manager, List<Manager> managers) {
+        this.sendTextMessage(manager.getUser().getViberId(), managerService.formatManagers(managers), null, null);
     }
 
-    public void sendManagerInformationMessage(String viberId, Manager manager, String managerAvatar) {
-        this.sendPictureMessage(viberId, managerService.getManagerInformation(manager), managerAvatar, null, null);
+    // Add manager messages
+
+    public void sendShareManagerContactMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.addManager.shareManagerContact"), keyboardSource.getBackKeyboard(), null);
     }
 
-    public void sendConfrimAddNewManagerMessage(String viberId) {
-        this.sendTextMessage(viberId, "Подтвердите добавление менеджера", keyboardSource.getConfirmManagerKeyboard(), null);
+    public void sendClientNotFoundMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.addManager.clientNotFound"), null, null);
     }
 
-    public void sendSuccessfullyAddedNewManagerMessage(String viberId) {
-        this.sendTextMessage(viberId, "Менеджер успешно добавлен", null, null);
+    public void sendConfrimAddNewManagerMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.addManager.confrimAddNewManager"), keyboardSource.getConfirmManagerKeyboard(), null);
     }
 
-    public void sendCancellerationAddManagerMessage(String viberId) {
-        this.sendTextMessage(viberId, "Вы отменили добавление менеджера", null, null);
+    public void sendSuccessfullyAddedNewManagerMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.addManager.successfullyAddedNewManager"), null, null);
     }
 
-    public void sendSelectManagerToDelete(String viberId) {
-        this.sendTextMessage(viberId, "Отправьте контакт менеджера для удаления", keyboardSource.getBackKeyboard(), null);
+    public void sendCancellerationAddManagerMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.addManager.cancellerationAddManager"), null, null);
     }
 
-    public void sendUnableToDeleteSelfMessage(String viberId) {
-        this.sendTextMessage(viberId, "Невозможно удалить самого себя", null, null);
+    // Delete manager messages
+
+    public void sendSelectManagerToDelete(Manager manager) {
+        // TODO: Rename method
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.shareManagerContact"), keyboardSource.getBackKeyboard(), null);
     }
 
-    public void sendConfrimDeleteManagerMessage(String viberId) {
-        this.sendTextMessage(viberId, "Подтвердите удаление менеджера", keyboardSource.getConfirmManagerKeyboard(), null);
+    public void sendUnableToDeleteSelfMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.unableToDeleteSelf"), null, null);
     }
 
-    public void sendSuccessfullyDeleteManagerMessage(String viberId) {
-        this.sendTextMessage(viberId, "Менеджер успешно удален", null, null);
+    public void sendConfrimDeleteManagerMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.confrimDeleteManager"), keyboardSource.getConfirmManagerKeyboard(), null);
     }
 
-    public void sendUnableToDeleteManagerMessage(String viberId) {
-        this.sendTextMessage(viberId, "Не удалось удалить менеджера так как он не найден или уже удален", null, null);
+    public void sendSuccessfullyDeleteManagerMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.successfullyDeleteManager"), null, null);
     }
 
-    public void sendCancellerationDeleteManagerMessage(String viberId) {
-        this.sendTextMessage(viberId, "Удаление менеджера успешно отменено", null, null);
+    public void sendUnableToDeleteManagerMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.unableToDeleteManager"), null, null);
     }
+
+    public void sendCancellerationDeleteManagerMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.cancellerationDeleteManager"), null, null);
+    }
+
+    // Change managers privilegies
 
     public void changeManagerPrivilegiesMessage(String viberId) {
         //TODO: send change manager privilegies details message
     }
 
-    public void sendListOfClientsMessage(String viberId) {
+    // Clients messages
+
+    public void sendListOfClientsMessage(Manager manager) {
         String filename = excelService.generateExcelAndWriteActualData();
         String mediaUrl = viberService.getFileEndpoint() + filename;
         Long fileSize = fileService.getFileSizeInBytes(filename);
 
-        this.sendFileMessage(viberId, mediaUrl, filename, fileSize);
+        this.sendFileMessage(manager.getUser().getViberId(), mediaUrl, filename, fileSize);
     }
 
     public void sendAdditionalOperationsWithClientsMessage(String viberId) {
         //TODO: send additional operations with clients details messages
     }
 
-    public void sendGetReportAboutManagersWork(String viberId) {
-        //TODO: create and send report about managers work
+    // Report messages
+
+    public void sendReportAbountManagersWork(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), "Отчет по работе менеджеров:\n" + managerService.getManagersStatistics(), null, null);
     }
 
     public void sendGetReportAboutBotWork(String viberId) {
         //TODO: create and send report about bot work
     }
+
+    // Integration Messages
 
     public void sendAddIntegrationMessage(String viberId) {
         this.sendTextMessage(viberId, "Введите токен для добавления интеграции", null, null);
@@ -193,295 +224,286 @@ public class MessageService {
         //TODO: get and send list of integrations ?????
     }
 
-    public void sendSelectBotMessageToEdit(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("message.editTextsWhichBotSend.selectMessage"), keyboardSource.getBackKeyboard(), null);
+    // Bot Message Menu 
+
+    public void sendBotMessageButtonsMenuKeyboard(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.botMessageButtonsMenu"), keyboardSource.getBotMessageButtonsMenuKeyabord(), null);
     }
 
-    public void sendBotMessageButtonsMenuKeyboard(String viberId) {
-        this.sendTextMessage(viberId, "Меню редактирования сообщения", keyboardSource.getBotMessageButtonsMenuKeyabord(), null);
+    public void sendBotMessageMenuKeyboard(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessageMenu"), keyboardSource.getBotMessageMenuKeyabord(), null);
     }
 
-    public void sendBotMessageMenuKeyboard(String viberId) {
-        this.sendTextMessage(viberId, "Меню сообщений бота", keyboardSource.getBotMessageMenuKeyabord(), null);
+    // Bot Work Time
+
+    public void sendBotWillBeTurnedOffMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botWorkTime.botWillBeTurnedOn"), null, null);
     }
 
-    public void sendUnableToEditBotMessageMessage(String viberId) {
-        this.sendTextMessage(viberId, "Не удалось изменить сообщение бота, так как оно не найдено или удалено", null, null);
+    public void sendBotWillBeTurnedOnMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botWorkTime.botWillBeTurnedOn"), null, null);
     }
 
-    public void sendDeleteBotMessageButtonMessage(String viberId, List<Button> buttons) {
-        this.sendTextMessage(viberId, "Список кнопок:\n" + buttonService.formatButtons(buttons), null, null);
-        this.sendTextMessage(viberId, "Введите номер кнопки для удаления", keyboardSource.getBackKeyboard(), null);
-    }
-
-    public void sendListOfBotMessageButtons(String viberId, List<Button> buttons) {
-        this.sendTextMessage(viberId, "Список кнопок:\n" + buttonService.formatButtons(buttons), null, null);
-    }
-
-    public void sendAddBotMessageButtonMessage(String viberId) {
-        this.sendTextMessage(viberId, "Введите текст кнопки", null, null);
-    }
-
-    public void sendSuccessfullyAddedButtonMessage(String viberId) {
-        this.sendTextMessage(viberId, "Кнопка успешно добавлена", null, null);
-    }
-
-    public void sendConfirmAddNewBotMessageButtonMessage(String viberId) {
-        this.sendTextMessage(viberId, "Подтвердите добавление кнопки", keyboardSource.getConfirmBotMessageButtonKeyboard(), null);
+    // Update car prices
+    
+    public void sendSendExcelFileWithPricesMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.updateCarPrices.sendExcelFileWithPrices"), keyboardSource.getBackKeyboard(), null);
     }
     
-    public void sendUnableToAddNewButtonMessage(String viberId) {
-        this.sendTextMessage(viberId, "Не удалось добавить новую кнопку, так как сообщение бота не найдено или удалено", null, null);
+    public void sendCountOfCarsUpdatedMessage(Manager manager, Integer countOfCarsUpdated, Integer countOfCars) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.updateCarPrices.countOfCarsUpdated", countOfCarsUpdated, countOfCars), null, null);
     }
 
-    public void sendConfirmDeleteBotMessageButtonMessage(String viberId) {
-        this.sendTextMessage(viberId, "Подтвердите удаление кнопки", keyboardSource.getConfirmBotMessageButtonKeyboard(), null);
+    // Select Bot Message to Edit message
+
+    public void sendSelectBotMessageToEdit(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.selectBotMessageToEdit"), keyboardSource.getBackKeyboard(), null);
     }
 
-    public void sendUnableToDeleteButtonMessage(String viberId) {
-        this.sendTextMessage(viberId, "Не удалось удалить кнопку, так как она не найдена удалена", null, null);
+    public void sendBotMessageText(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.showBotMessage") + manager.getBotMessage().getMessage(), null, null);
     }
 
-    public void sendSuccessfullyDeletedButtonMessage(String viberId) {
-        this.sendTextMessage(viberId, "Кнопка успешно удалена", null, null);
+    public void sendBotMessageNotFoundMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.botMessageNotFound"), null, null);
     }
 
-    public void sendCancellerationDeleteButtonMessage(String viberId) {
-        this.sendTextMessage(viberId, "Вы отменили удаление кнопки", null, null);
+    public void sendUnableToEditBotMessageMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.unableToEditBotMessage"), null, null);
     }
 
-    public void sendCancellerationAddNewButtonMessage(String viberId) {
-        this.sendTextMessage(viberId, "Вы отменили добавление новой кнопки", null, null);
+    public void sendEnterBotMessageTextMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.enterBotMessageText"), keyboardSource.getBackKeyboard(), null);
     }
 
-    public void sendChangesSuccessfullySavedMessage(String viberId) {
-        this.sendTextMessage(viberId, "Изменения успешно сохранены", null, null);
+    public void sendCancellerationChangeBotMessageTextMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.cancellerationChangeBotMessageText"), null, null);
     }
 
-    public void sendChangesIsCancelledMessage(String viberId) {
-        this.sendTextMessage(viberId, "Изменения отменены", null, null);
+    public void sendConfirmChangeBotMessageTextMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.confirmChangeBotEditMessage"), keyboardSource.getConfirmBotMessageKeyboard(), null);
     }
 
-    public void sendSelectAnswerTypeMessage(String viberId) {
-        this.sendTextMessage(viberId, "Выберите какой тип ответа будет сохраняться при нажатии на кнопку", keyboardSource.getAnswerTypeKeyboard(), null);
+    public void sendSuccessEditBotMessageTextMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.successEditBotMessageText"), null, null);
     }
 
-    public void sendIsButtonEndsDialogueMessage(String viberId) {
-        this.sendTextMessage(viberId, "При нажатии на кнопку, диалог будет продолжаться?", keyboardSource.getYesNoKeyboard(), null);
+    // Button edit
+
+    public void sendAskNumberOfButtonToDeleteMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.askNumberOfButtonToDelete"), keyboardSource.getBackKeyboard(), null);
     }
 
-    public void sendSelectBotMessageButtonActionTypeMessage(String viberId) {
-        this.sendTextMessage(viberId, "Какого типа будет кнопка?", keyboardSource.getButtonTypeKeyboard(), null);
+    public void sendListOfBotMessageButtons(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.listOfBotMessageButtons") + buttonService.formatButtons(buttonService.getAllByBotMessage(manager.getBotMessage())), null, null);
     }
 
-    public void sendListOfBotMessagesMessage(String viberId) {
-        this.sendTextMessage(viberId, viberService.getBotMessageService().getPrettyFormatedAllBotMessages(), null, null);
+    public void sendAddBotMessageButtonMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.addBotMessageButton"), null, null);
     }
 
-    public void sendBotTextMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), "Текущий текст сообщения:\n" + manager.getBotMessage().getMessage(), null, null);
+    public void sendSuccessfullyAddedButtonMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.successfullyAddedButton"), null, null);
     }
 
-    public void sendEnterBotMessageTextMessage(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("message.editTextsWhichBotSend.enterText"), null, null);
+    public void sendConfirmAddNewBotMessageButtonMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.confirmAddNewBotMessageButton"), keyboardSource.getConfirmBotMessageButtonKeyboard(), null);
+    }
+    
+    public void sendUnableToAddNewButtonMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.unableToAddNewButton"), null, null);
     }
 
-    public void sendUnableToChangeBotMessageTextMessage(String viberId) {
-        this.sendTextMessage(viberId, "Не удалось изменить текст сообщения бота, так как оно не найдено или удалено", null, null);
+    public void sendConfirmDeleteBotMessageButtonMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.confirmDeleteBotMessageButton"), keyboardSource.getConfirmBotMessageButtonKeyboard(), null);
     }
 
-    public void sendCancellerationChangeBotMessageTextMessage(String viberId) {
-        this.sendTextMessage(viberId, "Вы отменили изменение текста сообщения бота", null, null);
+    public void sendUnableToDeleteButtonMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.unableToDeleteButton"), null, null);
     }
 
-    public void sendConfirmChangeBotMessageTextMessage(String viberId) {
-        this.sendTextMessage(viberId, "Подтвердите изменение текста сообщения бота", keyboardSource.getConfirmBotMessageKeyboard(), null);
+    public void sendSuccessfullyDeletedButtonMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.successfullyDeletedButton"), null, null);
     }
 
-    public void sendSuccessEditBotMessageTextMessage(String viberId) {
-        this.sendTextMessage(viberId, "Текст успешно изменен", null, null);
+    public void sendCancellerationDeleteButtonMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.cancellerationDeleteButton"), null, null);
     }
 
-    public void sendMaxButtonsCountReachedMessage(String viberId) {
-        this.sendTextMessage(viberId, "Достигнуто максимальное количество кнопок", null, null);
+    public void sendCancellerationAddNewButtonMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.cancellerationAddNewButton"), null, null);
     }
 
-    public void sendMinButtonsCountReachedMessage(String viberId) {
-        this.sendTextMessage(viberId, "Список кнопок пуст", null, null);
+    public void sendSelectAnswerTypeMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.selectAnswerType"), keyboardSource.getAnswerTypeKeyboard(), null);
     }
 
-    public void sendBotMessageNotFoundMessage(String viberId) {
-        this.sendTextMessage(viberId, "Такое сообщение не найдено", null, null);
+    public void sendIsButtonEndsDialogueMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.isButtonEndsDialogue"), keyboardSource.getYesNoKeyboard(), null);
     }
 
-    public void sendUnableSaveBotMessage(String viberId) {
-        this.sendTextMessage(viberId, "Не удалось сохранить сообщение, так как это сообщение не найдено или было удалено", null, null);
+    public void sendListOfBotMessages(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.listOfBotMessages") + viberService.getBotMessageService().getPrettyFormatedAllBotMessages(), null, null);
     }
 
-    public void sendAddNewBotMessageMessage(String viberId) {
-        this.sendTextMessage(viberId, "Введите текст сообщения.\nЧтобы выводить имя клиента впишите &{name}, чтобы выводить ссылку на автомобиль впишите &{link}", null, null);
+    public void sendListOfBotMessagesIsEmptyMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.listOfBotMessagesIsEmpty"), null, null);
     }
 
-    public void sendConfirmAddNewBotMessageMessage(String viberId) {
-        this.sendTextMessage(viberId, "Подтвердите добавление нового сообщения", keyboardSource.getConfirmBotMessageKeyboard(), null);
+    public void sendCurrentBotMessageTextMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.currentBotMessageText") + manager.getBotMessage().getMessage(), null, null);
     }
 
-    public void sendSuccessfullyAddedNewBotMessageMessage(String viberId) {
-        this.sendTextMessage(viberId, "Сообщение успешно добавлено", null, null);
+    public void sendMaxButtonsCountReachedMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.maxButtonsCountReached"), null, null);
     }
 
-    public void sendCancellerationAddNewBotMessageMessage(String viberId) {
-        this.sendTextMessage(viberId, "Вы отменили добавление сообщения.\nСообщение не добавлено", null, null);
+    public void sendButtonsListIsEmptyMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.buttonsListIsEmpty"), null, null);
     }
 
-    public void sendSelectBotMessageToDelete(String viberId) {
-        this.sendTextMessage(viberId, "Введите номер сообщения для удаления", null, null);
+    public void sendAddNewBotMessageMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessageMenu.addNewBotMessage"), null, null);
     }
 
-    public void sendConfirmDeleteBotMessageMessage(String viberId) {
-        this.sendTextMessage(viberId, "Подтвердите удаление сообщения", keyboardSource.getConfirmBotMessageKeyboard(), null);
+    public void sendConfirmAddNewBotMessageMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.confirmAddNewBotMessage"), keyboardSource.getConfirmBotMessageKeyboard(), null);
     }
 
-    public void sendSuccessfullyDeleteBotMessageMessage(String viberId) {
-        this.sendTextMessage(viberId, "Сообщение успешно удалено", null, null);
+    public void sendSuccessfullyAddedNewBotMessageMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.successfullyAddedNewBotMessage"), null, null);
     }
 
-    public void sendCancellerationDeleteBotMessageMessage(String viberId) {
-        this.sendTextMessage(viberId, "Вы отменили удаление сообщения.\nСообщение не удалено", null, null);
+    public void sendCancellerationAddNewBotMessageMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.cancellerationAddNewBotMessage"), null, null);
     }
 
-    public void sendEnterNewBotMessageSequence(String viberId) {
-        this.sendTextMessage(viberId, "Введите новую последовательность сообщений бота.\n(Через запятую в формате 1,2,3)", keyboardSource.getBackKeyboard(), null);
+    public void sendSelectBotMessageToDeleteMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.selectBotMessageToDelete"), null, null);
     }
 
-    public void sendSuccessfullyChangedBotMessageSequenceMessage(String viberId) {
-        this.sendTextMessage(viberId, "Последовательность сообщений бота успешно изменена", null, null);
+    public void sendConfirmDeleteBotMessageMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.confirmDeleteBotMessage"), keyboardSource.getConfirmBotMessageKeyboard(), null);
     }
 
-    public void sendBotMessageMessage(String viberId, BotMessage botMessage, Client client) {
-        this.sendTextMessage(viberId, botMessageService.formateBotMessage(botMessage, client), keyboardSource.generateKeyboard(botMessage), 3);
+    public void sendSuccessfullyDeleteBotMessageMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.successfullyDeleteBotMessage"), null, null);
     }
 
-    public void sendBotMessageDeclineConfirmationMessage(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("message.editTextsWhichBotSend.declineConfirmation"), null, null);
+    public void sendCancellerationDeleteBotMessageMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.cancellerationDeleteBotMessage"), null, null);
     }
 
-    public void sendInChatBotUsagePeriodSettingsMessage(String viberId) {
+    public void sendEnterNewBotMessageSequenceMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.enterNewBotMessageSequence"), keyboardSource.getBackKeyboard(), null);
+    }
+
+    public void sendSuccessfullyChangedBotMessageSequenceMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.successfullyChangedBotMessageSequence"), null, null);
+    }
+
+    
+
+    public void sendBotMessageMessage(Client client, BotMessage botMessage) {
+        this.sendTextMessage(client.getUser().getViberId(), botMessageService.formateBotMessage(botMessage, client), keyboardSource.generateKeyboard(botMessage), 3);
+    }
+
+    public void sendInChatBotUsagePeriodSettingsMessage(Manager manager) {
         //TODO: send in chat bot work time period settings details
 
-        this.sendTextMessage(viberId, localeMessageService.getMessage("button.botUsagePeriodMenu.inChat"), null, null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("button.botUsagePeriodMenu.inChat"), null, null);
     }
 
-    public void sendAtNightBotUsagePeriodSettingsMessage(String viberId) {
+    public void sendAtNightBotUsagePeriodSettingsMessage(Manager manager) {
         //TODO: send at night bot work time period settings details
 
-        this.sendTextMessage(viberId, localeMessageService.getMessage("button.botUsagePeriodMenu.atNight"), null, null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("button.botUsagePeriodMenu.atNight"), null, null);
     }
 
     // User messages
 
-    public void sendAskClientNameMessage(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("reply.askName"), null, null);
+    public void sendAskClientNameMessage(Client client) {
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.askName"), null, null);
     }
 
-    public void sendAskBrandMessage(String viberId, List<String> brands, Integer page) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("message.userDialog.askBrand"), keyboardSource.generatePagableKeyboard(brands, page), null);
+    public void sendAskBrandMessage(Client client, List<String> brands, Integer page) {
+        this.sendTextMessage(client.getUser().getViberId(), botMessageService.formateBotMessage(localeMessageService.getMessage("message.userDialog.askBrand"), client), keyboardSource.generatePagableKeyboard(brands, page), null);
     }
 
-    public void sendAskModelMessage(String viberId, List<String> models, Integer page) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("message.userDialog.askModel"), keyboardSource.generatePagableKeyboard(models, page), null);
+    public void sendAskModelMessage(Client client, List<String> models, Integer page) {
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("message.userDialog.askModel"), keyboardSource.generatePagableKeyboard(models, page), null);
     }
 
-    public void sendAskYearOfIssueFromMessage(String viberId, List<String> years, Integer page) {
-        this.sendTextMessage(viberId, "Выберите минимальный год выпуска", keyboardSource.generatePagableKeyboard(years, page), null);
+    public void sendAskYearOfIssueFromMessage(Client client, List<String> years, Integer page) {
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("message.userDialog.askYearOfIssueFrom"), keyboardSource.generatePagableKeyboard(years, page), null);
     }
 
-    public void sendAskYearOfIssueToMessage(String viberId, List<String> years, Integer page) {
-        this.sendTextMessage(viberId, "Выберите максимальный год выпуска", keyboardSource.generatePagableKeyboard(years, page), null);
+    public void sendAskYearOfIssueToMessage(Client client, List<String> years, Integer page) {
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("message.userDialog.askYearOfIssueTo"), keyboardSource.generatePagableKeyboard(years, page), null);
     }
 
-    public void sendAdminMainMenuMessageAndKeyboard(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("keyboardMessage.mainMenu"), keyboardSource.getAdminMainMenuKeyboard(), 6);
+    public void sendAdminMainMenuKeyboard(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.mainMenu"), keyboardSource.getAdminMainMenuKeyboard(), 6);
     }
 
-    public void sendManagersMenuMessageAndKeyboard(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("keyboardMessage.managers"), keyboardSource.getManagersMenuKeyboard(), null);
+    public void sendManagersMenuKeyboard(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.managers"), keyboardSource.getManagersMenuKeyboard(), null);
     }
 
-    public void sendClientsMenuMessageAndKeyboard(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("keyboardMessage.clients"), keyboardSource.getClientsMenuKeyboard(), null);
+    public void sendClientsMenuKeyboard(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.clients"), keyboardSource.getClientsMenuKeyboard(), null);
     }
 
-    public void sendReportMenuMessageAndKeyboard(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("keyboardMessage.report"), keyboardSource.getReportMenuKeyboard(), null);
+    public void sendReportMenuKeyboard(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.report"), keyboardSource.getReportMenuKeyboard(), null);
     }
 
-    public void sendIntegrationsMenuMessageAndKeyboard(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("keyboardMessage.integrations"), keyboardSource.getIntegrationsMenuKeyboard(), null);
+    public void sendIntegrationsMenuKeyboard(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.integrations"), keyboardSource.getIntegrationsMenuKeyboard(), null);
     }
 
-    public void sendSettingsMenuMessageAndKeyboard(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("keyboardMessage.settings"), keyboardSource.getSettingsMenuKeyboard(), null);
+    public void sendSettingsMenuKeyboard(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.settings"), keyboardSource.getSettingsMenuKeyboard(), null);
     }
 
-    public void sendBotUsagePeriodMenuMessageAndKeyboard(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("keyboardMessage.botUsagePeriod"), keyboardSource.getBotUsagePeriodMenuKeyboard(), null);
+    public void sendBotWorkKeyboard(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.botWork"), keyboardSource.getBotUsagePeriodMenuKeyboard(), null);
     }
 
-    public void sendConfirmPostponeMessageMessageAndKeyboard(String viberId) {
-        this.sendTextMessage(viberId, "Подтвердите отправку отложенного сообщения", keyboardSource.getConfirmPostponeMessageKeyboard(), null);
+    public void sendConfirmPostponeMessageMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.confirmPostponeMessage"), keyboardSource.getConfirmPostponeMessageKeyboard(), null);
     }
 
-    public void sendAddPhotoMessageAndKeyboard(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("message.postponeMessage.uploadPhoto"), keyboardSource.getWithoutPhotoKeyboard(), null);
+    public void sendAddPhotoMessageAndKeyboard(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.uploadPhoto"), keyboardSource.getWithoutPhotoKeyboard(), null);
     }
 
     //endregion
 
     //region UserMessageKeyboards
 
-    public void sendIsHaveAnyBenefitsMessageAndKeyboard(Client client) {
-        this.sendTextMessage(client.getUser().getViberId(), viberService.getBotMessageService().formatBotMessage(1, client), keyboardSource.getYesNoKeyboard(), null);
+    public void sendPhoneNumberSuccessfullyEnteredMessage(Client client) {
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.phoneEntered"), null, null);
     }
 
-    public void sendNegativeDialogEndMessageAndKeyboard(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("reply.negativeDialogEnd"), keyboardSource.getEndDialogKeyboard(), null);
+    public void sendNegativeDialogEndMessage(Client client) {
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.negativeDialogEnd"), keyboardSource.getEndDialogKeyboard(), null);
     }
 
-    public void sendPositiveDialogEndMessageAndKeyboard(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("reply.positiveDialogEnd"), keyboardSource.getEndDialogKeyboard(), null);
+    public void sendPositiveDialogEndMessage(Client client) {
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.positiveDialogEnd"), keyboardSource.getEndDialogKeyboard(), null);
     }
 
-    public void sendPositiveDialogEndAndPhoneEnteredMessageAndKeyboard(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("reply.positiveDialogEndAndPhoneEntered"), keyboardSource.getEndDialogKeyboard(), null);
+    public void sendPositiveDialogEndAndPhoneEnteredMessage(Client client) {
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.positiveDialogEndAndPhoneEntered"), keyboardSource.getEndDialogKeyboard(), null);
     }
 
-    public void sendAreInterestedToKnowAdditionalDataAboutCarsAtAuctionsMessageAndKeyboard(Client client) {
-        this.sendTextMessage(client.getUser().getViberId(), viberService.getBotMessageService().formatBotMessage(2, client), keyboardSource.getYesNoKeyboard(), null);
-    }
-
-    public void sendDontWorryAboutPricesAndIsLinkOpensMessageAndKeyboard(Client client) {
-        this.sendTextMessage(client.getUser().getViberId(), viberService.getBotMessageService().formatBotMessage(3, client), keyboardSource.getYesNoKeyboard(), null);
-    }
-
-    public void sendWhenArePlanningToBuyCarMessageAndKeyboard(Client client) {
-        this.sendTextMessage(client.getUser().getViberId(), viberService.getBotMessageService().formatBotMessage(4, client), keyboardSource.getWhenWillBuyCarKeyboard(), null);
-    }
-
-    public void sendIsInterestedInSpecificCarVariantsMessageAndKeyboard(Client client) {
-        this.sendTextMessage(client.getUser().getViberId(), viberService.getBotMessageService().formatBotMessage(5, client), keyboardSource.getYesNoKeyboard(), null);
-    }
-
-    public void sendWillAskFewQuestionsRegardingYourCriteriaMessageAndKeyboard(Client client) {
-        this.sendTextMessage(client.getUser().getViberId(), viberService.getBotMessageService().formatBotMessage(6, client), keyboardSource.getYesNoKeyboard(), null);
-    }
-
-    public void sendAskAndEnterPhoneNumberMessageAndKeyboard(Client client) {
+    public void sendAskAndEnterPhoneNumberMessage(Client client) {
         this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.askAndEnterPhoneNumber"), keyboardSource.getAskAndEnterPhoneNumberKeyboard(), 3);
     }
 
-    public void sendAskYearOfIssueMessage(String viberId) {
-        this.sendTextMessage(viberId, localeMessageService.getMessage("message.userDialog.askYearOfIssue"), null, null);
+    public void sendClientWithThisPhoneNumberAlreadyExistsMessage(Client client) {
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("message.userDialog.clientWithThisPhoneNumberAlreadyExists"), null, null);
     }
 
     private SendTextMessageRequest getConversationStartedMessage(String viberId, String message, Keyboard keyboard, Integer minApiVersion) {

@@ -50,7 +50,7 @@ public class Dialogue {
     @Column(name = "LastUpdate", nullable = false)
     private Long lastUpdate;
 
-    @Column(name = "BotMessagesLastUpdate", nullable = false)
+    @Column(name = "BotMessagesLastUpdate", columnDefinition = "BIGINT DEFAULT 0")
     private Long botMessagesLastUpdate;
 
     @Column(name = "MustBeAnswers", nullable = false)

@@ -10,7 +10,8 @@ import by.testbot.models.enums.button.ActionType;
 import by.testbot.models.enums.button.BackgroundMediaScaleType;
 import by.testbot.models.enums.button.BackgroundMediaType;
 import by.testbot.models.enums.button.ImageScaleType;
-import by.testbot.models.enums.button.TextAlign;
+import by.testbot.models.enums.button.TextHorizontalAlign;
+import by.testbot.models.enums.button.TextVerticalAlign;
 import by.testbot.models.enums.button.TextSize;
 import lombok.Data;
 
@@ -57,10 +58,10 @@ public class Button {
     private String text;
 
     @JsonProperty("TextVAlign")
-    private TextAlign textVerticalAlign;
+    private TextVerticalAlign textVerticalAlign;
 
     @JsonProperty("TextHAlign")
-    private TextAlign textHorizontalAlign;
+    private TextHorizontalAlign textHorizontalAlign;
 
     @JsonProperty("TextPaddings")
     private List<Integer> textPaddings;
