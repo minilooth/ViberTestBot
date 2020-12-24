@@ -60,6 +60,8 @@ public class KeyboardSource {
     final static String PHONE_ICON_FILENAME = "phone.png";
     final static String CONFIRM_ICON_FILENAME = "confirm.png";
     final static String REJECT_ICON_FILENAME = "reject.png";
+    final static String YES_ICON_FILENAME = "yes.png";
+    final static String NO_ICON_FILENAME = "no.png";
 
     @PostConstruct
     public void postConstruct() {
@@ -279,7 +281,7 @@ public class KeyboardSource {
         additionalActionsWithClientsButton.setColumns(6);
         additionalActionsWithClientsButton.setRows(1);
         additionalActionsWithClientsButton.setImageScaleType(ImageScaleType.FIT);
-        // additionalActionsWithClientsButton.setImageUrl(viberService.getIconEndpoint() + BACK_ICON_FILENAME);
+        additionalActionsWithClientsButton.setImageUrl(viberService.getIconEndpoint() + ADD_ICON_FILENAME);
         additionalActionsWithClientsButton.setFrame(frame);
         additionalActionsWithClientsButton.setTextSize(TextSize.SMALL);
         additionalActionsWithClientsButton.setTextVerticalAlign(TextVerticalAlign.BOTTOM);
@@ -706,7 +708,7 @@ public class KeyboardSource {
         positiveButton.setColumns(6);
         positiveButton.setRows(1);
         positiveButton.setImageScaleType(ImageScaleType.FIT);
-        // positiveButton.setImageUrl(viberService.getIconEndpoint() + BACK_ICON_FILENAME);
+        positiveButton.setImageUrl(viberService.getIconEndpoint() + YES_ICON_FILENAME);
         positiveButton.setFrame(frame);
         positiveButton.setTextSize(TextSize.SMALL);
         positiveButton.setTextVerticalAlign(TextVerticalAlign.BOTTOM);
@@ -720,7 +722,7 @@ public class KeyboardSource {
         negativeButton.setColumns(6);
         negativeButton.setRows(1);
         negativeButton.setImageScaleType(ImageScaleType.FIT);
-        // negativeButton.setImageUrl(viberService.getIconEndpoint() + BACK_ICON_FILENAME);
+        negativeButton.setImageUrl(viberService.getIconEndpoint() + NO_ICON_FILENAME);
         negativeButton.setFrame(frame);
         negativeButton.setTextSize(TextSize.SMALL);
         negativeButton.setTextVerticalAlign(TextVerticalAlign.BOTTOM);
@@ -862,7 +864,7 @@ public class KeyboardSource {
         yesButton.setColumns(6);
         yesButton.setRows(1);
         yesButton.setImageScaleType(ImageScaleType.FIT);
-        // yesButton.setImageUrl(viberService.getIconEndpoint() + BACK_ICON_FILENAME);
+        yesButton.setImageUrl(viberService.getIconEndpoint() + YES_ICON_FILENAME);
         yesButton.setFrame(frame);
         yesButton.setTextSize(TextSize.SMALL);
         yesButton.setTextVerticalAlign(TextVerticalAlign.BOTTOM);
@@ -876,7 +878,7 @@ public class KeyboardSource {
         noButton.setColumns(6);
         noButton.setRows(1);
         noButton.setImageScaleType(ImageScaleType.FIT);
-        // noButton.setImageUrl(viberService.getIconEndpoint() + BACK_ICON_FILENAME);
+        noButton.setImageUrl(viberService.getIconEndpoint() + NO_ICON_FILENAME);
         noButton.setFrame(frame);
         noButton.setTextSize(TextSize.SMALL);
         noButton.setTextVerticalAlign(TextVerticalAlign.BOTTOM);
@@ -903,7 +905,7 @@ public class KeyboardSource {
         startNewDialogButton.setColumns(6);
         startNewDialogButton.setRows(1);
         startNewDialogButton.setImageScaleType(ImageScaleType.FIT);
-        // startNewDialogButton.setImageUrl(viberService.getIconEndpoint() + BACK_ICON_FILENAME);
+        startNewDialogButton.setImageUrl(viberService.getIconEndpoint() + MESSAGE_ICON_FILENAME);
         startNewDialogButton.setFrame(frame);
         startNewDialogButton.setTextSize(TextSize.SMALL);
         startNewDialogButton.setTextVerticalAlign(TextVerticalAlign.BOTTOM);
