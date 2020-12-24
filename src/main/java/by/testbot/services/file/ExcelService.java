@@ -56,7 +56,11 @@ public class ExcelService {
     final static String XLSX_EXTENSION = ".xlsx";
 
     public String generateExcelAndWriteActualData() {
-        return generateExcel(dialogueService.getAll());
+        return generateDialogueExcel(dialogueService.getAll());
+    }
+
+    public String generateCarExcel() {
+        return generateCarExcel(carService.getAll());
     }
 
     public Integer updateCarInformation(String filename) {
@@ -170,7 +174,33 @@ public class ExcelService {
     }
     
     @SneakyThrows
-    private String generateExcel(List<Dialogue> dialogues) {
+    private String generateCarExcel(List<Car> cars) {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet();
+        sheet.setDefaultColumnWidth(10);
+
+        Integer rowCount = 1;
+
+        createCarHeaderRow(sheet);
+
+        for (Car car : cars) {
+            Row row = sheet.createRow(rowCount++);
+            writeCar(row, car);
+        }
+
+        String filename = new SimpleDateFormat("yyyy-MM-dd HH_mm_ss").format(new Date()) + ".xlsx";
+
+        try(FileOutputStream fileOutputStream = new FileOutputStream(FileService.EXCEL_FOLDER_PATH + filename)) {
+            workbook.write(fileOutputStream);
+        }
+
+        workbook.close();
+
+        return filename;
+    }
+
+    @SneakyThrows
+    private String generateDialogueExcel(List<Dialogue> dialogues) {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet();
         sheet.setDefaultColumnWidth(10);
@@ -189,7 +219,7 @@ public class ExcelService {
             }
 
             createBotMessagesUpdateRow(sheet, rowCount++, botMessageUpdate);
-            createHeaderRow(sheet, answersCount, rowCount++);
+            createDialogueHeaderRow(sheet, answersCount, rowCount++);
 
             for (Dialogue dialogue : dialoguesList) {
                 Row row = sheet.createRow(rowCount++);
@@ -208,6 +238,20 @@ public class ExcelService {
         workbook.close();
 
         return filename;
+    }
+
+    private void writeCar(Row row, Car car) {
+        Cell cell = row.createCell(0);
+        cell.setCellValue(car.getBrand() != null ? car.getBrand() : "");
+
+        cell = row.createCell(1);
+        cell.setCellValue(car.getModel() != null ? car.getModel() : "");
+
+        cell = row.createCell(2);
+        cell.setCellValue(car.getSixteenEighteenPrice() != null ? car.getSixteenEighteenPrice() : "");
+
+        cell = row.createCell(3);
+        cell.setCellValue(car.getEighteenTwentyOnePrice() != null ? car.getEighteenTwentyOnePrice() : "");
     }
 
     private void writeDialogue(Dialogue dialogue, Row row, Sheet sheet, Integer answersCount) {
@@ -268,7 +312,7 @@ public class ExcelService {
         cell.setCellValue("Обновление сообщений бота от: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(botMessageUpdate)));
     }
 
-    private void createHeaderRow(Sheet sheet, Integer answersCount, Integer rowCount) {
+    private void createDialogueHeaderRow(Sheet sheet, Integer answersCount, Integer rowCount) {
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         Font font = sheet.getWorkbook().createFont();
         font.setBold(true);
@@ -315,5 +359,33 @@ public class ExcelService {
             cell.setCellStyle(cellStyle);
             columnCounter++;
         }
+    }
+
+    private void createCarHeaderRow(Sheet sheet) {
+        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        Font font = sheet.getWorkbook().createFont();
+        font.setBold(true);
+        cellStyle.setFont(font);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setWrapText(true);
+
+        Row row = sheet.createRow(0);
+
+        Cell cell = row.createCell(0);
+        cell.setCellValue("Марка");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(1);
+        cell.setCellValue("Модель");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(2);
+        cell.setCellValue("2016-2018 Цена");
+        cell.setCellStyle(cellStyle);
+
+        cell = row.createCell(3);
+        cell.setCellValue("2018-2021 Цена");
+        cell.setCellStyle(cellStyle);
     }
 }

@@ -9,6 +9,7 @@ import by.testbot.bot.KeyboardSource;
 import by.testbot.models.BotMessage;
 import by.testbot.models.Client;
 import by.testbot.models.Manager;
+import by.testbot.models.Statistics;
 import by.testbot.models.viber.Failed;
 import by.testbot.models.viber.Keyboard;
 import by.testbot.models.viber.Sender;
@@ -47,7 +48,12 @@ public class MessageService {
     private ClientService clientService;
 
     @Autowired
+    private StatisticsService statisticsService;
+
+    @Autowired
     private LocaleMessageService localeMessageService;
+
+    final static Integer MIN_API_VERSION = 6;
 
     // Other
 
@@ -88,7 +94,7 @@ public class MessageService {
     } 
 
     public void sendAskManagerPhoneNumberMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.askManagerPhoneNumber"), keyboardSource.getAskManagerPhoneNumberKeyboard(), 3);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.askManagerPhoneNumber"), keyboardSource.getSharePhoneKeyboard(), MIN_API_VERSION);
     }
 
     public void sendManagerWithThisPhoneNumberAlreadyExistsMessage(Manager manager) {
@@ -102,19 +108,27 @@ public class MessageService {
     // Postpone message messages
 
     public void sendAddTextMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.enterText"), null, null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.enterText"), keyboardSource.getBackKeyboard(), MIN_API_VERSION);
     }
 
     public void sendSelectDateAndTimeMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.setDateAndTime"), null, null);
     }
 
-    public void sendSuccessPostponeMessageConfirmationMessage(Manager manager) {
+    public void sendConfirmedPostponeMessageMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.successPostponeMessageConfirmation"), null, null);
     }
 
-    public void sendDeclinePostponeMessageConfirmationMessage(Manager manager) {
+    public void sendRejectedPostponeMessageMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.declinePostponeMessageConfirmation"), null, null);
+    }
+
+    public void sendConfirmPostponeMessageMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.confirmPostponeMessage"), keyboardSource.getConfirmKeyboard(), MIN_API_VERSION);
+    }
+
+    public void sendAddPhotoMessage(Manager manager) {
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.uploadPhoto"), keyboardSource.getWithoutPhotoKeyboard(), MIN_API_VERSION);
     }
 
     // List of managers
@@ -134,7 +148,7 @@ public class MessageService {
     // Add manager messages
 
     public void sendShareManagerContactMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.addManager.shareManagerContact"), keyboardSource.getBackKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.addManager.shareManagerContact"), keyboardSource.getBackKeyboard(), MIN_API_VERSION);
     }
 
     public void sendClientNotFoundMessage(Manager manager) {
@@ -142,14 +156,14 @@ public class MessageService {
     }
 
     public void sendConfrimAddNewManagerMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.addManager.confrimAddNewManager"), keyboardSource.getConfirmManagerKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.addManager.confrimAddNewManager"), keyboardSource.getConfirmKeyboard(), MIN_API_VERSION);
     }
 
-    public void sendSuccessfullyAddedNewManagerMessage(Manager manager) {
+    public void sendConfirmedAddNewManagerMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.addManager.successfullyAddedNewManager"), null, null);
     }
 
-    public void sendCancellerationAddManagerMessage(Manager manager) {
+    public void sendRejectedAddNewManagerMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.addManager.cancellerationAddManager"), null, null);
     }
 
@@ -157,7 +171,7 @@ public class MessageService {
 
     public void sendSelectManagerToDelete(Manager manager) {
         // TODO: Rename method
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.shareManagerContact"), keyboardSource.getBackKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.shareManagerContact"), keyboardSource.getBackKeyboard(), MIN_API_VERSION);
     }
 
     public void sendUnableToDeleteSelfMessage(Manager manager) {
@@ -165,10 +179,10 @@ public class MessageService {
     }
 
     public void sendConfrimDeleteManagerMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.confrimDeleteManager"), keyboardSource.getConfirmManagerKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.confrimDeleteManager"), keyboardSource.getConfirmKeyboard(), MIN_API_VERSION);
     }
 
-    public void sendSuccessfullyDeleteManagerMessage(Manager manager) {
+    public void sendConfirmedDeleteManagerMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.successfullyDeleteManager"), null, null);
     }
 
@@ -176,7 +190,7 @@ public class MessageService {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.unableToDeleteManager"), null, null);
     }
 
-    public void sendCancellerationDeleteManagerMessage(Manager manager) {
+    public void sendRejectedDeleteManagerMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.managers.deleteManager.cancellerationDeleteManager"), null, null);
     }
 
@@ -193,7 +207,7 @@ public class MessageService {
         String mediaUrl = viberService.getFileEndpoint() + filename;
         Long fileSize = fileService.getFileSizeInBytes(filename);
 
-        this.sendFileMessage(manager.getUser().getViberId(), mediaUrl, filename, fileSize);
+        this.sendFileMessage(manager.getUser().getViberId(), mediaUrl, filename, fileSize, null, null);
     }
 
     public void sendAdditionalOperationsWithClientsMessage(String viberId) {
@@ -203,11 +217,21 @@ public class MessageService {
     // Report messages
 
     public void sendReportAbountManagersWork(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), "Отчет по работе менеджеров:\n" + managerService.getManagersStatistics(), null, null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.report.reportAboutManagersWork", managerService.getManagersStatistics()), null, null);
     }
 
-    public void sendGetReportAboutBotWork(String viberId) {
-        //TODO: create and send report about bot work
+    public void sendReportAboutBotWork(Manager manager) {
+        Statistics yesterdayStatistics = statisticsService.getYesterdayStatistics();
+
+        if (yesterdayStatistics == null) {
+            this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.report.reportAboutBotWorkNotFound"), null, null);
+        }
+        else {
+            this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.report.reportAboutBotWork", yesterdayStatistics.getDate().toString(),
+                                                                                                     yesterdayStatistics.getMidnightToEightOclickCount(), 
+                                                                                                     yesterdayStatistics.getEightOclockToSixteenOclockCount(),
+                                                                                                     yesterdayStatistics.getSixteenOclickToMidnightCount()), null, null);
+        }
     }
 
     // Integration Messages
@@ -227,11 +251,11 @@ public class MessageService {
     // Bot Message Menu 
 
     public void sendBotMessageButtonsMenuKeyboard(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.botMessageButtonsMenu"), keyboardSource.getBotMessageButtonsMenuKeyabord(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.botMessageButtonsMenu"), keyboardSource.getBotMessageButtonsMenuKeyabord(), MIN_API_VERSION);
     }
 
     public void sendBotMessageMenuKeyboard(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessageMenu"), keyboardSource.getBotMessageMenuKeyabord(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessageMenu"), keyboardSource.getBotMessageMenuKeyabord(), MIN_API_VERSION);
     }
 
     // Bot Work Time
@@ -247,7 +271,12 @@ public class MessageService {
     // Update car prices
     
     public void sendSendExcelFileWithPricesMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.updateCarPrices.sendExcelFileWithPrices"), keyboardSource.getBackKeyboard(), null);
+        String filename = excelService.generateCarExcel();
+        String mediaUrl = viberService.getFileEndpoint() + filename;
+        Long fileSize = fileService.getFileSizeInBytes(filename);
+
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.updateCarPrices.sendExcelFileWithPrices"), null, null);
+        this.sendFileMessage(manager.getUser().getViberId(), mediaUrl, filename, fileSize, keyboardSource.getBackKeyboard(), MIN_API_VERSION);
     }
     
     public void sendCountOfCarsUpdatedMessage(Manager manager, Integer countOfCarsUpdated, Integer countOfCars) {
@@ -257,11 +286,11 @@ public class MessageService {
     // Select Bot Message to Edit message
 
     public void sendSelectBotMessageToEdit(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.selectBotMessageToEdit"), keyboardSource.getBackKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.selectBotMessageToEdit"), keyboardSource.getBackKeyboard(), MIN_API_VERSION);
     }
 
     public void sendBotMessageText(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.showBotMessage") + manager.getBotMessage().getMessage(), null, null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.showBotMessage", manager.getBotMessage().getMessage()), null, null);
     }
 
     public void sendBotMessageNotFoundMessage(Manager manager) {
@@ -273,41 +302,41 @@ public class MessageService {
     }
 
     public void sendEnterBotMessageTextMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.enterBotMessageText"), keyboardSource.getBackKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.enterBotMessageText"), keyboardSource.getBackKeyboard(), MIN_API_VERSION);
     }
 
-    public void sendCancellerationChangeBotMessageTextMessage(Manager manager) {
+    public void sendRejectedEditBotMessageTextMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.cancellerationChangeBotMessageText"), null, null);
     }
 
     public void sendConfirmChangeBotMessageTextMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.confirmChangeBotEditMessage"), keyboardSource.getConfirmBotMessageKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.confirmChangeBotEditMessage"), keyboardSource.getConfirmKeyboard(), MIN_API_VERSION);
     }
 
-    public void sendSuccessEditBotMessageTextMessage(Manager manager) {
+    public void sendConfirmedEditBotMessageTextMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.successEditBotMessageText"), null, null);
     }
 
     // Button edit
 
     public void sendAskNumberOfButtonToDeleteMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.askNumberOfButtonToDelete"), keyboardSource.getBackKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.askNumberOfButtonToDelete"), keyboardSource.getBackKeyboard(), MIN_API_VERSION);
     }
 
     public void sendListOfBotMessageButtons(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.listOfBotMessageButtons") + buttonService.formatButtons(buttonService.getAllByBotMessage(manager.getBotMessage())), null, null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.listOfBotMessageButtons", buttonService.formatButtons(buttonService.getAllByBotMessage(manager.getBotMessage()))), null, null);
     }
 
     public void sendAddBotMessageButtonMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.addBotMessageButton"), null, null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.addBotMessageButton"), keyboardSource.getBackKeyboard(), MIN_API_VERSION);
     }
 
-    public void sendSuccessfullyAddedButtonMessage(Manager manager) {
+    public void sendConfirmedAddButtonMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.successfullyAddedButton"), null, null);
     }
 
     public void sendConfirmAddNewBotMessageButtonMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.confirmAddNewBotMessageButton"), keyboardSource.getConfirmBotMessageButtonKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.confirmAddNewBotMessageButton"), keyboardSource.getConfirmKeyboard(), MIN_API_VERSION);
     }
     
     public void sendUnableToAddNewButtonMessage(Manager manager) {
@@ -315,43 +344,44 @@ public class MessageService {
     }
 
     public void sendConfirmDeleteBotMessageButtonMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.confirmDeleteBotMessageButton"), keyboardSource.getConfirmBotMessageButtonKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.confirmDeleteBotMessageButton"), keyboardSource.getConfirmKeyboard(), MIN_API_VERSION);
     }
 
     public void sendUnableToDeleteButtonMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.unableToDeleteButton"), null, null);
     }
 
-    public void sendSuccessfullyDeletedButtonMessage(Manager manager) {
+    public void sendConfirmedDeleteButtonMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.successfullyDeletedButton"), null, null);
     }
 
-    public void sendCancellerationDeleteButtonMessage(Manager manager) {
+    public void sendRejectedDeleteButtonMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.cancellerationDeleteButton"), null, null);
     }
 
-    public void sendCancellerationAddNewButtonMessage(Manager manager) {
+    public void sendRejectedAddNewButtonMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.cancellerationAddNewButton"), null, null);
     }
 
     public void sendSelectAnswerTypeMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.selectAnswerType"), keyboardSource.getAnswerTypeKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.selectAnswerType"), keyboardSource.getAnswerTypeKeyboard(), MIN_API_VERSION);
     }
 
     public void sendIsButtonEndsDialogueMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.isButtonEndsDialogue"), keyboardSource.getYesNoKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.isButtonEndsDialogue"), keyboardSource.getYesNoKeyboard(), MIN_API_VERSION);
     }
 
     public void sendListOfBotMessages(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.listOfBotMessages") + viberService.getBotMessageService().getPrettyFormatedAllBotMessages(), null, null);
-    }
-
-    public void sendListOfBotMessagesIsEmptyMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.listOfBotMessagesIsEmpty"), null, null);
+        if (!botMessageService.isListOfBotMessagesEmpty()) {
+            this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.listOfBotMessages", botMessageService.getPrettyFormatedAllBotMessages()), null, null);
+        }
+        else {
+            this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.listOfBotMessagesIsEmpty"), null, null);
+        }
     }
 
     public void sendCurrentBotMessageTextMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.currentBotMessageText") + manager.getBotMessage().getMessage(), null, null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.editBotMessage.currentBotMessageText", manager.getBotMessage().getMessage()), null, null);
     }
 
     public void sendMaxButtonsCountReachedMessage(Manager manager) {
@@ -367,14 +397,14 @@ public class MessageService {
     }
 
     public void sendConfirmAddNewBotMessageMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.confirmAddNewBotMessage"), keyboardSource.getConfirmBotMessageKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.confirmAddNewBotMessage"), keyboardSource.getConfirmKeyboard(), MIN_API_VERSION);
     }
 
-    public void sendSuccessfullyAddedNewBotMessageMessage(Manager manager) {
+    public void sendConfirmedAddNewBotMessageMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.successfullyAddedNewBotMessage"), null, null);
     }
 
-    public void sendCancellerationAddNewBotMessageMessage(Manager manager) {
+    public void sendRejectedAddNewBotMessageMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.cancellerationAddNewBotMessage"), null, null);
     }
 
@@ -383,19 +413,19 @@ public class MessageService {
     }
 
     public void sendConfirmDeleteBotMessageMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.confirmDeleteBotMessage"), keyboardSource.getConfirmBotMessageKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.confirmDeleteBotMessage"), keyboardSource.getConfirmKeyboard(), MIN_API_VERSION);
     }
 
-    public void sendSuccessfullyDeleteBotMessageMessage(Manager manager) {
+    public void sendConfirmedDeleteBotMessageMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.successfullyDeleteBotMessage"), null, null);
     }
 
-    public void sendCancellerationDeleteBotMessageMessage(Manager manager) {
+    public void sendRejectedDeleteBotMessageMessage(Manager manager) {
         this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.cancellerationDeleteBotMessage"), null, null);
     }
 
     public void sendEnterNewBotMessageSequenceMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.enterNewBotMessageSequence"), keyboardSource.getBackKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.botMessage.enterNewBotMessageSequence"), keyboardSource.getBackKeyboard(), MIN_API_VERSION);
     }
 
     public void sendSuccessfullyChangedBotMessageSequenceMessage(Manager manager) {
@@ -405,7 +435,7 @@ public class MessageService {
     
 
     public void sendBotMessageMessage(Client client, BotMessage botMessage) {
-        this.sendTextMessage(client.getUser().getViberId(), botMessageService.formateBotMessage(botMessage, client), keyboardSource.generateKeyboard(botMessage), 3);
+        this.sendTextMessage(client.getUser().getViberId(), botMessageService.formateBotMessage(botMessage, client), keyboardSource.generateKeyboard(botMessage), MIN_API_VERSION);
     }
 
     public void sendInChatBotUsagePeriodSettingsMessage(Manager manager) {
@@ -427,55 +457,47 @@ public class MessageService {
     }
 
     public void sendAskBrandMessage(Client client, List<String> brands, Integer page) {
-        this.sendTextMessage(client.getUser().getViberId(), botMessageService.formateBotMessage(localeMessageService.getMessage("message.userDialog.askBrand"), client), keyboardSource.generatePagableKeyboard(brands, page), null);
+        this.sendTextMessage(client.getUser().getViberId(), botMessageService.formateBotMessage(localeMessageService.getMessage("message.userDialog.askBrand"), client), keyboardSource.generatePagableKeyboard(brands, page), MIN_API_VERSION);
     }
 
     public void sendAskModelMessage(Client client, List<String> models, Integer page) {
-        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("message.userDialog.askModel"), keyboardSource.generatePagableKeyboard(models, page), null);
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("message.userDialog.askModel"), keyboardSource.generatePagableKeyboard(models, page), MIN_API_VERSION);
     }
 
     public void sendAskYearOfIssueFromMessage(Client client, List<String> years, Integer page) {
-        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("message.userDialog.askYearOfIssueFrom"), keyboardSource.generatePagableKeyboard(years, page), null);
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("message.userDialog.askYearOfIssueFrom"), keyboardSource.generatePagableKeyboard(years, page), MIN_API_VERSION);
     }
 
     public void sendAskYearOfIssueToMessage(Client client, List<String> years, Integer page) {
-        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("message.userDialog.askYearOfIssueTo"), keyboardSource.generatePagableKeyboard(years, page), null);
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("message.userDialog.askYearOfIssueTo"), keyboardSource.generatePagableKeyboard(years, page), MIN_API_VERSION);
     }
 
     public void sendAdminMainMenuKeyboard(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.mainMenu"), keyboardSource.getAdminMainMenuKeyboard(), 6);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.mainMenu"), keyboardSource.getAdminMainMenuKeyboard(), MIN_API_VERSION);
     }
 
     public void sendManagersMenuKeyboard(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.managers"), keyboardSource.getManagersMenuKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.managers"), keyboardSource.getManagersMenuKeyboard(), MIN_API_VERSION);
     }
 
     public void sendClientsMenuKeyboard(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.clients"), keyboardSource.getClientsMenuKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.clients"), keyboardSource.getClientsMenuKeyboard(), MIN_API_VERSION);
     }
 
     public void sendReportMenuKeyboard(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.report"), keyboardSource.getReportMenuKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.report"), keyboardSource.getReportMenuKeyboard(), MIN_API_VERSION);
     }
 
     public void sendIntegrationsMenuKeyboard(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.integrations"), keyboardSource.getIntegrationsMenuKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.integrations"), keyboardSource.getIntegrationsMenuKeyboard(), MIN_API_VERSION);
     }
 
     public void sendSettingsMenuKeyboard(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.settings"), keyboardSource.getSettingsMenuKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.settings"), keyboardSource.getSettingsMenuKeyboard(), MIN_API_VERSION);
     }
 
     public void sendBotWorkKeyboard(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.botWork"), keyboardSource.getBotUsagePeriodMenuKeyboard(), null);
-    }
-
-    public void sendConfirmPostponeMessageMessage(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.confirmPostponeMessage"), keyboardSource.getConfirmPostponeMessageKeyboard(), null);
-    }
-
-    public void sendAddPhotoMessageAndKeyboard(Manager manager) {
-        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("message.postponeMessage.uploadPhoto"), keyboardSource.getWithoutPhotoKeyboard(), null);
+        this.sendTextMessage(manager.getUser().getViberId(), localeMessageService.getMessage("keyboardMessage.botWork"), keyboardSource.getBotUsagePeriodMenuKeyboard(), MIN_API_VERSION);
     }
 
     //endregion
@@ -487,19 +509,19 @@ public class MessageService {
     }
 
     public void sendNegativeDialogEndMessage(Client client) {
-        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.negativeDialogEnd"), keyboardSource.getEndDialogKeyboard(), null);
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.negativeDialogEnd"), keyboardSource.getEndDialogKeyboard(), MIN_API_VERSION);
     }
 
     public void sendPositiveDialogEndMessage(Client client) {
-        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.positiveDialogEnd"), keyboardSource.getEndDialogKeyboard(), null);
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.positiveDialogEnd"), keyboardSource.getEndDialogKeyboard(), MIN_API_VERSION);
     }
 
     public void sendPositiveDialogEndAndPhoneEnteredMessage(Client client) {
-        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.positiveDialogEndAndPhoneEntered"), keyboardSource.getEndDialogKeyboard(), null);
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.positiveDialogEndAndPhoneEntered"), keyboardSource.getEndDialogKeyboard(), MIN_API_VERSION);
     }
 
     public void sendAskAndEnterPhoneNumberMessage(Client client) {
-        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.askAndEnterPhoneNumber"), keyboardSource.getAskAndEnterPhoneNumberKeyboard(), 3);
+        this.sendTextMessage(client.getUser().getViberId(), localeMessageService.getMessage("reply.askAndEnterPhoneNumber"), keyboardSource.getSharePhoneKeyboard(), MIN_API_VERSION);
     }
 
     public void sendClientWithThisPhoneNumberAlreadyExistsMessage(Client client) {
@@ -519,7 +541,7 @@ public class MessageService {
         return sendTextMessageRequest;
     }
 
-    public void sendFileMessage(String viberId, String mediaUrl, String filename, Long fileSize) {
+    public void sendFileMessage(String viberId, String mediaUrl, String filename, Long fileSize, Keyboard keyboard, Integer minApiVersion) {
         SendFileMessageRequest sendFileMessageRequest = new SendFileMessageRequest();
         Sender sender = new Sender();
 
@@ -529,6 +551,8 @@ public class MessageService {
         sendFileMessageRequest.setSender(sender);
         sendFileMessageRequest.setFileName(filename);
         sendFileMessageRequest.setSize(fileSize);
+        sendFileMessageRequest.setKeyboard(keyboard);
+        sendFileMessageRequest.setMinApiVersion(minApiVersion);
         sendFileMessageRequest.setUserId(viberId);
 
         viberService.sendFileMessage(sendFileMessageRequest);

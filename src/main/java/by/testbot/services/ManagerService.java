@@ -2,12 +2,14 @@ package by.testbot.services;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import by.testbot.models.BotMessage;
 import by.testbot.models.Manager;
 import by.testbot.repositories.ManagerRepository;
 
@@ -99,5 +101,17 @@ public class ManagerService {
         }
 
         return stringBuilder.toString();
+    }
+
+    public void deleteManagersBotMessage(BotMessage deleteMessage) {
+        Set<Manager> managers = deleteMessage.getManagers();
+        
+        managers.forEach(m -> {
+            if (m.getBotMessage() != null && m.getBotMessage().getId() == deleteMessage.getId()) {
+                m.setBotMessage(null);
+            }
+        });
+
+        saveAll(managers);
     }
 }

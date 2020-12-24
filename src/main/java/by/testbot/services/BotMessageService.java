@@ -23,6 +23,9 @@ public class BotMessageService {
     private CarService carService;
 
     @Autowired
+    private ManagerService managerService;
+
+    @Autowired
     private DialogueService dialogueService;
 
     final static String NAME_PLACEHOLDER = "&{name}";
@@ -209,6 +212,45 @@ public class BotMessageService {
         }
 
         return botMessage.getMessage().replace(NAME_PLACEHOLDER, name).replace(LINK_PLACEHOLDER, link).replace(PRICE_PLACEHOLDER, price);
+    }
+
+    public void addNewMessage(BotMessage newBotMessage) {
+        List<BotMessage> botMessages = getAllAdded();
+        BotMessage lastMessage = getLastMessage();
+        Long timestamp = new Date().getTime();
+
+        if (lastMessage != null) {
+            lastMessage.setNextMessage(newBotMessage);
+            newBotMessage.setPreviousMessage(lastMessage);
+            save(lastMessage);
+        }
+
+        newBotMessage.setIsAdded(false);
+        newBotMessage.setLastUpdate(timestamp);
+
+        botMessages.forEach(m -> m.setLastUpdate(timestamp));
+
+        save(newBotMessage);
+        saveAll(botMessages);
+    }
+
+    public void deleteBotMessage(BotMessage deleteMessage) {
+        BotMessage previousMessage = deleteMessage.getPreviousMessage();
+        BotMessage nextMessage = deleteMessage.getNextMessage();
+
+        if (previousMessage != null) {
+            previousMessage.setNextMessage(nextMessage);
+            save(previousMessage);
+        }
+        if (nextMessage != null) {
+            nextMessage.setPreviousMessage(previousMessage);
+            save(nextMessage);
+        }
+
+        dialogueService.changeCurrentBotMessageToOtherBotMessage(deleteMessage, previousMessage);
+        managerService.deleteManagersBotMessage(deleteMessage);
+        
+        delete(deleteMessage);
     }
 
     private Boolean hasName(String message) {

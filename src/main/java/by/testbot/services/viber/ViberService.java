@@ -1,5 +1,6 @@
 package by.testbot.services.viber;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -20,6 +21,7 @@ import by.testbot.models.viber.Failed;
 import by.testbot.models.viber.Message;
 import by.testbot.models.Client;
 import by.testbot.models.Manager;
+import by.testbot.models.Statistics;
 import by.testbot.models.User;
 import by.testbot.models.viber.ViberUpdate;
 import by.testbot.models.enums.Role;
@@ -29,28 +31,22 @@ import by.testbot.payload.requests.SetWebhookRequest;
 import by.testbot.payload.responses.SendMessageResponse;
 import by.testbot.payload.responses.SetWebhookResponse;
 import by.testbot.proxy.ViberProxy;
-import by.testbot.services.AnswerService;
-import by.testbot.services.BotMessageService;
-import by.testbot.services.ButtonService;
-import by.testbot.services.CarService;
-import by.testbot.services.ClientService;
-import by.testbot.services.DialogueService;
-import by.testbot.services.ManagerService;
 import by.testbot.services.MessageService;
-import by.testbot.services.PostponeMessageService;
+import by.testbot.services.StatisticsService;
 import by.testbot.services.UserService;
-import by.testbot.services.file.ExcelService;
-import by.testbot.services.file.FileService;
 import by.testbot.services.other.ConfigService;
 import by.testbot.utils.Utils;
 import lombok.Getter;
 
-@Getter
 @Service
-@PropertySource(value = "file:" + ConfigService.BOT_CONFIG_PATH, factory = ReloadablePropertySourceFactory.class, ignoreResourceNotFound = true)
+@PropertySource(value = "file:" + ConfigService.BOT_CONFIG_PATH, factory = ReloadablePropertySourceFactory.class)
 @RefreshScope
 public class ViberService {
     private static final Logger logger = LoggerFactory.getLogger(ViberService.class);
+    
+    public static final String FILE_URL = "/file/";
+    public static final String PICTURE_URL = "/picture/";
+    public static final String KEYBOARD_ICON_URL = "/keyboard_icon/";
     
     @Autowired
     private ViberProxy viberProxy;
@@ -62,40 +58,10 @@ public class ViberService {
     private MessageService messageService;
 
     @Autowired
-    private DialogueService dialogueService;
-
-    @Autowired
-    private PostponeMessageService postponeMessageService;
-
-    @Autowired
-    private CarService carService;
-
-    @Autowired
-    private FileService fileService;
-
-    @Autowired
-    private BotMessageService botMessageService;
-
-    @Autowired
-    private ButtonService buttonService;
-
-    @Autowired
-    private AnswerService answerService;
-
-    @Autowired
-    private ManagerService managerService;
-
-    @Autowired
-    private ClientService clientService;
-
-    @Autowired
     private EnvironmentConfig environmentConfig;
 
     @Autowired
-    private ConfigService configService;
-
-    @Autowired
-    private ExcelService excelService;
+    private StatisticsService statisticsService;
 
     @Value("${testbot.authenticationToken}")
     private String authenticationToken;
@@ -103,18 +69,19 @@ public class ViberService {
     @Value("${testbot.webhookUrl}")
     private String webhookUrl;
 
+    @Getter
     @Value("${testbot.sender.name}")
     private String senderName;
 
-    private String fileEndpoint;
-    private String pictureEndpoint;
-    private String iconEndpoint;
+    @Getter private String fileEndpoint;
+    @Getter private String pictureEndpoint;
+    @Getter private String iconEndpoint;
 
     @PostConstruct
     private void postConstruct() {
-        this.fileEndpoint = webhookUrl + "/file/";
-        this.pictureEndpoint = webhookUrl + "/picture/";
-        this.iconEndpoint = webhookUrl + "/keyboard_icons/";
+        this.fileEndpoint = webhookUrl + FILE_URL;
+        this.pictureEndpoint = webhookUrl + PICTURE_URL;
+        this.iconEndpoint = webhookUrl + KEYBOARD_ICON_URL;
     }
 
     public void setWeebhook() {
@@ -441,7 +408,6 @@ public class ViberService {
             // handle callback
         }
         else if (viberUpdate.hasMessageCallback()) {
-            logger.info("Received MessageCallback from user: " + viberUpdate.getMessageCallback().getSender().getId() + ", message type: " + viberUpdate.getMessageCallback().getMessage().getMessageType());
             handleMessageCallback(viberUpdate);
         }
         return null;
@@ -455,15 +421,19 @@ public class ViberService {
         }
 
         if (message.hasText()) {
+            logger.info("Received MessageCallback from user: " + viberUpdate.getMessageCallback().getSender().getId() + ", message type: " + viberUpdate.getMessageCallback().getMessage().getMessageType() + ", with text: " + viberUpdate.getMessageCallback().getMessage().getText());
             handleTextMessage(viberUpdate);
         }
         else if (message.hasPicture()) {
+            logger.info("Received MessageCallback from user: " + viberUpdate.getMessageCallback().getSender().getId() + ", message type: " + viberUpdate.getMessageCallback().getMessage().getMessageType());
             handlePictureMessage(viberUpdate);
         }
         else if (message.hasContact()) {
+            logger.info("Received MessageCallback from user: " + viberUpdate.getMessageCallback().getSender().getId() + ", message type: " + viberUpdate.getMessageCallback().getMessage().getMessageType());
             handleContactMessage(viberUpdate);
         }
         else if (message.hasFile()) {
+            logger.info("Received MessageCallback from user: " + viberUpdate.getMessageCallback().getSender().getId() + ", message type: " + viberUpdate.getMessageCallback().getMessage().getMessageType());
             handleFileMessage(viberUpdate);
         }
     }
@@ -486,7 +456,8 @@ public class ViberService {
 
             Client client = null;
             Manager manager = null;
-
+            Statistics statistics = statisticsService.getTodayStatistics();
+            
             if (message.getText().equals(environmentConfig.getCodeWord())) {
                 user.setRole(Role.MANAGER);
                 botState = BotState.getAdminInitialState();
@@ -502,6 +473,18 @@ public class ViberService {
 
                 client.setUser(user);
                 client.setKeyboardPage(1);
+
+                LocalDateTime now = LocalDateTime.now();
+                if (now.getHour() >= 0 && now.getHour() < 8) {
+                    statistics.setMidnightToEightOclickCount(statistics.getMidnightToEightOclickCount() + 1);
+                }
+                else if (now.getHour() >= 8 && now.getHour() < 16) {
+                    statistics.setEightOclockToSixteenOclockCount(statistics.getEightOclockToSixteenOclockCount() + 1);
+                }
+                else if (now.getHour() >= 16 && now.getHour() < 24) {
+                    statistics.setSixteenOclickToMidnightCount(statistics.getSixteenOclickToMidnightCount() + 1);
+                }
+                statisticsService.save(statistics);
             }
 
             user.setViberId(viberId);
@@ -568,6 +551,7 @@ public class ViberService {
 
             Client client = null;
             Manager manager = null;
+            Statistics statistics = statisticsService.getTodayStatistics();
 
             if (message.getText().equals(environmentConfig.getCodeWord())) {
                 user.setRole(Role.MANAGER);
@@ -584,6 +568,18 @@ public class ViberService {
 
                 client.setUser(user);
                 client.setKeyboardPage(1);
+
+                LocalDateTime now = LocalDateTime.now();
+                if (now.getHour() >= 0 && now.getHour() < 8) {
+                    statistics.setMidnightToEightOclickCount(statistics.getMidnightToEightOclickCount() + 1);
+                }
+                else if (now.getHour() >= 8 && now.getHour() < 16) {
+                    statistics.setEightOclockToSixteenOclockCount(statistics.getEightOclockToSixteenOclockCount() + 1);
+                }
+                else if (now.getHour() >= 16 && now.getHour() < 24) {
+                    statistics.setSixteenOclickToMidnightCount(statistics.getSixteenOclickToMidnightCount() + 1);
+                }
+                statisticsService.save(statistics);
             }
 
             user.setViberId(viberId);
@@ -650,6 +646,7 @@ public class ViberService {
 
             Client client = null;
             Manager manager = null;
+            Statistics statistics = statisticsService.getTodayStatistics();
 
             if (message.getText().equals(environmentConfig.getCodeWord())) {
                 user.setRole(Role.MANAGER);
@@ -666,6 +663,18 @@ public class ViberService {
 
                 client.setUser(user);
                 client.setKeyboardPage(1);
+
+                LocalDateTime now = LocalDateTime.now();
+                if (now.getHour() >= 0 && now.getHour() < 8) {
+                    statistics.setMidnightToEightOclickCount(statistics.getMidnightToEightOclickCount() + 1);
+                }
+                else if (now.getHour() >= 8 && now.getHour() < 16) {
+                    statistics.setEightOclockToSixteenOclockCount(statistics.getEightOclockToSixteenOclockCount() + 1);
+                }
+                else if (now.getHour() >= 16 && now.getHour() < 24) {
+                    statistics.setSixteenOclickToMidnightCount(statistics.getSixteenOclickToMidnightCount() + 1);
+                }
+                statisticsService.save(statistics);
             }
 
             user.setViberId(viberId);
@@ -731,6 +740,7 @@ public class ViberService {
             
             Manager manager = null;
             Client client = null;
+            Statistics statistics = statisticsService.getTodayStatistics();
 
             if (message.getText().equals(environmentConfig.getCodeWord())) {
                 user.setRole(Role.MANAGER);
@@ -747,6 +757,18 @@ public class ViberService {
                 
                 client.setUser(user);
                 client.setKeyboardPage(1);
+
+                LocalDateTime now = LocalDateTime.now();
+                if (now.getHour() >= 0 && now.getHour() < 8) {
+                    statistics.setMidnightToEightOclickCount(statistics.getMidnightToEightOclickCount() + 1);
+                }
+                else if (now.getHour() >= 8 && now.getHour() < 16) {
+                    statistics.setEightOclockToSixteenOclockCount(statistics.getEightOclockToSixteenOclockCount() + 1);
+                }
+                else if (now.getHour() >= 16 && now.getHour() < 24) {
+                    statistics.setSixteenOclickToMidnightCount(statistics.getSixteenOclickToMidnightCount() + 1);
+                }
+                statisticsService.save(statistics);
             }
 
             user.setViberId(viberId);
@@ -812,6 +834,7 @@ public class ViberService {
 
             Manager manager = null;
             Client client = null;
+            Statistics statistics = statisticsService.getTodayStatistics();
 
             if (viberId.equals("gbcD9ezHUeQkbrYUwyU3Bw==")) {
                 botState = BotState.getAdminInitialState();
@@ -828,6 +851,18 @@ public class ViberService {
                 
                 client.setUser(user);
                 client.setKeyboardPage(1);
+
+                LocalDateTime now = LocalDateTime.now();
+                if (now.getHour() >= 0 && now.getHour() < 8) {
+                    statistics.setMidnightToEightOclickCount(statistics.getMidnightToEightOclickCount() + 1);
+                }
+                else if (now.getHour() >= 8 && now.getHour() < 16) {
+                    statistics.setEightOclockToSixteenOclockCount(statistics.getEightOclockToSixteenOclockCount() + 1);
+                }
+                else if (now.getHour() >= 16 && now.getHour() < 24) {
+                    statistics.setSixteenOclickToMidnightCount(statistics.getSixteenOclickToMidnightCount() + 1);
+                }
+                statisticsService.save(statistics);
             }
 
             user.setViberId(viberId);

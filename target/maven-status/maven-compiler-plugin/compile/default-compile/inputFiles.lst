@@ -2,6 +2,7 @@ D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\fi
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\config\FeignErrorDecoder.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\UserService.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\enums\Status.java
+D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\StatisticsService.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\Client.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\viber\RichMediaKeyboard.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\callbacks\MessageCallback.java
@@ -46,6 +47,7 @@ D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\enum
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\other\InitializationService.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\ButtonService.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\viber\Message.java
+D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\repositories\StatisticsRepository.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\requests\message\SendVideoMessageRequest.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\enums\InputFieldState.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\bot\KeyboardSource.java
@@ -53,7 +55,6 @@ D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\Ca
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\repositories\BotMessageRepository.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\Button.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\services\ClientService.java
-D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\Config.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\enums\MessageType.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\viber\ViberUpdate.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\viber\Contact.java
@@ -61,6 +62,7 @@ D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\Dial
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\bot\BotContext.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\callbacks\DeliveredCallback.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\User.java
+D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\Statistics.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\BotMessage.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\models\enums\button\TextHorizontalAlign.java
 D:\Visual Studio Code Projects\vibertestbot\src\main\java\by\testbot\payload\requests\message\SendPictureMessageRequest.java

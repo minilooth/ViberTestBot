@@ -24,7 +24,7 @@ public class FileService {
     public final static String FILE_FOLDER_PATH = "./files/";
     public final static String EXCEL_FOLDER_PATH = FILE_FOLDER_PATH + "excel/";
     public final static String PICTURE_FOLDER_PATH = FILE_FOLDER_PATH + "pictures/";
-    public final static String ICON_FORDER_PATH = FILE_FOLDER_PATH + "keyboard_icons/";
+    public final static String ICON_FOLDER_PATH = FILE_FOLDER_PATH + "keyboard_icons/";
     public final static String PICTURE_PLACEHOLDER = "//ssl.gstatic.com/accounts/ui/avatar_2x.png";
     public final static Integer FILENAME_LENGTH = 10;
 
@@ -58,7 +58,7 @@ public class FileService {
     }
 
     public FileSystemResource getIcon(String filename) {
-        return new FileSystemResource(new File(ICON_FORDER_PATH + filename));
+        return new FileSystemResource(new File(ICON_FOLDER_PATH + filename));
     }
 
     @SneakyThrows

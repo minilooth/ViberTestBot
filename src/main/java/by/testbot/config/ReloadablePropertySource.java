@@ -59,8 +59,8 @@ public class ReloadablePropertySource extends PropertySource<Property> {
 
             FileWriter fileWriter = new FileWriter(ConfigService.BOT_CONFIG_PATH);
 
-            fileWriter.append("bot.enabled=true");
-            fileWriter.append("bot.codeWord=MANAGER");
+            fileWriter.append("bot.enabled=true\n");
+            fileWriter.append("bot.codeWord=MANAGER\n");
             fileWriter.close();
 
             logger.info("Created config file " + ConfigService.BOT_CONFIG_PATH);

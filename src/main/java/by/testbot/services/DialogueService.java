@@ -1,6 +1,7 @@
 package by.testbot.services;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,5 +60,13 @@ public class DialogueService {
 
     public Dialogue getCurrentDialogueByClient(Client client) {
         return getAllByClient(client).stream().filter(m -> m.getDialogueIsOver() == false).findFirst().orElse(null);
+    }
+
+    public void changeCurrentBotMessageToOtherBotMessage(BotMessage currentBotMessage, BotMessage otherBotMessage) {
+        Set<Dialogue> dialogues = currentBotMessage.getDialogues();
+
+        dialogues.forEach(d -> d.setBotMessage(otherBotMessage));
+
+        saveAll(dialogues);
     }
 }
