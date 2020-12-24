@@ -1,0 +1,32 @@
+package by.autocapital.models.enums;
+
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
+public enum Status {
+    OK,
+    INVALID_URL,
+    INVALID_AUTH_TOKEN,
+    BAD_DATA,
+    MISSING_DATA,
+    RECEIVER_NOT_REGISTERED,
+    RECEIVER_NOT_SUBSCRIBED,
+    PUBLIC_ACCOUNT_BLOCKED,
+    PUBLIC_ACCOUNT_NOT_FOUND,
+    PUBLIC_ACCOUNT_SUSPENDED,
+    WEBHOOK_NOT_SET,
+    RECEIVER_NO_SUITABLE_DEVICE,
+    TOO_MANY_REQUESTS,
+    API_VERSION_NOT_SUPPORTED,
+    INCOMPATIBLE_WITH_VERSION,
+    PUBLIC_ACCOUNT_NOT_AUTHORIZED,
+    INCHAT_REPLY_MESSAGE_NOT_ALLOWED,
+    PUBLIC_ACCOUNT_IS_NOT_INLINE,
+    NO_PUBLIC_CHAT,
+    CANNOT_SEND_BROADCAST,
+    BROADCAST_NOT_ALLOWED,
+
+    @JsonEnumDefaultValue
+    OTHER;
+}
